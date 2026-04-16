@@ -1,8 +1,8 @@
 # Mini ClickUp - Documentation Index
 
-**Version:** 0.1.0  
-**Last Updated:** 2026-03-17  
-**Status:** MVP Development  
+**Version:** 2.0.0  
+**Last Updated:** 2026-04-16  
+**Status:** MVP Rescue — Phase 0 en progreso  
 
 ---
 
@@ -22,6 +22,10 @@
 | [08_Internacionalizacion_i18n.md](./08_Internacionalizacion_i18n.md) | Internationalization (i18n) | 📝 Draft |
 | [09_Estado_Global_y_Contextos.md](./09_Estado_Global_y_Contextos.md) | State management with Context | 📝 Draft |
 | [10_Roadmap_y_Deuda_Tecnica.md](./10_Roadmap_y_Deuda_Tecnica.md) | Roadmap and technical debt tracking | 📝 Draft |
+| [11_Sprint_Plan.md](./11_Sprint_Plan.md) | Sprint plan S0–S5 con story points | 📝 Draft |
+| [12_MVP_Work_Plan.md](./12_MVP_Work_Plan.md) | Plan de trabajo MVP (referencia histórica) | 📋 Archive |
+| [13_Roadmap_Rescate_MVP.md](./13_Roadmap_Rescate_MVP.md) | **Roadmap de rescate — 5 fases, 29 épicas, inventario de bugs** | ✅ Activo |
+| [14_Epicas_y_Criterios.md](./14_Epicas_y_Criterios.md) | **Épicas, historias y criterios de aceptación por pantalla** | ✅ Activo |
 
 ---
 
