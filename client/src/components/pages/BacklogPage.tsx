@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import {
   Card,
@@ -42,25 +42,16 @@ interface BacklogTasks {
 
 export default function BacklogPage() {
   const { tasks: allTasks, loading, error, updateTask } = useTasks();
-  const [tasks, setTasks] = useState<BacklogTasks>({
-    todo: [],
-    "in-progress": [],
-    review: [],
-    done: [],
-    qa: [],
-  });
+  const tasks = useMemo<BacklogTasks>(() => {
+    const organized: BacklogTasks = {
+      todo: [],
+      "in-progress": [],
+      review: [],
+      done: [],
+      qa: [],
+    };
 
-  // Organize tasks by status
-  useEffect(() => {
     if (!loading && allTasks.length > 0) {
-      const organized: BacklogTasks = {
-        todo: [],
-        "in-progress": [],
-        review: [],
-        done: [],
-        qa: [],
-      };
-
       allTasks.forEach((task) => {
         switch (task.status) {
           case "todo":
@@ -80,9 +71,9 @@ export default function BacklogPage() {
             break;
         }
       });
-
-      setTasks(organized);
     }
+
+    return organized;
   }, [allTasks, loading]);
 
   if (loading) {
