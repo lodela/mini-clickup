@@ -134,29 +134,33 @@ export function CreateTeamModal({
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Team Name */}
-          <Input
-            type="text"
-            label="Team Name"
-            placeholder="Enter team name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            error={!!errors.name}
-            errorMessage={errors.name}
-            required
-            autoFocus
-            autoComplete="off"
-          />
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-neutral-700">Team Name</label>
+            <Input
+              type="text"
+              placeholder="Enter team name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              aria-invalid={!!errors.name}
+              required
+              autoFocus
+              autoComplete="off"
+            />
+            {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+          </div>
 
           {/* Description */}
-          <Input
-            type="text"
-            label="Description (optional)"
-            placeholder="Brief description of your team"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            helperText="Describe what your team does"
-            autoComplete="off"
-          />
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-neutral-700">Description (optional)</label>
+            <Input
+              type="text"
+              placeholder="Brief description of your team"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              autoComplete="off"
+            />
+            <p className="text-sm text-neutral-500">Describe what your team does</p>
+          </div>
 
           {/* Actions */}
           <div className="flex gap-3 pt-4">
@@ -164,16 +168,15 @@ export function CreateTeamModal({
               type="button"
               variant="ghost"
               onClick={onClose}
-              fullWidth
+              className="w-full"
               disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              variant="accent"
-              fullWidth
-              isLoading={isSubmitting}
+              variant="default"
+              className="w-full"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Creating..." : "Create Team"}

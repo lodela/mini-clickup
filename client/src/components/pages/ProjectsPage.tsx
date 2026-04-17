@@ -40,10 +40,10 @@ export default function ProjectsPage() {
             </p>
           </div>
           <Button
-            variant="accent"
-            leftIcon={<Plus className="w-4 h-4" />}
+            variant="default"
             onClick={handleCreateProject}
           >
+            <Plus className="w-4 h-4" />
             New Project
           </Button>
         </div>
@@ -65,10 +65,10 @@ export default function ProjectsPage() {
             </p>
           </div>
           <Button
-            variant="accent"
-            leftIcon={<Plus className="w-4 h-4" />}
+            variant="default"
             onClick={handleCreateProject}
           >
+            <Plus className="w-4 h-4" />
             New Project
           </Button>
         </div>
@@ -90,10 +90,10 @@ export default function ProjectsPage() {
           </p>
         </div>
         <Button
-          variant="accent"
-          leftIcon={<Plus className="w-4 h-4" />}
+          variant="default"
           onClick={handleCreateProject}
         >
+          <Plus className="w-4 h-4" />
           New Project
         </Button>
       </div>
@@ -108,7 +108,7 @@ export default function ProjectsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project) => (
-          <Card key={project._id} glass hoverable>
+          <Card key={project._id} className="glass hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className={`w-3 h-3 rounded-full ${project.color}`} />
@@ -126,7 +126,7 @@ export default function ProjectsPage() {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-neutral-500">Tasks</span>
                   <span className="font-medium">
-                    {project.tasks?.length || 0}
+                    {(project as any).tasks?.length || 0}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
@@ -136,7 +136,7 @@ export default function ProjectsPage() {
                   </span>
                 </div>
               </div>
-              <Button variant="ghost" fullWidth className="mt-4">
+              <Button variant="ghost" className="w-full mt-4">
                 View Project
               </Button>
             </CardContent>

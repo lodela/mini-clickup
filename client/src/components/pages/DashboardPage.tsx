@@ -10,19 +10,20 @@ import {
   CardTitle,
 } from "@/components/ui";
 import {
-  LayoutDashboard,     // Dashboard - grid view
-  Layers,              // Projects - stacked layers
-  Calendar,            // Calendar
-  Plane,               // Vacations - airplane
-  Users,               // Employees - people
-  MessageCircle,       // Messenger - chat bubble
-  Folder,              // Info Portal - folder
+  LayoutDashboard,
+  Layers,
+  Calendar,
+  Plane,
+  Users,
+  MessageCircle,
+  Folder,
   LogOut,
   Bell,
   Search,
   Menu,
   X,
-  Sparkles,
+  CheckSquare,
+  FolderKanban,
 } from "lucide-react";
 import logoSrc from "@/assets/images/logo.svg";
 import supportSrc from "@/assets/images/support.svg";
@@ -44,7 +45,6 @@ export default function DashboardPage() {
     */
    const navItems = [
      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', highlight: false },
-     { icon: Sparkles, label: 'Dashboard 2', path: '/dashboard-2', highlight: true },
      { icon: Layers, label: 'Projects', path: '/projects', highlight: false },
      { icon: Calendar, label: 'Calendar', path: '/calendar', highlight: false },
      { icon: Plane, label: 'Vacations', path: '/vacations', highlight: false },
@@ -154,10 +154,10 @@ export default function DashboardPage() {
              </div>
              <Button
                variant="ghost"
-               fullWidth
-               leftIcon={<LogOut className="w-4 h-4" />}
+               className="w-full justify-start gap-2"
                onClick={handleLogout}
              >
+               <LogOut className="w-4 h-4" />
                Sign Out
              </Button>
            </div>
@@ -247,7 +247,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Recent Activity */}
-          <Card glass className="mb-6">
+          <Card className="glass mb-6">
             <CardHeader>
               <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
@@ -308,7 +308,7 @@ function StatCard({
   };
 
   return (
-    <Card glass hoverable>
+    <Card className="glass hover:shadow-md transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>

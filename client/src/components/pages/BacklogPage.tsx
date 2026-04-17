@@ -1,10 +1,6 @@
 import { useMemo } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   Button,
   Alert,
   AlertTitle,
@@ -41,7 +37,7 @@ interface BacklogTasks {
 }
 
 export default function BacklogPage() {
-  const { tasks: allTasks, loading, error, updateTask } = useTasks();
+  const { tasks: allTasks, loading, error } = useTasks();
   const tasks = useMemo<BacklogTasks>(() => {
     const organized: BacklogTasks = {
       todo: [],
@@ -53,7 +49,7 @@ export default function BacklogPage() {
 
     if (!loading && allTasks.length > 0) {
       allTasks.forEach((task) => {
-        switch (task.status) {
+        switch (task.status as string) {
           case "todo":
             organized.todo.push(task as BacklogTask);
             break;
@@ -117,23 +113,26 @@ export default function BacklogPage() {
             Prioritize and manage tasks for the current sprint
           </p>
         </div>
-        <Button variant="primary" leftIcon={<Plus className="w-4 h-4" />}>
+        <Button variant="default">
+          <Plus className="w-4 h-4" />
           New Task
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {columnConfig.map((column) => (
+        {columnConfig.map((column) => {
+          const Icon = column.icon;
+          return (
           <div
             key={column.id}
             data-droppable-id={column.id}
             className={`border rounded-lg p-4 min-h-[200px] ${column.id === "in-progress" || column.id === "done" ? "bg-white" : "bg-blue-50"}`}
           >
             <div className="mb-4 flex items-center">
-              {column.icon && <div className="mr-2">{column.icon}</div>}
+              {Icon && <div className="mr-2"><Icon className="w-4 h-4" /></div>}
               <h2 className="text-lg font-medium flex-1">{column.title}</h2>
             </div>
-            {tasks[column.id as keyof BacklogTasks]?.map((task, index) => (
+            {tasks[column.id as keyof BacklogTasks]?.map((task) => (
               <div
                 key={task._id}
                 className="flex items-center p-2 rounded-lg border border-neutral-200"
@@ -144,7 +143,8 @@ export default function BacklogPage() {
               </div>
             ))}
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
