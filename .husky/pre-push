@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Allow protected branches
+if echo "$branch" | grep -qE "^(main|develop|release/.+)$"; then
+  exit 0
+fi
+
+# Enforce: <type>/<issue-number>-<kebab-description>
+# Examples: feature/42-add-kanban-board, bugfix/21-fix-delete-team-500
+valid_pattern='^(feature|bugfix|hotfix|chore|docs|refactor|test)/[0-9]+-[a-z0-9][a-z0-9-]*$'
+
+if ! echo "$branch" | grep -qE "$valid_pattern"; then
+  echo ""
+  echo "✗ husky - pre-push: nombre de branch inválido"
+  echo ""
+  echo "  Branch actual: \"$branch\""
+  echo ""
+  echo "  Formato requerido: <tipo>/<número-issue>-<descripción-en-kebab-case>"
+  echo ""
+  echo "  Tipos válidos: feature, bugfix, hotfix, chore, docs, refactor, test"
+  echo ""
+  echo "  Ejemplos válidos:"
+  echo "    feature/42-kanban-board"
+  echo "    bugfix/21-fix-delete-team-500"
+  echo "    hotfix/99-fix-auth-token-expiry"
+  echo "    chore/10-upgrade-dependencies"
+  echo ""
+  echo "  Crea el issue en GitHub primero: https://github.com/lodela/mini-clickup/issues/new"
+  echo "  Luego renombra tu branch: git branch -m <nuevo-nombre>"
+  echo ""
+  exit 1
+fi

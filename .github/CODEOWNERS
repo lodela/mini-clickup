@@ -1,0 +1,22 @@
+# CODEOWNERS
+# Cada PR debe ser aprobado por el responsable del área antes de merge
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @lodela
+
+# Frontend
+/client/ @lodela
+
+# Backend
+/server/ @lodela
+
+# Documentation
+/Documentacion/ @lodela
+*.md @lodela
+
+# CI/CD and workflows
+/.github/ @lodela
+
+# Design system and tokens
+/design-tokens/ @lodela
