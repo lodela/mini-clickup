@@ -61,3 +61,6 @@ figma-login-node.json
 
 # Windows artifacts
 nul
+
+# PowerShell artifacts
+$null
