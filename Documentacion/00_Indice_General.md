@@ -1,7 +1,7 @@
 # Mini ClickUp - Documentation Index
 
 **Version:** 2.0.0  
-**Last Updated:** 2026-04-16  
+**Last Updated:** 2026-04-17  
 **Status:** MVP Rescue — Phase 0 en progreso  
 
 ---
