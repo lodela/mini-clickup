@@ -214,6 +214,6 @@ Para que una task se considere **Done**:
 
 ---
 
-**Created by:** Milly AI - SprintPlanner Agent  
+**Created by:** GitHub Copilot (NLodela Orchestrator)  
 **Date:** 2026-03-17  
 **Next Review:** Sprint Planning Meeting

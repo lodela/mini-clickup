@@ -4,7 +4,7 @@
 **Fecha:** 2026-03-17  
 **Versión:** 0.1.0  
 **Autor:** Norberto Lodela - Ingeniero Senior  
-**Revisor:** Milly AI - Master Orchestrator
+**Revisor:** GitHub Copilot (NLodela Orchestrator)
 
 ---
 

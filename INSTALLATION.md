@@ -353,4 +353,4 @@ After successful installation:
 
 **Installation Guide Version:** 1.0.0  
 **Last Updated:** 2026-03-17  
-**Maintained by:** Milly AI - Master Orchestrator
+**Maintained by:** Norberto Lodela / GitHub Copilot

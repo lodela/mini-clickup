@@ -56,6 +56,6 @@
 
 ---
 
-**Created by:** Milly AI - Master Orchestrator  
+**Created by:** GitHub Copilot (NLodela Orchestrator)  
 **Project:** Mini ClickUp  
 **Reference:** Prisma Kirest v2.7.0
