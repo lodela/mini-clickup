@@ -1,10 +1,11 @@
 # Mini ClickUp
 
-**Version:** 0.1.0 (MVP Development)  
-**Created:** 2026-03-17  
-**Status:** MVP In Progress  
+**Version:** 0.1.0-rescue  
+**Last Updated:** 2026-04-17  
+**Status:** 🔴 FASE 0 — RESCATE ACTIVO (app no compila en estado actual)  
 **Architecture:** MERN Stack + Socket.IO  
-**Design System:** Prisma Kirest v2.7.0 Derivative  
+**Design System:** Figma CRM Workroom Community (`IOYnTnClPHrmSnWFlKh96O`)  
+**Repo:** Public — Branch Protection activa • Dependabot activo • CodeQL activo  
 
 ---
 
@@ -12,20 +13,47 @@
 
 **Mini ClickUp** is a streamlined project management platform inspired by ClickUp, built with the same design system and architectural patterns as **Prisma Kirest v2.7.0**.
 
-### Core Features (MVP)
-- ✅ Team & Collaborator Management
-- ✅ Task Management (CRUD + Kanban Board)
-- ✅ Real-time Chat (Socket.IO)
-- ✅ Vacation Calendar
-- ✅ Dashboard with KPIs
-- ✅ Mobile-First Responsive Design
+### Estado Real de Pantallas (Figma → Código)
 
-### Non-Goals (Post-MVP)
-- Advanced reporting & analytics
-- Gantt charts
-- Time tracking
-- Custom fields builder
-- Automation rules engine
+> ⚠️ El proyecto fue dejado en estado roto. El estado abajo refleja la realidad al 2026-04-17.
+
+```
+RUTAS PÚBLICAS (GuestLayout)
+├── /login              ✅ 100% — LoginPage.tsx
+├── /register           ✅ 100% — RegisterPage.tsx
+├── /forgot-password    ⚠️  UI lista, ❌ email flow sin implementar
+└── /reset-password     ⚠️  UI lista, ❌ token flow sin implementar
+
+RUTAS PROTEGIDAS (ProtectedLayout)
+├── /dashboard          ⚠️  70% — árbol duplicado, datos mock
+├── /projects           ⚠️  50% — datos mock, sin API real
+├── /tasks              ⚠️  40% — datos mock, sin API real
+├── /team               ⚠️  90% — BUG: DELETE devuelve 500
+├── /backlog            ❌   0% — stub vacío
+├── /chat               ❌  15% — stub, sin Socket.IO
+├── /calendar           ❌  20% — stub
+└── /settings           ❌  20% — stub
+```
+
+### Bugs Críticos (Fase 0 — Bloqueantes)
+
+| ID | Descripción | Prioridad |
+|----|-------------|-----------|
+| BUG-001 | `DELETE /api/teams/:id` → 500 Internal Server Error | **P0** |
+| BUG-002 | `authenticate` sin `()` en routes/projects, tasks, sprint | **P0** |
+| BUG-003 | Build TypeScript falla — imports rotos | **P0** |
+| BUG-004 | 12/33 tests de teams fallan | **P0** |
+| BUG-005 | Árbol dashboard duplicado (`pages/dashboard/app/` vs `DashboardPage.tsx`) | P1 |
+| BUG-006 | `axios` directo en hooks viejos en lugar de `services/api.ts` | P1 |
+| BUG-007 | Socket.IO naming mixto: kebab-case vs colon-notation | P1 |
+
+### MVP Goal (Post-Rescue)
+- Team & Collaborator Management
+- Task Management (CRUD + Kanban Board)
+- Real-time Chat (Socket.IO)
+- Vacation Calendar
+- Dashboard con KPIs reales
+- Mobile-First Responsive Design
 
 ---
 
@@ -266,31 +294,90 @@ FRONTEND_URL=http://localhost:5173
 
 ---
 
-## 📋 Agile Development
+## 📋 Roadmap — Fase 0 a Fase 5
 
-### Sprint Structure (7-day cycles)
+Todos los issues están en GitHub: [github.com/lodela/mini-clickup/issues](https://github.com/lodela/mini-clickup/issues)
 
-| Sprint | Duration | Focus | Story Points (Tallas) |
-|--------|----------|-------|----------------------|
-| **Sprint 0** | 3 días | Setup + Scaffold | CH: 5, MD: 1 |
-| **Sprint 1** | 7 días | Auth + Teams | CH: 8, MD: 4, L: 2 |
-| **Sprint 2** | 7 días | Tasks + Kanban | CH: 6, MD: 4, L: 3, XL: 1 |
-| **Sprint 3** | 7 días | Dashboard + Reports | CH: 4, MD: 4, L: 2 |
-| **Sprint 4** | 7 días | Chat Real-time | CH: 2, MD: 2, L: 2, XL: 2 |
-| **Sprint 5** | 7 días | Calendar + Notifications | CH: 4, MD: 3, L: 2 |
+### Progreso por Fase
+
+| Fase | Milestone | Estado | Issues |
+|------|-----------|--------|--------|
+| **Fase 0** | Phase 0 — Rescue | 🔴 ACTIVA | #2, #3, #4 (epics) · #21–#26 (stories) |
+| **Fase 1** | Phase 1 — API Foundation | ⏳ Pendiente | #5, #6, #7 (epics) · #27–#31 (stories) |
+| **Fase 2** | Phase 2 — Core Screens | ⏳ Pendiente | #8–#11 (epics) · #32–#40 (stories) |
+| **Fase 3** | Phase 3 — Workflow Engine | ⏳ Pendiente | #12–#15 (epics) · #41–#45 (stories) |
+| **Fase 4** | Phase 4 — Secondary Screens | ⏳ Pendiente | #16–#19 (epics) · #46–#50 (stories) |
+| **Fase 5** | Phase 5 — Polish & Ship | ⏳ Pendiente | #20 (epic) · #51–#52 (stories) |
+
+### Fase 0 — RESCATE (bloqueante) 🔴
+
+**Condición de salida:** `npm run build` ✅ · `npm run test` sin fallos P0
+
+| Epic | Story | Issue | Descripción |
+|------|-------|-------|-------------|
+| E-RESCUE-01 | S01 | [#21](https://github.com/lodela/mini-clickup/issues/21) | Fix `DELETE /api/teams/:id` → 500 |
+| E-RESCUE-01 | S02 | [#22](https://github.com/lodela/mini-clickup/issues/22) | Fix `authenticate` sin paréntesis en routes |
+| E-RESCUE-01 | S03 | [#23](https://github.com/lodela/mini-clickup/issues/23) | Pasar los 12 tests fallidos de Teams |
+| E-RESCUE-02 | S01 | [#24](https://github.com/lodela/mini-clickup/issues/24) | Fix errores TypeScript para build completo |
+| E-RESCUE-02 | S02 | [#25](https://github.com/lodela/mini-clickup/issues/25) | Reconciliar árbol dashboard duplicado |
+| E-RESCUE-03 | S01 | [#26](https://github.com/lodela/mini-clickup/issues/26) | Migrar hooks axios → `services/api.ts` |
+
+### Fase 1 — API Foundation 🟡
+
+| Epic | Issue | Descripción |
+|------|-------|-------------|
+| E-PROJ-01 | [#27](https://github.com/lodela/mini-clickup/issues/27) | Modelo Mongoose de Project |
+| E-PROJ-01 | [#28](https://github.com/lodela/mini-clickup/issues/28) | Controller, Service y Routes de Projects |
+| E-TASK-01 | [#29](https://github.com/lodela/mini-clickup/issues/29) | Modelo Task con Workflow Fields |
+| E-TASK-01 | [#30](https://github.com/lodela/mini-clickup/issues/30) | Controller, Service y Routes de Tasks |
+| E-DASH-01 | [#31](https://github.com/lodela/mini-clickup/issues/31) | Endpoint `GET /api/dashboard/stats` |
+
+### Fase 2–5
+
+Ver el [backlog completo de issues](https://github.com/lodela/mini-clickup/issues) con todos los epics (#2–#20) y stories (#21–#52).
 
 ### Story Point Tallas
 
-| Talla | Horas | Complejidad | Ejemplo |
-|-------|-------|-------------|---------|
-| **CH** | ≤4h | Baja | Componente simple, bug fix |
-| **MD** | 4-8h | Media | Feature con lógica moderada |
-| **L** | 8-16h | Alta | Feature complejo, múltiples archivos |
-| **XL** | 16-24h | Muy Alta | Sistema completo (ej: drag-and-drop) |
+| Talla | Horas | Ejemplo |
+|-------|-------|---------|
+| **CH** | ≤4h | Bug fix, componente simple |
+| **MD** | 4–8h | Feature con lógica moderada |
+| **L** | 8–16h | Feature complejo, múltiples archivos |
+| **XL** | 16–24h | Sistema completo (ej: drag-and-drop Kanban) |
 
 ---
 
-## 🔒 Security
+## 🔒 Security & DevOps
+
+### Branch Protection (`main`)
+
+| Regla | Estado |
+|-------|--------|
+| PR requerido antes de merge | ✅ Activo |
+| Mínimo 1 reviewer aprobando | ✅ Activo |
+| Stale reviews descartados en nuevo push | ✅ Activo |
+| Push directo bloqueado | ✅ Activo |
+| Force push bloqueado | ✅ Activo |
+
+### Seguridad Automatizada
+
+| Feature | Estado |
+|---------|--------|
+| Dependabot alerts | ✅ Activo — 25 vulnerabilidades detectadas |
+| Dependabot auto-fix PRs | ✅ Activo |
+| CodeQL JS/TS scanning | ✅ [PR #54](https://github.com/lodela/mini-clickup/pull/54) pendiente de merge |
+
+### Branch Naming Convention
+
+```bash
+# Formato obligatorio (validado por Husky pre-push)
+feature/42-kanban-board
+bugfix/21-fix-delete-team-500
+hotfix/99-fix-auth-token-expiry
+chore/10-upgrade-dependencies
+docs/5-update-readme
+refactor/33-extract-button
+```
 
 ### Authentication Flow
 
@@ -307,33 +394,25 @@ sequenceDiagram
     MongoDB-->>Server: User data
     Server->>Server: Generate JWT (access + refresh)
     Server-->>Client: Tokens (HttpOnly cookies)
-    Client->>Client: Store in memory
     Client-->>User: Redirect to dashboard
 
-    Note over Client,Server: Subsequent requests
-    Client->>Server: Request with access token
-    Server->>Server: Verify JWT
-    Server-->>Client: Protected resource
-
     Note over Client,Server: Token refresh
-    Client->>Server: POST /api/auth/refresh (refresh token)
+    Client->>Server: POST /api/auth/refresh
     Server->>Server: Validate + rotate refresh token
     Server-->>Client: New access + refresh tokens
 ```
 
 ### Security Checklist
 
-- [ ] JWT with RS256/ES256 (NOT HS256)
-- [ ] Access token expiration: 15 minutes
-- [ ] Refresh token rotation: 7 days
-- [ ] Password hashing: bcrypt cost 12
+- [ ] JWT con RS256/ES256 (actualmente HS256 — upgrade pendiente)
+- [ ] Access token: 15 minutos
+- [ ] Refresh token rotation: 7 días
+- [ ] Password: bcrypt cost 12
 - [ ] HttpOnly + Secure + SameSite cookies
-- [ ] CSRF protection
 - [ ] Rate limiting (express-rate-limit)
 - [ ] Input validation (Zod)
-- [ ] XSS prevention (DOMPurify)
 - [ ] Helmet headers
-- [ ] Socket.IO authentication on handshake
+- [ ] Socket.IO auth en handshake
 
 ---
 
@@ -409,35 +488,10 @@ npm run start
 
 ---
 
-## 🗺️ Roadmap
-
-### MVP (Sprints 0-3) - ~25 días
-- [x] Project setup
-- [ ] Authentication (Login, Register, JWT)
-- [ ] Team management
-- [ ] Task CRUD
-- [ ] Kanban board
-- [ ] Dashboard with KPIs
-
-### Post-MVP (Sprints 4-5) - ~14 días
-- [ ] Real-time chat
-- [ ] Vacation calendar
-- [ ] Notifications system
-- [ ] Advanced filters
-- [ ] Export reports
-
-### Future Enhancements
-- [ ] Gantt charts
-- [ ] Time tracking
-- [ ] Custom fields builder
-- [ ] Automation rules
-- [ ] Mobile app (React Native)
-
----
 
 ## 🤝 Contributing
 
-### Git Workflow
+
 
 ```bash
 # Branch naming convention — issue number is REQUIRED
@@ -474,8 +528,8 @@ chore(deps): upgrade React to 19.0.0
 
 ## 📄 License
 
-Private - All rights reserved  
-**Repository:** `mini-clickup` (Private)  
+Open Source — MIT  
+**Repository:** [`lodela/mini-clickup`](https://github.com/lodela/mini-clickup) (Public)  
 **Created:** 2026-03-17  
 
 ---
@@ -512,9 +566,13 @@ Private - All rights reserved
 | [08_Internacionalizacion_i18n.md](./Documentacion/08_Internacionalizacion_i18n.md) | Internationalization |
 | [09_Estado_Global_y_Contextos.md](./Documentacion/09_Estado_Global_y_Contextos.md) | State management |
 | [10_Roadmap_y_Deuda_Tecnica.md](./Documentacion/10_Roadmap_y_Deuda_Tecnica.md) | Roadmap and technical debt |
+| [11_Sprint_Plan.md](./Documentacion/11_Sprint_Plan.md) | Sprint plan detallado |
+| [12_MVP_Work_Plan.md](./Documentacion/12_MVP_Work_Plan.md) | Work plan completo |
+| [13_Roadmap_Rescate_MVP.md](./Documentacion/13_Roadmap_Rescate_MVP.md) | Roadmap de rescate — Fase 0→5 |
+| [14_Epicas_y_Criterios.md](./Documentacion/14_Epicas_y_Criterios.md) | Épicas, stories, acceptance criteria |
 
 ---
 
 **Last Updated:** 2026-04-17  
-**Version:** 0.1.0  
-**Status:** MVP Development
+**Version:** 0.1.0-rescue  
+**Status:** 🔴 Fase 0 — Rescate Activo
