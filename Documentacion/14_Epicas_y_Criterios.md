@@ -82,7 +82,7 @@
 
 #### Story RES-02-S02: Reconciliar árbol dashboard duplicado
 
-**Descripción:** Existe un árbol completo en `pages/dashboard/app/` (Gemini/Qwen dump) que duplica funcionalidad con `DashboardPage.tsx`. Debe decidirse cuál conservar y eliminar el otro.
+**Descripción:** Existe un árbol completo en `pages/dashboard/app/` (código legado) que duplica funcionalidad con `DashboardPage.tsx`. Debe decidirse cuál conservar y eliminar el otro.
 
 **Decisión:** Conservar `DashboardPage.tsx` como punto de entrada + extraer los componentes útiles de `pages/dashboard/app/` que estén bien implementados.
 

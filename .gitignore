@@ -53,5 +53,5 @@ Thumbs.db
 .eslintcache
 .stylelintcache
 
-# Sisyphus workspace (OhMyOpenCode external system)
+# External AI workspace artifacts
 .sisyphus/

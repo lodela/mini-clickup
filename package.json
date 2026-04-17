@@ -2,7 +2,7 @@
   "name": "mini-clickup",
   "version": "0.1.0",
   "private": true,
-  "description": "AI-driven project management platform - MERN Stack + Socket.IO",
+  "description": "Project management platform - MERN Stack + Socket.IO",
   "author": "Norberto Lodela",
   "license": "UNLICENSED",
   "repository": {

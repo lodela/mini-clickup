@@ -9,7 +9,7 @@
 
 ## 🎯 Visión General
 
-Mini ClickUp es una aplicación de gestión de proyectos inspirada en ClickUp, construida con MERN Stack + Socket.IO. El proyecto fue iniciado y dejado en estado roto por agentes anteriores (Gemini/Qwen). Este documento define el plan de rescate y desarrollo ordenado hacia un MVP funcional y verificable.
+Mini ClickUp es una aplicación de gestión de proyectos inspirada en ClickUp, construida con MERN Stack + Socket.IO. El proyecto fue iniciado y dejado en estado roto por agentes anteriores. Este documento define el plan de rescate y desarrollo ordenado hacia un MVP funcional y verificable.
 
 **Pila tecnológica confirmada:**
 - Frontend: React 19 + Vite + TypeScript + Tailwind CSS
