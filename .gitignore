@@ -16,12 +16,19 @@ build/
 build-qa/
 *.tsbuildinfo
 
-# Environment variables
+# Environment variables — never commit, monorepo-wide coverage
 .env
 .env.local
+.env.development
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local
+**/.env
+**/.env.local
+**/.env.*.local
+**/.env.development
+**/.env.production
 
 # Logs
 logs
