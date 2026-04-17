@@ -1,8 +1,8 @@
-# Mini ClickUp - AI-Driven Project Management Platform
+# Mini ClickUp
 
 **Version:** 0.1.0 (MVP Development)  
 **Created:** 2026-03-17  
-**Status:** Greenfield Development  
+**Status:** MVP In Progress  
 **Architecture:** MERN Stack + Socket.IO  
 **Design System:** Prisma Kirest v2.7.0 Derivative  
 
@@ -440,12 +440,13 @@ npm run start
 ### Git Workflow
 
 ```bash
-# Branch naming convention
-feature/auth-login          # New feature
-fix/jwt-token-expiry        # Bug fix
-docs/update-readme          # Documentation
-refactor/component-extract  # Refactoring
-chore/upgrade-react-19      # Chores, upgrades
+# Branch naming convention — issue number is REQUIRED
+feature/42-kanban-board       # New feature (refs issue #42)
+bugfix/21-fix-delete-team     # Bug fix (refs issue #21)
+hotfix/99-fix-auth-token      # Critical production fix
+docs/5-update-readme          # Documentation
+refactor/33-extract-button    # Refactoring
+chore/10-upgrade-react-19     # Chores, upgrades
 ```
 
 ### Commit Convention
@@ -479,13 +480,21 @@ Private - All rights reserved
 
 ---
 
+## 👥 Team
+
+| Role | Name | GitHub |
+|------|------|--------|
+| Tech Lead & Developer | Norberto Lodela | [@lodela](https://github.com/lodela) |
+| AI Pair Programmer | GitHub Copilot | [@Copilot](https://github.com/features/copilot) |
+| Developer | Victor Rangel | _(pending GitHub invite)_ |
+
+---
+
 ## 📞 Project Information
 
 **Reference Project:** Prisma Kirest v2.7.0  
 **Location:** `~/www/prisma_V0.0.1/`  
 **Design Source:** Figma CRM Workroom Community  
-**Architect:** Milly AI - Master Orchestrator  
-**Developer:** Norberto Lodela  
 
 ---
 
@@ -506,6 +515,6 @@ Private - All rights reserved
 
 ---
 
-**Last Updated:** 2026-03-17  
+**Last Updated:** 2026-04-17  
 **Version:** 0.1.0  
 **Status:** MVP Development
