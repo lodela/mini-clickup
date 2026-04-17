@@ -1,0 +1,386 @@
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  Button,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Form,
+  FormControl,
+  FormLabel,
+  Input,
+  Textarea,
+  Select,
+} from "@/components/ui";
+import { useState } from "react";
+import axios from "axios";
+
+interface QAReviewModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  task: {
+    _id: string;
+    title: string;
+    description?: string;
+    assignee?: { name: string; email: string; avatar?: string };
+    reporter: { name: string; email: string; avatar?: string };
+    status: string;
+    priority: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  availableSprints: Array<{ _id: string; name: string; goal?: string }>;
+}
+
+export function QAReviewModal({
+  isOpen,
+  onClose,
+  task,
+  availableSprints,
+}: QAReviewModalProps) {
+  const [sprintId, setSprintId] = useState<string>("");
+  const [rejectionReason, setRejectionReason] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleApprove = async () => {
+    if (!sprintId) {
+      setError("Please select a sprint");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.post(`/api/tasks/${task._id}/approve-for-sprint`, {
+        sprintId,
+      });
+      onClose();
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to approve task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectionReason.trim()) {
+      setError("Please provide a reason for rejection");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.post(`/api/tasks/${task._id}/convert-to-bug`, {
+        reason: rejectionReason,
+      });
+      onClose();
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to reject task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <Modal>
+      <ModalOverlay onClick={onClose} />
+      <ModalContent className="w-[500px] max-w-full">
+        <ModalHeader>
+          <h2 className="text-lg font-semibold">QA Review: {task.title}</h2>
+          <button className="btn-sm btn-ghost" onClick={onClose}>
+            <span className="sr-only">Close modal</span>
+          </button>
+        </ModalHeader>
+        <ModalBody className="space-y-4">
+          {error && (
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <div className="space-y-2">
+            <div>
+              <FormLabel className="font-medium">Title</FormLabel>
+              <p className="text-neutral-900">{task.title}</p>
+            </div>
+            <div>
+              <FormLabel className="font-medium">Description</FormLabel>
+              <p className="text-neutral-600">
+                {task.description || "No description provided"}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <FormLabel className="font-medium">Assignee</FormLabel>
+                <p className="text-neutral-900">
+                  {task.assignee?.name || "Unassigned"}
+                </p>
+              </div>
+              <div>
+                <FormLabel className="font-medium">Reporter</FormLabel>
+                <p className="text-neutral-900">{task.reporter.name}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <FormLabel className="font-medium">Priority</FormLabel>
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityBadgeClass(task.priority)}`}
+                >
+                  {task.priority}
+                </span>
+              </div>
+              <div>
+                <FormLabel className="font-medium">Status</FormLabel>
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass(task.status)}`}
+                >
+                  {task.status.replace("-", " ")}
+                </span>
+              </div>
+            </div>
+            <div className="border-t pt-4">
+              <FormLabel className="font-medium mb-2">
+                Sprint Assignment (for approval)
+              </FormLabel>
+              <Select
+                value={sprintId}
+                onValueChange={setSprintId}
+                placeholder="Select a sprint"
+                className="w-full"
+              >
+                {availableSprints.map((sprint) => (
+                  <option key={sprint._id} value={sprint._id}>
+                    {sprint.name} {sprint.goal ? `- ${sprint.goal}` : ""}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="border-t pt-4">
+              <FormLabel className="font-medium mb-2">
+                Rejection Reason (if applicable)
+              </FormLabel>
+              <Textarea
+                value={rejectionReason}
+                onValueChange={setRejectionReason}
+                placeholder="Provide reason for rejecting this task..."
+                className="w-full h-32"
+              />
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter className="flex justify-end space-x-3">
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleReject}
+            isLoading={loading}
+          >
+            Reject as Bug
+          </Button>
+          <Button variant="primary" onClick={handleApprove} isLoading={loading}>
+            Approve & Assign to Sprint
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+}
+
+export function QAReviewModal({
+  isOpen,
+  onClose,
+  task,
+  onApprove,
+  onReject,
+  availableSprints,
+}: QAReviewModalProps) {
+  const [sprintId, setSprintId] = useState<string>("");
+  const [rejectionReason, setRejectionReason] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleApprove = async () => {
+    if (!sprintId) {
+      setError("Please select a sprint");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      await onApprove(task._id, sprintId);
+      onClose();
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to approve task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectionReason.trim()) {
+      setError("Please provide a reason for rejection");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      await onReject(task._id, rejectionReason);
+      onClose();
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to reject task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <Modal>
+      <ModalOverlay onClick={onClose} />
+      <ModalContent className="w-[500px] max-w-full">
+        <ModalHeader>
+          <h2 className="text-lg font-semibold">QA Review: {task.title}</h2>
+          <button className="btn-sm btn-ghost" onClick={onClose}>
+            <span className="sr-only">Close modal</span>
+          </button>
+        </ModalHeader>
+        <ModalBody className="space-y-4">
+          {error && (
+            <Alert variant="destructive">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <div className="space-y-2">
+            <div>
+              <FormLabel className="font-medium">Title</FormLabel>
+              <p className="text-neutral-900">{task.title}</p>
+            </div>
+            <div>
+              <FormLabel className="font-medium">Description</FormLabel>
+              <p className="text-neutral-600">
+                {task.description || "No description provided"}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <FormLabel className="font-medium">Assignee</FormLabel>
+                <p className="text-neutral-900">
+                  {task.assignee?.name || "Unassigned"}
+                </p>
+              </div>
+              <div>
+                <FormLabel className="font-medium">Reporter</FormLabel>
+                <p className="text-neutral-900">{task.reporter.name}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <FormLabel className="font-medium">Priority</FormLabel>
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityBadgeClass(task.priority)}`}
+                >
+                  {task.priority}
+                </span>
+              </div>
+              <div>
+                <FormLabel className="font-medium">Status</FormLabel>
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass(task.status)}`}
+                >
+                  {task.status.replace("-", " ")}
+                </span>
+              </div>
+            </div>
+            <div className="border-t pt-4">
+              <FormLabel className="font-medium mb-2">
+                Sprint Assignment (for approval)
+              </FormLabel>
+              <Select
+                value={sprintId}
+                onValueChange={setSprintId}
+                placeholder="Select a sprint"
+                className="w-full"
+              >
+                {availableSprints.map((sprint) => (
+                  <option key={sprint._id} value={sprint._id}>
+                    {sprint.name} {sprint.goal ? `- ${sprint.goal}` : ""}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="border-t pt-4">
+              <FormLabel className="font-medium mb-2">
+                Rejection Reason (if applicable)
+              </FormLabel>
+              <Textarea
+                value={rejectionReason}
+                onValueChange={setRejectionReason}
+                placeholder="Provide reason for rejecting this task..."
+                className="w-full h-32"
+              />
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter className="flex justify-end space-x-3">
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleReject}
+            isLoading={loading}
+          >
+            Reject as Bug
+          </Button>
+          <Button variant="primary" onClick={handleApprove} isLoading={loading}>
+            Approve & Assign to Sprint
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+}
+
+// Helper functions for badge colors (matching the design system)
+function getPriorityBadgeClass(priority: string): string {
+  switch (priority) {
+    case "low":
+      return "bg-neutral-100 text-neutral-600";
+    case "medium":
+      return "bg-blue-100 text-blue-600";
+    case "high":
+      return "bg-orange-100 text-orange-600";
+    case "urgent":
+      return "bg-red-100 text-red-600";
+    default:
+      return "bg-neutral-100 text-neutral-600";
+  }
+}
+
+function getStatusBadgeClass(status: string): string {
+  switch (status) {
+    case "todo":
+      return "bg-neutral-100 text-neutral-600";
+    case "in-progress":
+      return "bg-blue-100 text-blue-600";
+    case "review":
+      return "bg-purple-100 text-purple-600";
+    case "done":
+      return "bg-green-100 text-green-600";
+    case "qa":
+      return "bg-yellow-100 text-yellow-600";
+    default:
+      return "bg-neutral-100 text-neutral-600";
+  }
+}

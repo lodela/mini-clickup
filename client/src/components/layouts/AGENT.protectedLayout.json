@@ -1,0 +1,173 @@
+{
+  "layout_id": "APP_LOGGED_IN_LAYOUT",
+  "layout_type": "FIXED_HEADER + FIXED_SIDEBAR + FLEX_MAIN",
+  "global_visibility": "HEADER y SIDEBAR siempre presentes en todas las rutas protegidas",
+  "root_structure": "flex h-screen overflow-hidden",
+  "children": [
+    {
+      "component": "AppHeader",
+      "position": "fixed top-0 left-0 right-0 z-30",
+      "height": "64px",
+      "background": "theme(background.primary)",
+      "padding": "0 24px",
+      "display": "flex items-center justify-between",
+      "slots": {
+        "left": {
+          "component": "AppLogo",
+          "variant": "horizontal",
+          "content": "blue square + white 'd' letter"
+        },
+        "center": {
+          "component": "GlobalSearchInput",
+          "props": {
+            "placeholder": "Search",
+            "width": "min-w-[320px] max-w-[480px]",
+            "rounded": "full",
+            "background": "white",
+            "border": "none",
+            "iconLeft": "search"
+          }
+        },
+        "right": {
+          "display": "flex items-center gap-4",
+          "components": [
+            {
+              "component": "NotificationsTrigger",
+              "icon": "bell",
+              "hasBadge": true,
+              "badgeVariant": "red-dot",
+              "badgeCount": "dynamic (0 = hidden)",
+              "tooltip": "Notifications",
+              "onClick": "open notifications popover / drawer / page"
+            },
+            {
+              "component": "UserMenuDropdown",
+              "trigger": {
+                "avatar": "user photo rounded-full",
+                "name": "current user display name",
+                "chevron": true
+              },
+              "menuItems": ["Profile", "Settings", "Your teams", "Sign out"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "component": "AppSidebar",
+      "position": "fixed left-0 top-[64px] bottom-0 z-20",
+      "width": "240px",
+      "background": "white",
+      "borderRight": "1px solid theme(border)",
+      "overflowY": "auto",
+      "children": [
+        {
+          "component": "SidebarLogo",
+          "variant": "vertical",
+          "content": "same blue 'd' as header"
+        },
+        {
+          "component": "NavMenu",
+          "items": [
+            {
+              "id": "dashboard",
+              "label": "Dashboard",
+              "icon": "layout-grid",
+              "active": "when route matches /dashboard",
+              "href": "/dashboard"
+            },
+            {
+              "id": "projects",
+              "label": "Projects",
+              "icon": "folder",
+              "href": "/projects"
+            },
+            {
+              "id": "calendar",
+              "label": "Calendar",
+              "icon": "calendar-days",
+              "href": "/calendar"
+            },
+            {
+              "id": "vacations",
+              "label": "Vacations",
+              "icon": "plane",
+              "href": "/vacations"
+            },
+            {
+              "id": "employees",
+              "label": "Employees",
+              "icon": "users",
+              "href": "/employees"
+            },
+            {
+              "id": "messenger",
+              "label": "Messenger",
+              "icon": "message-circle",
+              "href": "/messenger"
+            },
+            {
+              "id": "info-portal",
+              "label": "Info Portal",
+              "icon": "book-open",
+              "href": "/info-portal"
+            }
+          ]
+        },
+        {
+          "component": "SidebarFooter",
+          "position": "sticky bottom-0 bg-white pt-6",
+          "children": [
+            {
+              "component": "SupportPromo",
+              "illustration": "woman-with-laptop",
+              "button": {
+                "label": "Support",
+                "variant": "primary",
+                "size": "md",
+                "fullWidth": true
+              }
+            },
+            {
+              "component": "LogoutButton",
+              "icon": "log-out",
+              "label": "Logout",
+              "variant": "ghost",
+              "align": "left"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "component": "MainContent",
+      "marginLeft": "240px",
+      "marginTop": "64px",
+      "height": "calc(100vh - 64px)",
+      "overflowY": "auto",
+      "background": "theme(background.secondary)",
+      "padding": "24px",
+      "children": "dynamic page content (Outlet / children)"
+    }
+  ],
+  "design_tokens_reference": {
+    "spacing": "use theme spacing scale (4px base)",
+    "typography": "use theme fonts and sizes",
+    "colors": "all via theme (primary, secondary, accent, etc.)",
+    "shadows": "sm shadow on cards",
+    "rounded": "lg on cards, full on avatars/search"
+  },
+  "accessibility_notes": [
+    "header: role=banner",
+    "sidebar: role=navigation aria-label='Main navigation'",
+    "each nav item: aria-current when active",
+    "search input: aria-label='Global search'",
+    "notifications: aria-label='Notifications (count)'",
+    "user menu: aria-haspopup='menu'"
+  ],
+  "future_extensions": [
+    "sidebar collapsible (mobile / setting)",
+    "dark mode support",
+    "multi-team switcher in user dropdown"
+  ]
+}

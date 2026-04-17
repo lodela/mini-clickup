@@ -55,3 +55,9 @@ Thumbs.db
 
 # External AI workspace artifacts
 .sisyphus/
+
+# Figma API cache
+figma-login-node.json
+
+# Windows artifacts
+nul

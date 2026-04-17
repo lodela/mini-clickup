@@ -1,0 +1,71 @@
+{
+  "screen_id": "LAYOUT_LOGGED_IN_BASE",
+  "purpose": "Base layout para TODAS las pantallas post-login • Header + Sidebar fijos • Main dinámico",
+  "principles_applied": ["SOLID", "DRY", "KISS", "YAGNI"],
+  "structure": {
+    "root": "flex h-screen",
+    "header": {
+      "component": "HeaderBar",
+      "reusable": true,
+      "props": {
+        "left": "AppLogo (blue square 'd' icon)",
+        "center": "SearchInput (placeholder='Search', full-width rounded)",
+        "right": [
+          "NotificationsBell (campana icon + badge rojo • actualmente vacío pero preparado para badge count)",
+          "UserAvatarDropdown (avatar foto + nombre 'Evan Yates' + chevron • onClick menú perfil)"
+        ]
+      },
+      "height": "64px",
+      "fixed": "top"
+    },
+    "sidebar": {
+      "component": "SideNav",
+      "reusable": true,
+      "width": "240px",
+      "fixed": "left",
+      "children": [
+        "VerticalLogo (mismo 'd' que header)",
+        "MenuList (array de MenuItem)",
+        "MenuItem (reusable component)": [
+          { "id": "dashboard", "label": "Dashboard", "icon": "grid", "active": true },
+          { "id": "projects", "label": "Projects", "icon": "folder" },
+          { "id": "calendar", "label": "Calendar", "icon": "calendar" },
+          { "id": "vacations", "label": "Vacations", "icon": "plane" },
+          { "id": "employees", "label": "Employees", "icon": "users" },
+          { "id": "messenger", "label": "Messenger", "icon": "chat" },
+          { "id": "infoportal", "label": "Info Portal", "icon": "folder-open" }
+        ],
+        "bottom": [
+          "SupportIllustration (mujer laptop + botón azul 'Support' • reusable SupportButton)",
+          "LogoutButton (icon flecha + texto • reusable)"
+        ],
+      ],
+    },
+    "main": {
+      "component": "PageContainer",
+      "reusable": true,
+      "flex": "1",
+      "overflow": "auto",
+      "padding": "24px",
+      "children": [
+        "WelcomeHeader (texto 'Welcome back, Evan!' + título página + DateRangePicker)",
+        "ContentGrid (2 columnas principales + widgets)",
+        "ReusableWidgets": [
+          "WorkloadGrid (8 UserCard • cada UserCard reusable con avatar, nombre, role, level)",
+          "EventsList (3 EventRow • cada row reusable con color bar, título, hora, countdown)",
+          "ProjectsList (3 ProjectCard • reusable: icono proyecto, ID, nombre, fecha, status arrow, metrics 3 columnas)",
+          "ActivityFeed (lista de ActivityItem • cada item reusable: avatar + usuario + acción + icono)"
+        ]
+      ],
+    }
+  },
+  "component_library_notes": {
+    "all_cards": "CardBase (shadow sm, rounded-xl, bg-white, hover effects)",
+    "all_buttons": "ButtonBase (variantes: primary, ghost, icon-only)",
+    "icons": "Icon component (lucide-react style) • cada uno recibe name prop",
+    "badges": "Badge (red circle para notificaciones • count prop)",
+    "no_hardcoded_colors": "todos via CSS variables / Tailwind theme (Figma definirá)",
+    "no_repeated_markup": "cada elemento listado es UN SOLO componente reutilizable"
+  },
+  "render_rules": "Header y Sidebar SIEMPRE visibles en todas las rutas protegidas • Main recibe <Outlet/> o children dinámico • Responsive: sidebar collapsible futuro"
+}

@@ -1,55 +1,71 @@
 :root {
-  /* Colors - Prisma Kirest Design System */
+  /* Colors - Woorkroom Design System (Figma-accurate) */
   --font-size: 16px;
-  --background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-  --foreground: #0f172a;
-  --card: rgba(255, 255, 255, 0.8);
-  --card-foreground: #0f172a;
+  /* Background: #F4F9FE - Light blue-tinted background */
+  --background: #F4F9FE;
+  --foreground: #0A1628;
+  /* Card: Pure white with subtle shadow */
+  --card: rgba(255, 255, 255, 0.95);
+  --card-foreground: #0A1628;
   --popover: rgba(255, 255, 255, 0.95);
-  --popover-foreground: #0f172a;
-  --primary: #0f172a;
+  --popover-foreground: #0A1628;
+  /* Primary: Navy text */
+  --primary: #0A1628;
   --primary-foreground: #ffffff;
-  --secondary: #f8fafc;
-  --secondary-foreground: #0f172a;
-  --muted: #e2e8f0;
-  --muted-foreground: #64748b;
-  --accent: #3b82f6;
+  --secondary: #F8FAFC;
+  --secondary-foreground: #0A1628;
+  /* Muted: Secondary text color #7D8592 */
+  --muted: #E2E8F0;
+  --muted-foreground: #7D8592;
+  /* Accent: Electric Blue #3F8CFF (Figma primary blue) */
+  --accent: #3F8CFF;
   --accent-foreground: #ffffff;
-  --destructive: #ef4444;
+  --destructive: #EF4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(15, 23, 42, 0.06);
+  /* Border: Light gray-blue #D9E0E6 */
+  --border: #D9E0E6;
   --input: transparent;
-  --input-background: rgba(255, 255, 255, 0.8);
-  --switch-background: #cbd5e1;
-  --font-weight-medium: 500;
+  --input-background: rgba(255, 255, 255, 1);
+  --switch-background: #CBD5E1;
+  --font-weight-medium: 600;
   --font-weight-normal: 400;
-  --ring: #3b82f6;
-  --chart-1: #3b82f6;
-  --chart-2: #10b981;
-  --chart-3: #f59e0b;
-  --chart-4: #8b5cf6;
-  --chart-5: #ef4444;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --electric-blue: #3b82f6;
-  --navy: #0f172a;
-  --radius: 16px;
+  /* Ring: Electric blue focus */
+  --ring: #3F8CFF;
+  --chart-1: #3F8CFF;
+  --chart-2: #10B981;
+  --chart-3: #F59E0B;
+  --chart-4: #8B5CF6;
+  --chart-5: #EF4444;
+  --success: #10B981;
+  --warning: #F59E0B;
+  /* Electric Blue - Figma accurate */
+  --electric-blue: #3F8CFF;
+  --navy: #0A1628;
+  /* Radius: 24px for cards, 14px for buttons/inputs */
+  --radius: 24px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
   --blur-sm: 8px;
   --blur-md: 16px;
   --blur-lg: 24px;
-  --shadow-glass: 0 8px 32px rgba(15, 23, 42, 0.1);
-  --shadow-float: 0 20px 40px rgba(15, 23, 42, 0.15);
-  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  /* Card Shadow: 0px 6px 58px rgba(196, 203, 214, 0.104) */
+  --shadow-glass: 0px 6px 58px rgba(196, 203, 214, 0.104);
+  --shadow-float: 0px 20px 40px rgba(10, 22, 40, 0.15);
+  /* Button Shadow: 0px 6px 12px rgba(63, 140, 255, 0.264) */
+  --shadow-button: 0px 6px 12px rgba(63, 140, 255, 0.264);
+  --gradient-primary: linear-gradient(135deg, #3F8CFF 0%, #1D4ED8 100%);
+  --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --gradient-warning: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   --sidebar: rgba(255, 255, 255, 0.7);
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #3b82f6;
+  --sidebar-foreground: #0A1628;
+  --sidebar-primary: #3F8CFF;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(59, 130, 246, 0.1);
-  --sidebar-accent-foreground: #3b82f6;
-  --sidebar-border: rgba(15, 23, 42, 0.06);
-  --sidebar-ring: #3b82f6;
+  --sidebar-accent: rgba(63, 140, 255, 0.1);
+  --sidebar-accent-foreground: #3F8CFF;
+  --sidebar-border: rgba(10, 22, 40, 0.06);
+  --sidebar-ring: #3F8CFF;
 }
 
 .dark {
@@ -153,6 +169,7 @@
     @apply text-foreground;
     background: var(--background);
     font-family:
+      'Nunito Sans',
       'Inter',
       -apple-system,
       BlinkMacSystemFont,
