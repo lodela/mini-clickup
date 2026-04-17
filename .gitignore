@@ -52,3 +52,6 @@ Thumbs.db
 # Misc
 .eslintcache
 .stylelintcache
+
+# Sisyphus workspace (OhMyOpenCode external system)
+.sisyphus/
