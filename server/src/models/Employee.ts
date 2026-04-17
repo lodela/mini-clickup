@@ -154,7 +154,6 @@ const employeeSchema = new Schema<IEmployee>(
     email: {
       type: String,
       required: [true, "Email is required"],
-      unique: true,
       lowercase: true,
       trim: true,
       match: [
@@ -256,8 +255,6 @@ const employeeSchema = new Schema<IEmployee>(
 /**
  * Indexes for performance optimization
  */
-employeeSchema.index({ employeeId: 1 });
-employeeSchema.index({ email: 1 });
 employeeSchema.index({ status: 1 });
 employeeSchema.index({ department: 1 });
 employeeSchema.index({ firstName: 1, lastName: 1 });

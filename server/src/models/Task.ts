@@ -169,7 +169,6 @@ const taskSchema = new Schema<ITask>(
     tags: {
       type: [String],
       default: [],
-      index: true,
     },
     estimatedTime: {
       type: Number,
