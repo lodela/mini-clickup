@@ -170,7 +170,7 @@ export function DeleteTeamConfirm({
             type="button"
             variant="ghost"
             onClick={onClose}
-            fullWidth
+            className="w-full"
             disabled={isDeleting}
           >
             Cancel
@@ -179,8 +179,7 @@ export function DeleteTeamConfirm({
             type="button"
             variant="destructive"
             onClick={handleConfirm}
-            fullWidth
-            isLoading={isDeleting}
+            className="w-full"
             disabled={!canDelete || isDeleting}
           >
             {isDeleting ? "Deleting..." : "Delete Team"}

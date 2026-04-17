@@ -268,19 +268,18 @@ export function InviteMemberModal({
               type="button"
               variant="ghost"
               onClick={onClose}
-              fullWidth
+              className="w-full"
               disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              variant="accent"
-              fullWidth
-              isLoading={isSubmitting}
+              variant="default"
+              className="w-full"
               disabled={isSubmitting || emails.length === 0}
-              leftIcon={<UserPlus className="w-4 h-4" />}
             >
+              <UserPlus className="w-4 h-4" />
               {isSubmitting
                 ? "Sending..."
                 : `Send ${emails.length > 1 ? "Invitations" : "Invitation"}`}

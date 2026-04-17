@@ -15,7 +15,6 @@ const ResetPasswordPage = lazy(
   () => import("@/components/pages/ResetPasswordPage"),
 );
 const DashboardPage = lazy(() => import("@/components/pages/DashboardPage"));
-const DashboardPageFigma = lazy(() => import("@/components/pages/DashboardPage.figma"));
 const ProjectsPage = lazy(() => import("@/components/pages/ProjectsPage"));
 const TasksPage = lazy(() => import("@/components/pages/TasksPage"));
 const TeamPage = lazy(() => import("@/components/pages/TeamPage"));
@@ -42,7 +41,6 @@ export const router = createBrowserRouter([
     element: <ProtectedLayout />,
     children: [
       { path: "/dashboard", element: <DashboardPage /> },
-      { path: "/dashboard-2", element: <DashboardPageFigma /> },
       { path: "/projects", element: <ProjectsPage /> },
       { path: "/tasks", element: <TasksPage /> },
       { path: "/team", element: <TeamPage /> },

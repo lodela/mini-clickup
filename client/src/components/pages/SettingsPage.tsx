@@ -12,7 +12,7 @@ export default function SettingsPage() {
         <p className="text-neutral-500 mt-1">Manage your account settings</p>
       </div>
 
-      <Card glass>
+      <Card className="glass">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5" />

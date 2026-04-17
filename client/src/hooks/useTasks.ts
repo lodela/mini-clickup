@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ITask } from "../types/index";
+import { Task as ITask } from "../types/index";
 import axios from "axios";
 
 /**

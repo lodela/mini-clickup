@@ -1,6 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
-import { ISprint } from "../types/index";
 import axios from "axios";
+
+interface ISprint {
+  _id: string;
+  name: string;
+  startDate?: string;
+  endDate?: string;
+  status?: string;
+  projectId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 /**
  * Custom hook for managing sprint data

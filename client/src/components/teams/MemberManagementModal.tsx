@@ -284,7 +284,7 @@ export function MemberManagementModal({
 
         {/* Footer */}
         <div className="p-6 border-t border-neutral-200">
-          <Button variant="ghost" onClick={onClose} fullWidth>
+          <Button variant="ghost" onClick={onClose} className="w-full">
             Done
           </Button>
         </div>

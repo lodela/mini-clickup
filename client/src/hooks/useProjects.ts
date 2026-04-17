@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { IProject } from "../types/index";
+import { Project as IProject } from "../types/index";
 import axios from "axios";
 
 /**

@@ -8,7 +8,7 @@ export type TeamMemberRole = "admin" | "member" | "guest";
 /**
  * Team Member Interface
  */
-interface ITeamMember {
+export interface ITeamMember {
   user: Types.ObjectId;
   role: TeamMemberRole;
   joinedAt: Date;

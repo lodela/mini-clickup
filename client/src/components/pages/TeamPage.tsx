@@ -150,10 +150,10 @@ export default function TeamPage() {
           </p>
         </div>
         <Button
-          variant="accent"
+          variant="default"
           onClick={() => setIsModalOpen(true)}
-          leftIcon={<Plus className="w-4 h-4" />}
         >
+          <Plus className="w-4 h-4" />
           Create Team
         </Button>
       </div>

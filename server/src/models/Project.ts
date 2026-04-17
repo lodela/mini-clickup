@@ -52,6 +52,7 @@ export interface IProject extends Document {
     tags: string[];
     attachments?: string[];
     links?: string[];
+    __v?: number;
   };
 }
 
@@ -122,7 +123,6 @@ const projectSchema = new Schema<IProject>(
     tags: {
       type: [String],
       default: [],
-      index: true, // Índice para búsqueda rápida
     },
     attachments: {
       type: [String],
@@ -143,7 +143,6 @@ const projectSchema = new Schema<IProject>(
 /**
  * Indexes for performance optimization
  */
-projectSchema.index({ projectNumber: 1 });
 projectSchema.index({ team: 1, status: 1 });
 projectSchema.index({ owner: 1 });
 projectSchema.index({ members: 1 });
