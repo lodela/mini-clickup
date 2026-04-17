@@ -15,6 +15,8 @@ export type TaskType = "task" | "bug";
  */
 export type TaskPriority = "low" | "medium" | "high" | "urgent";
 
+export type WorkflowState = "pending-approval" | "approved";
+
 /**
  * Task Document Interface
  */
@@ -33,6 +35,7 @@ export interface ITask extends Document {
   tags: string[];               // Tags hasheados
   estimatedTime?: number;       // En horas (ej: 2.5 = 2d 4h)
   spentTime?: number;           // Tiempo invertido en horas
+  sprintId?: Types.ObjectId;
   attachments?: string[];
   comments?: ITaskComment[];
   createdAt: Date;
@@ -59,12 +62,10 @@ export interface ITask extends Document {
     comments?: ITaskComment[];
     createdAt: string;
     updatedAt: string;
+    __v?: number;
   };
 }
 
-/**
- * Task Comment Interface
- */
 export interface ITaskComment {
   id: string;
   content: string;
