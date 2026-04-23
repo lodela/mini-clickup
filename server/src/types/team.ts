@@ -25,6 +25,10 @@ export interface CreateTeamDTO {
   description?: string;
   /** Optional team avatar URL */
   avatar?: string;
+  /** ID of the company this team belongs to */
+  companyId: string;
+  /** ID of the department this team belongs to */
+  departmentId: string;
 }
 
 /**

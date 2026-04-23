@@ -45,6 +45,8 @@ export async function createTeamService(
     // Create team with owner as first member
     const team = new Team({
       ...teamData,
+      companyId: new Types.ObjectId(teamData.companyId),
+      departmentId: new Types.ObjectId(teamData.departmentId),
       owner: new Types.ObjectId(userId),
       members: [
         {

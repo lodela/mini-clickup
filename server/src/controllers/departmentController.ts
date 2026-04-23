@@ -58,8 +58,59 @@ export const createDepartment = async (req: Request, res: Response) => {
       companyId: targetCompanyId
     });
 
-    res.status(201).json({ success: true, data: department });
+/**
+ * Update a department
+ */
+export const updateDepartment = async (req: Request, res: Response) => {
+  try {
+    const department = await Department.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!department) {
+      return res.status(404).json({ success: false, message: "Department not found" });
+    }
+
+    await ActionLog.create({
+      userId: (req as any).user._id,
+      action: "UPDATE",
+      entity: "Department",
+      entityId: department._id,
+      details: `Updated department ${department.name}`,
+      companyId: department.companyId
+    });
+
+    res.status(200).json({ success: true, data: department });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Delete a department
+ */
+export const deleteDepartment = async (req: Request, res: Response) => {
+  try {
+    const department = await Department.findById(req.params.id);
+
+    if (!department) {
+      return res.status(404).json({ success: false, message: "Department not found" });
+    }
+
+    await department.deleteOne();
+
+    await ActionLog.create({
+      userId: (req as any).user._id,
+      action: "DELETE",
+      entity: "Department",
+      entityId: department._id,
+      details: `Deleted department ${department.name}`,
+      companyId: department.companyId
+    });
+
+    res.status(200).json({ success: true, message: "Department removed" });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

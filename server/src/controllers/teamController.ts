@@ -4,6 +4,7 @@ import * as teamService from "../services/teamService.js";
 import { TeamAuthRequest } from "../middleware/team.js";
 import { AppError } from "../middleware/errorHandler.js";
 import { TeamMemberRole } from "../types/team.js";
+import ActionLog from "../models/ActionLog.js";
 
 /**
  * Zod validation schemas for team operations
@@ -24,6 +25,8 @@ const createTeamSchema = z.object({
     .optional()
     .nullable(),
   avatar: z.string().max(255, "Avatar is too long").optional().nullable(),
+  companyId: z.string().min(24, "Invalid Company ID"),
+  departmentId: z.string().min(24, "Invalid Department ID"),
 });
 
 /**
@@ -111,6 +114,18 @@ export async function createTeam(
       name: validatedData.name,
       description: validatedData.description || undefined,
       avatar: validatedData.avatar || undefined,
+      companyId: validatedData.companyId,
+      departmentId: validatedData.departmentId,
+    });
+
+    // Log the action
+    await ActionLog.create({
+      userId: req.user.userId,
+      action: "CREATE",
+      entity: "Team",
+      entityId: team._id,
+      details: `Created team ${validatedData.name}`,
+      companyId: validatedData.companyId
     });
 
     res.status(201).json({

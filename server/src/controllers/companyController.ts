@@ -23,17 +23,38 @@ const logAction = async (userId: string, action: string, entity: string, entityI
 };
 
 /**
- * Get all companies with basic stats
+ * Get all companies with pagination, search and stats
  */
 export const getAllCompanies = async (req: Request, res: Response) => {
   try {
-    const companies = await Company.find()
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = req.query.search as string;
+    const skip = (page - 1) * limit;
+
+    let query: any = {};
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { rfc: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const total = await Company.countDocuments(query);
+    const companies = await Company.find(query)
       .populate("primaryContact", "name email avatar")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
       count: companies.length,
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+      },
       data: companies,
     });
   } catch (error: any) {

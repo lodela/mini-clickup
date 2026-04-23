@@ -11,6 +11,7 @@
  */
 
 import { LucideIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface NavMenuItemProps {
   icon: LucideIcon;
@@ -44,14 +45,14 @@ export function NavMenuItem({
 
   if (href) {
     return (
-      <a
-        href={href}
+      <Link
+        to={href}
         onClick={onClick}
         className={`${baseClasses} ${activeClasses}`}
         aria-current={isActive ? 'page' : undefined}
       >
         {content}
-      </a>
+      </Link>
     );
   }
 

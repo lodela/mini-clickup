@@ -27,6 +27,12 @@ const InfoPortalPage = lazy(() => import("@/components/pages/InfoPortalPage"));
 const AdminCompaniesPage = lazy(
   () => import("@/components/pages/AdminCompaniesPage"),
 );
+const AdminDepartmentsPage = lazy(
+  () => import("@/components/pages/AdminDepartmentsPage"),
+);
+const AdminTeamsPage = lazy(
+  () => import("@/components/pages/AdminTeamsPage"),
+);
 
 // ── Router ────────────────────────────────────────────────────────────────────
 export const router = createBrowserRouter([
@@ -55,6 +61,9 @@ export const router = createBrowserRouter([
       { path: "/backlog", element: <BacklogPage /> },
       { path: "/vacations", element: <VacationsPage /> },
       { path: "/info", element: <InfoPortalPage /> },
+      { path: "/admin/companies", element: <AdminCompaniesPage /> },
+      { path: "/admin/companies/:companyId/departments", element: <AdminDepartmentsPage /> },
+      { path: "/admin/companies/:companyId/departments/:departmentId/teams", element: <AdminTeamsPage /> },
     ],
   },
 
