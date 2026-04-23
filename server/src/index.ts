@@ -6,15 +6,18 @@ import rateLimit from "express-rate-limit";
 import { createServer } from "http";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import employeeRoutes from "./routes/employees.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 // Import models (ensure they are registered with Mongoose)
-// These imports register the models with Mongoose even if not directly used
 import "./models/User.js";
 import "./models/Team.js";
 import "./models/Project.js";
 import "./models/Task.js";
 import "./models/Employee.js";
 import "./models/Sprint.js";
+import "./models/Company.js";
+import "./models/ActionLog.js";
 
 // Import routes
 import authRoutes from "./routes/auth.js";

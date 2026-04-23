@@ -72,6 +72,16 @@ const teamSchema = new Schema<ITeam>(
       maxlength: [500, "Description cannot exceed 500 characters"],
       default: null,
     },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      required: true,
+    },
+    departmentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Department",
+      required: true,
+    },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",

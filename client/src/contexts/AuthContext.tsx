@@ -15,8 +15,14 @@ export interface User {
   _id: string;
   email: string;
   name: string;
-  role: "user" | "admin";
+  role: 
+    | "GOD_MODE" 
+    | "CLIENT_A" | "CLIENT_B" | "CLIENT_C" 
+    | "DIRECTOR" | "EXECUTIVE" | "MANAGER" 
+    | "USER_A" | "USER_B" | "USER_C"
+    | "user" | "admin"; // Fallbacks for legacy compatibility
   avatar?: string;
+  companyId?: string;
   teams?: string[];
   isActive: boolean;
   lastLogin?: string;

@@ -4,7 +4,11 @@ import bcrypt from "bcrypt";
 /**
  * User Role Enum
  */
-export type UserRole = "user" | "admin";
+export type UserRole = 
+  | "GOD_MODE" 
+  | "CLIENT_A" | "CLIENT_B" | "CLIENT_C" 
+  | "DIRECTOR" | "EXECUTIVE" | "MANAGER" 
+  | "USER_A" | "USER_B" | "USER_C";
 
 /**
  * User Document Interface
@@ -14,6 +18,7 @@ export interface IUser extends Document {
   password: string;
   name: string;
   role: UserRole;
+  companyId?: mongoose.Types.ObjectId; // null for GOD_MODE
   teams: mongoose.Types.ObjectId[];
   avatar?: string;
   isActive: boolean;
@@ -28,6 +33,7 @@ export interface IUser extends Document {
     email: string;
     name: string;
     role: UserRole;
+    companyId?: mongoose.Types.ObjectId;
     teams: mongoose.Types.ObjectId[];
     avatar?: string;
     isActive: boolean;
@@ -68,8 +74,18 @@ const userSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: [
+        "GOD_MODE", 
+        "CLIENT_A", "CLIENT_B", "CLIENT_C", 
+        "DIRECTOR", "EXECUTIVE", "MANAGER", 
+        "USER_A", "USER_B", "USER_C"
+      ],
+      default: "USER_C",
+    },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      default: null,
     },
     teams: [
       {

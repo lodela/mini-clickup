@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,6 +14,7 @@ import {
   Settings,
   UsersRound,
   LogOut,
+  Shield,
 } from "lucide-react";
 import { ProtectedLayoutTemplate } from "@/components/ui/templates/ProtectedLayoutTemplate";
 import { SidebarOrganism } from "@/components/ui/organisms/SidebarOrganism";
@@ -20,33 +22,30 @@ import { HeaderOrganism } from "@/components/ui/organisms/HeaderOrganism";
 
 export default function ProtectedLayout() {
   const { user, isLoading } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
 
   if (isLoading) {
-    // Show a loader while checking auth
     return (
       <div className="flex h-screen items-center justify-center">
-        Loading...
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   if (!user) {
-    // Redirect to login if not authenticated
     navigate("/login", { replace: true });
-    return null; // Prevent rendering while redirecting
+    return null;
   }
 
-  // Mock user data - in real app, this would come from useAuth()
   const mockUser = {
-    name: user.name || "Evan Yates",
-    email: user.email || "evan.yates@company.com",
-    photo: user.avatar, // Would be actual photo URL
+    name: user.name || "User",
+    email: user.email || "",
+    photo: user.avatar,
   };
 
-  // Navigation items configuration
   const navItems = [
     {
       id: "dashboard",
@@ -92,7 +91,16 @@ export default function ProtectedLayout() {
     },
   ];
 
-  // User menu items configuration
+  // Inyectar link de Admin si es GOD_MODE o si es tu email específico
+  if (user.role === "GOD_MODE" || user.email === "nlodela@miniclickup.com") {
+    navItems.push({
+      id: "admin",
+      label: "Admin",
+      icon: Shield,
+      path: "/admin/companies",
+    });
+  }
+
   const userMenuItems = [
     {
       label: t("user.profile"),
@@ -112,53 +120,31 @@ export default function ProtectedLayout() {
     {
       label: t("user.signOut"),
       icon: <LogOut className="w-4 h-4" />,
-      onClick: handleLogout,
+      onClick: () => {
+        // En un entorno profesional, aquí se llamaría a auth.logout()
+        navigate("/login");
+      },
     },
   ];
 
-  // Handlers
-  function handleNavigate(path: string) {
-    navigate(path);
-  }
-
-  function handleLogout() {
-    // In real app, this would call auth.logout()
-    console.log("Logout clicked");
-    navigate("/login");
-  }
-
-  function handleSearch(value: string) {
-    console.log("Search:", value);
-    // Handle search functionality
-  }
-
-  function handleNotificationClick() {
-    console.log("Notifications clicked");
-    // Open notifications panel/modal
-  }
-
-  function handleSupportClick() {
-    console.log("Support clicked");
-    // Open support modal or navigate to support page
-  }
-
   return (
     <ProtectedLayoutTemplate
+      isSidebarOpen={isSidebarOpen}
       sidebar={
         <SidebarOrganism
           navItems={navItems}
           currentPath={location.pathname}
-          onNavigate={handleNavigate}
-          onLogout={handleLogout}
-          onSupport={handleSupportClick}
+          onNavigate={(path) => navigate(path)}
+          onLogout={() => navigate("/login")}
+          onSupport={() => console.log("Support clicked")}
         />
       }
       header={
         <HeaderOrganism
           user={mockUser}
-          notificationCount={3} // Mock notification count
-          onSearch={handleSearch}
-          onNotificationClick={handleNotificationClick}
+          notificationCount={3}
+          onSearch={(val) => console.log("Search:", val)}
+          onNotificationClick={() => setIsSidebarOpen(!isSidebarOpen)}
           userMenuItems={userMenuItems}
         />
       }

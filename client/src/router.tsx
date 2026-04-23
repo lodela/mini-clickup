@@ -22,6 +22,11 @@ const ChatPage = lazy(() => import("@/components/pages/ChatPage"));
 const CalendarPage = lazy(() => import("@/components/pages/CalendarPage"));
 const SettingsPage = lazy(() => import("@/components/pages/SettingsPage"));
 const BacklogPage = lazy(() => import("@/components/pages/BacklogPage"));
+const VacationsPage = lazy(() => import("@/components/pages/VacationsPage"));
+const InfoPortalPage = lazy(() => import("@/components/pages/InfoPortalPage"));
+const AdminCompaniesPage = lazy(
+  () => import("@/components/pages/AdminCompaniesPage"),
+);
 
 // ── Router ────────────────────────────────────────────────────────────────────
 export const router = createBrowserRouter([
@@ -48,6 +53,8 @@ export const router = createBrowserRouter([
       { path: "/calendar", element: <CalendarPage /> },
       { path: "/settings", element: <SettingsPage /> },
       { path: "/backlog", element: <BacklogPage /> },
+      { path: "/vacations", element: <VacationsPage /> },
+      { path: "/info", element: <InfoPortalPage /> },
     ],
   },
 
