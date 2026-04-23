@@ -47,7 +47,6 @@ export function NavMenuItem({
     return (
       <Link
         to={href}
-        onClick={onClick}
         className={`${baseClasses} ${activeClasses}`}
         aria-current={isActive ? 'page' : undefined}
       >

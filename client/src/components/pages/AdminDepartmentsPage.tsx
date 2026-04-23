@@ -4,7 +4,7 @@ import { Plus, LayoutGrid, List, Users, ArrowLeft, Building2, User as UserIcon, 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 interface Department {
   _id: string;

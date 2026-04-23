@@ -75,19 +75,19 @@ export default function ProtectedLayout() {
       id: "employees",
       label: t("nav.employees"),
       icon: Users,
-      path: "/employees",
+      path: "/team",
     },
     {
       id: "messenger",
       label: t("nav.messenger"),
       icon: MessageCircle,
-      path: "/messenger",
+      path: "/chat",
     },
     {
       id: "info-portal",
       label: t("nav.infoPortal"),
       icon: BookOpen,
-      path: "/info-portal",
+      path: "/info",
     },
   ];
 

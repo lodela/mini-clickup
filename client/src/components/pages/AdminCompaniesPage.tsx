@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import CreateCompanyModal from "@/components/modals/CreateCompanyModal";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 interface CompanyStats {
   projectsCount: number;
@@ -236,7 +236,7 @@ export default function AdminCompaniesPage() {
                     </div>
                   </>
                 )}
-              </div>
+              </Link>
             );
           })}
         </div>
