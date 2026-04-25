@@ -75,7 +75,7 @@ async function createUser(userData: Partial<TestUser> = {}): Promise<TestUser> {
     email,
     password: userData.password || 'Test123!@#',
     name: userData.name || 'Test User',
-    role: userData.role || 'user',
+    role: userData.role || 'USER_C',
   });
 
   const token = generateToken(user._id.toString(), user.email, user.role);
