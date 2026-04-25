@@ -21,7 +21,7 @@ import { SidebarOrganism } from "@/components/ui/organisms/SidebarOrganism";
 import { HeaderOrganism } from "@/components/ui/organisms/HeaderOrganism";
 
 export default function ProtectedLayout() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -120,8 +120,8 @@ export default function ProtectedLayout() {
     {
       label: t("user.signOut"),
       icon: <LogOut className="w-4 h-4" />,
-      onClick: () => {
-        // En un entorno profesional, aquí se llamaría a auth.logout()
+      onClick: async () => {
+        await logout();
         navigate("/login");
       },
     },
@@ -135,7 +135,7 @@ export default function ProtectedLayout() {
           navItems={navItems}
           currentPath={location.pathname}
           onNavigate={(path) => navigate(path)}
-          onLogout={() => navigate("/login")}
+          onLogout={async () => { await logout(); navigate("/login"); }}
           onSupport={() => console.log("Support clicked")}
         />
       }
