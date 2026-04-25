@@ -851,7 +851,7 @@ export default function RegisterPage() {
                       <p style={{ fontSize: 13, color: "#7D8592", textAlign: "center", marginTop: 12 }}>
                         Didn't receive it?{" "}
                         <button type="button"
-                          onClick={async () => { try { await sendOtp(form.email, form.otpChannel, form.phone ? `${form.phoneCode}${form.phone}` : undefined); } catch {} }}
+                          onClick={async () => { try { await sendOtp(form.email, form.otpChannel, form.phone ? `${form.phoneCode}${form.phone}` : undefined); } catch (_err) { /* silent retry */ } }}
                           style={{ background: "none", border: "none", color: "#3F8CFF", cursor: "pointer", fontWeight: 700, fontSize: 13 }}>
                           Resend code
                         </button>
