@@ -9,7 +9,7 @@ import ActionLog from "../models/ActionLog";
 export const getDepartments = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
-    let query: any = {};
+    const query: any = {};
 
     // God Mode can see all, Clients only their company
     if (user.role !== "GOD_MODE") {
@@ -57,6 +57,12 @@ export const createDepartment = async (req: Request, res: Response) => {
       details: `Created department ${name}`,
       companyId: targetCompanyId
     });
+
+    res.status(201).json({ success: true, data: department });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 
 /**
  * Update a department

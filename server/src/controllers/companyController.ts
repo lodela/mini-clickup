@@ -32,7 +32,7 @@ export const getAllCompanies = async (req: Request, res: Response) => {
     const search = req.query.search as string;
     const skip = (page - 1) * limit;
 
-    let query: any = {};
+    const query: any = {};
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
