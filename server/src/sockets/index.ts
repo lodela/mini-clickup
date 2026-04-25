@@ -19,7 +19,7 @@ const socketOptions = {
     credentials: true,
     methods: ["GET", "POST"],
   },
-  transports: ["websocket" as "websocket", "polling" as "polling"],
+  transports: ["websocket" as const, "polling" as const],
   pingTimeout: 60000,
   pingInterval: 25000,
 };
