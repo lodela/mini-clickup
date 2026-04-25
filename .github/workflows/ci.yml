@@ -44,7 +44,7 @@ jobs:
 
   test-client:
     name: Test Client
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: lint
     
     steps:
@@ -76,7 +76,7 @@ jobs:
 
   test-server:
     name: Test Server
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: lint
     
     services:
