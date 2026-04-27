@@ -1,5 +1,4 @@
 import {
-  Folder,
   Calendar,
   Clock,
   Paperclip,

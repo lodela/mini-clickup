@@ -25,6 +25,7 @@ interface Company {
   };
   logo: string | null;
   status: string;
+  rfc?: string;
   stats: CompanyStats;
 }
 
@@ -64,7 +65,7 @@ export default function AdminCompaniesPage() {
     if (page > 1) fetchCompanies();
   }, [page]);
 
-  const lastElementRef = useCallback((node: HTMLDivElement) => {
+  const lastElementRef = useCallback((node: HTMLAnchorElement) => {
     if (isLoading) return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {

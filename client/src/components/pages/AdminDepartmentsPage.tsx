@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Plus, LayoutGrid, List, Users, ArrowLeft, Building2, User as UserIcon, MoreVertical } from "lucide-react";
+import { Plus, LayoutGrid, List, Users, ArrowLeft, Building2, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
