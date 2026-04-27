@@ -253,6 +253,7 @@ describe('Team API', () => {
     testUsers.owner = await createUser({ email: 'owner@test.com', name: 'Team Owner' });
     testUsers.admin = await createUser({ email: 'admin@test.com', name: 'Team Admin' });
     testUsers.member = await createUser({ email: 'member@test.com', name: 'Team Member' });
+    testUsers.guest = await createUser({ email: 'guest@test.com', name: 'Team Guest' });
     testUsers.nonMember = await createUser({ email: 'nonmember@test.com', name: 'Non Member' });
 
     // Create test team with all members initially
@@ -287,6 +288,8 @@ describe('Team API', () => {
       const teamData = {
         name: 'New Test Team',
         description: 'Test description',
+        companyId: testCompanyId.toString(),
+        departmentId: testDeptId.toString(),
       };
 
       const response = await request(testApp)
@@ -412,7 +415,7 @@ describe('Team API', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data._id).toBe(testTeams.main._id);
+      expect(response.body.data._id).toBe(testTeams.main._id.toString());
       expect(response.body.data.name).toBe('Test Team');
       expect(response.body.data.members).toBeDefined();
     });
@@ -561,7 +564,7 @@ describe('Team API', () => {
 
       // Verify member was added
       const team = await Team.findById(testTeams.main._id);
-      expect(team?.members.length).toBe(4);
+      expect(team?.members.length).toBe(5);
     });
 
     it('should validate email', async () => {
