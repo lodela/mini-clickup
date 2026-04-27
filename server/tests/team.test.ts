@@ -44,6 +44,8 @@ let mongoServer: MongoMemoryServer;
 let testApp: Express;
 let testUsers: Record<string, TestUser> = {};
 let testTeams: Record<string, TestTeam> = {};
+let testCompanyId: mongoose.Types.ObjectId;
+let testDeptId: mongoose.Types.ObjectId;
 
 /**
  * Helper function to generate auth token
@@ -100,6 +102,8 @@ async function createTeam(teamData: Partial<TestTeam> & { owner: string }): Prom
     name: teamData.name || `Team_${Date.now()}`,
     description: teamData.description || 'Test team description',
     owner: teamData.owner,
+    companyId: testCompanyId,
+    departmentId: testDeptId,
     members: [
       {
         user: teamData.owner,
@@ -157,6 +161,10 @@ describe('Team API', () => {
     // Connect to in-memory MongoDB
     await mongoose.connect(mongoUri);
 
+    // Initialize stub IDs for required Team references
+    testCompanyId = new mongoose.Types.ObjectId();
+    testDeptId = new mongoose.Types.ObjectId();
+
     // Set test environment variables
     process.env.NODE_ENV = 'test';
     process.env.MONGODB_URI = mongoUri;
@@ -199,6 +207,8 @@ describe('Team API', () => {
       name: 'Test Team',
       description: 'A test team for unit tests',
       owner: testUsers.owner._id,
+      companyId: testCompanyId,
+      departmentId: testDeptId,
       members: [
         { user: testUsers.owner._id, role: 'admin', joinedAt: new Date() },
         { user: testUsers.admin._id, role: 'admin', joinedAt: new Date() },
@@ -250,6 +260,8 @@ describe('Team API', () => {
       name: 'Test Team',
       description: 'A test team for unit tests',
       owner: testUsers.owner._id,
+      companyId: testCompanyId,
+      departmentId: testDeptId,
       members: [
         { user: testUsers.owner._id, role: 'admin', joinedAt: new Date() },
         { user: testUsers.admin._id, role: 'admin', joinedAt: new Date() },
