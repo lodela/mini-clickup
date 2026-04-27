@@ -32,7 +32,8 @@ describe("Company Model Validation", () => {
       rfc: "TEST123456XYZ",
       fiscalAddress: "123 Test St",
       primaryContact: user._id,
-      status: "Active"
+      status: "Active",
+      slug: "test-company"
     };
 
     const company = await Company.create(companyData);
@@ -41,10 +42,11 @@ describe("Company Model Validation", () => {
     expect(company.rfc).toBe("TEST123456XYZ");
   });
 
-  it("should fail without RFC", async () => {
+  it("should fail without required slug", async () => {
     const companyData = {
-      name: "No RFC Corp",
-      legalName: "No RFC S.A.",
+      name: "No Slug Corp",
+      legalName: "No Slug S.A.",
+      rfc: "NOSLUG123456X",
       fiscalAddress: "123 Test St",
     };
 
@@ -52,7 +54,7 @@ describe("Company Model Validation", () => {
       await Company.create(companyData);
       expect(true).toBe(false); // Should not reach here
     } catch (error: any) {
-      expect(error.errors.rfc).toBeDefined();
+      expect(error.errors.slug).toBeDefined();
     }
   });
 });
