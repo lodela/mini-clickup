@@ -70,7 +70,14 @@ export const createDepartment = async (req: Request, res: Response): Promise<voi
  */
 export const updateDepartment = async (req: Request, res: Response): Promise<void> => {
   try {
-    const department = await Department.findByIdAndUpdate(req.params.id, req.body, {
+    const { name, description, managerId, status } = req.body;
+    const updates: Partial<IDepartment> = {};
+    if (name !== undefined) updates.name = name;
+    if (description !== undefined) updates.description = description;
+    if (managerId !== undefined) updates.manager = managerId;
+    if (status !== undefined) updates.status = status;
+
+    const department = await Department.findByIdAndUpdate(req.params.id, updates, {
       new: true,
       runValidators: true,
     });
