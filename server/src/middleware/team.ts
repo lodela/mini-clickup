@@ -44,7 +44,7 @@ export function checkTeamMembership() {
         return;
       }
 
-      const teamId = req.params.id;
+      const teamId = req.params.id as string;
 
       if (!teamId) {
         throw AppError.badRequest("Team ID is required");
@@ -125,7 +125,7 @@ export function checkTeamOwnership() {
         return;
       }
 
-      const teamId = req.params.id;
+      const teamId = req.params.id as string;
 
       if (!teamId) {
         throw AppError.badRequest("Team ID is required");
@@ -201,7 +201,7 @@ export function checkTeamAdmin() {
         return;
       }
 
-      const teamId = req.params.id;
+      const teamId = req.params.id as string;
 
       if (!teamId) {
         throw AppError.badRequest("Team ID is required");
@@ -287,7 +287,7 @@ export function validateTeamId() {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const teamId = req.params.id;
+      const teamId = req.params.id as string;
 
       if (!teamId) {
         throw AppError.badRequest("Team ID is required");
@@ -328,7 +328,7 @@ export function validateMemberId() {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const userId = req.params.userId;
+      const userId = req.params.userId as string;
 
       if (!userId) {
         throw AppError.badRequest("User ID is required");

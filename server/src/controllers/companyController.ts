@@ -115,13 +115,14 @@ export const createCompany = async (req: Request, res: Response) => {
 /**
  * Get company details with deep stats
  */
-export const getCompanyById = async (req: Request, res: Response) => {
+export const getCompanyById = async (req: Request, res: Response): Promise<void> => {
   try {
     const company = await Company.findById(req.params.id)
       .populate("primaryContact", "name email role");
 
     if (!company) {
-      return res.status(404).json({ success: false, message: "Company not found" });
+      res.status(404).json({ success: false, message: "Company not found" });
+      return;
     }
 
     res.status(200).json({ success: true, data: company });

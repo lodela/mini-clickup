@@ -30,7 +30,7 @@ export const getDepartments = async (req: Request, res: Response) => {
 /**
  * Create a new department
  */
-export const createDepartment = async (req: Request, res: Response) => {
+export const createDepartment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, description, managerId, companyId } = req.body;
     const user = (req as any).user;
@@ -39,7 +39,8 @@ export const createDepartment = async (req: Request, res: Response) => {
     const targetCompanyId = user.role === "GOD_MODE" ? companyId : user.companyId;
 
     if (!targetCompanyId) {
-      return res.status(400).json({ success: false, message: "Company ID is required" });
+      res.status(400).json({ success: false, message: "Company ID is required" });
+      return;
     }
 
     const department = await Department.create({
@@ -67,7 +68,7 @@ export const createDepartment = async (req: Request, res: Response) => {
 /**
  * Update a department
  */
-export const updateDepartment = async (req: Request, res: Response) => {
+export const updateDepartment = async (req: Request, res: Response): Promise<void> => {
   try {
     const department = await Department.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -75,7 +76,8 @@ export const updateDepartment = async (req: Request, res: Response) => {
     });
 
     if (!department) {
-      return res.status(404).json({ success: false, message: "Department not found" });
+      res.status(404).json({ success: false, message: "Department not found" });
+      return;
     }
 
     await ActionLog.create({
@@ -96,12 +98,13 @@ export const updateDepartment = async (req: Request, res: Response) => {
 /**
  * Delete a department
  */
-export const deleteDepartment = async (req: Request, res: Response) => {
+export const deleteDepartment = async (req: Request, res: Response): Promise<void> => {
   try {
     const department = await Department.findById(req.params.id);
 
     if (!department) {
-      return res.status(404).json({ success: false, message: "Department not found" });
+      res.status(404).json({ success: false, message: "Department not found" });
+      return;
     }
 
     await department.deleteOne();

@@ -62,7 +62,7 @@ export interface ITask extends Document {
     comments?: ITaskComment[];
     createdAt: string;
     updatedAt: string;
-    __v?: number;
+    __v: number;
   };
 }
 

@@ -1,11 +1,11 @@
 import { Router } from "express";
 import ProjectController from "../controllers/projectController";
-import { authenticate } from "../middleware/auth";
+import { authenticate } from "../middleware/auth.js";
 
 const router = Router();
 
 // All routes require authentication
-router.use(authenticate);
+router.use(authenticate());
 
 router.post("/", ProjectController.createProject);
 router.get("/", ProjectController.getProjects);

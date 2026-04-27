@@ -52,7 +52,7 @@ export interface IProject extends Document {
     tags: string[];
     attachments?: string[];
     links?: string[];
-    __v?: number;
+    __v: number;
   };
 }
 

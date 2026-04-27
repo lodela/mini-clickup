@@ -24,6 +24,8 @@ export interface ITeam extends Document {
   members: ITeamMember[];
   projects: Types.ObjectId[];
   avatar?: string;
+  companyId: Types.ObjectId;
+  departmentId: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   addMember(userId: Types.ObjectId, role?: TeamMemberRole): Promise<void>;

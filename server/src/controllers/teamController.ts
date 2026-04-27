@@ -287,7 +287,7 @@ export async function updateTeam(
       return;
     }
 
-    const teamId = req.params.id;
+    const teamId = req.params.id as string;
 
     // Validate request body (partial update)
     const validatedData = updateTeamSchema.parse(req.body);
@@ -367,7 +367,7 @@ export async function deleteTeam(
       return;
     }
 
-    const teamId = req.params.id;
+    const teamId = req.params.id as string;
 
     // Delete team using service (ownership checked in middleware)
     await teamService.deleteTeamService(teamId);
@@ -416,7 +416,7 @@ export async function addMember(
       return;
     }
 
-    const teamId = req.params.id;
+    const teamId = req.params.id as string;
 
     // Validate request body
     const validatedData = addMemberSchema.parse(req.body);
@@ -489,8 +489,8 @@ export async function removeMember(
       return;
     }
 
-    const teamId = req.params.id;
-    const userIdToRemove = req.params.userId;
+    const teamId = req.params.id as string;
+    const userIdToRemove = req.params.userId as string;
 
     // Remove member using service (admin check done in service)
     const team = await teamService.removeMemberService(
@@ -544,8 +544,8 @@ export async function updateMemberRole(
       return;
     }
 
-    const teamId = req.params.id;
-    const userId = req.params.userId;
+    const teamId = req.params.id as string;
+    const userId = req.params.userId as string;
 
     // Validate request body
     const validatedData = updateMemberRoleSchema.parse(req.body);
@@ -616,7 +616,7 @@ export async function getTeamMembers(
       return;
     }
 
-    const teamId = req.params.id;
+    const teamId = req.params.id as string;
 
     // Get team members (service checks membership)
     const members = await teamService.getTeamMembersService(

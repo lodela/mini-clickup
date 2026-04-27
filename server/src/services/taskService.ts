@@ -74,7 +74,7 @@ export class TaskService {
       throw new Error("Task not found");
     }
     // Use the instance method (cast to ITask to access instance methods)
-    return await (task as ITask & { convertToBug: (reason: string) => Promise<ITask> }).convertToBug(reason);
+    return await (task as unknown as ITask & { convertToBug: (reason: string) => Promise<ITask> }).convertToBug(reason);
   }
 
   /**
@@ -98,7 +98,7 @@ export class TaskService {
       throw new Error("Task not found");
     }
     // Use the instance method (cast to ITask to access instance methods)
-    return await (task as ITask & { approveForSprint: (sprintId: Types.ObjectId) => Promise<ITask> }).approveForSprint(sprintId);
+    return await (task as unknown as ITask & { approveForSprint: (sprintId: Types.ObjectId) => Promise<ITask> }).approveForSprint(sprintId);
   }
 }
 

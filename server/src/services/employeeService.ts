@@ -431,6 +431,7 @@ export async function updateEmployeeService(
         tasksInProgress: updateData.taskAssignments.tasksInProgress ?? currentAssignments.tasksInProgress,
         tasksInReview: updateData.taskAssignments.tasksInReview ?? currentAssignments.tasksInReview,
         completedTasks: updateData.taskAssignments.completedTasks ?? currentAssignments.completedTasks,
+        totalTasks: 0,
         lastUpdated: new Date(),
       };
 
@@ -514,6 +515,7 @@ export async function updateTaskAssignmentsService(
       tasksInProgress: assignments.tasksInProgress ?? currentAssignments.tasksInProgress,
       tasksInReview: assignments.tasksInReview ?? currentAssignments.tasksInReview,
       completedTasks: assignments.completedTasks ?? currentAssignments.completedTasks,
+      totalTasks: 0,
       lastUpdated: new Date(),
     };
 
