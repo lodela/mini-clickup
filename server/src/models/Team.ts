@@ -8,7 +8,7 @@ export type TeamMemberRole = "admin" | "member" | "guest";
 /**
  * Team Member Interface
  */
-interface ITeamMember {
+export interface ITeamMember {
   user: Types.ObjectId;
   role: TeamMemberRole;
   joinedAt: Date;
@@ -24,6 +24,8 @@ export interface ITeam extends Document {
   members: ITeamMember[];
   projects: Types.ObjectId[];
   avatar?: string;
+  companyId: Types.ObjectId;
+  departmentId: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   addMember(userId: Types.ObjectId, role?: TeamMemberRole): Promise<void>;
@@ -71,6 +73,16 @@ const teamSchema = new Schema<ITeam>(
       trim: true,
       maxlength: [500, "Description cannot exceed 500 characters"],
       default: null,
+    },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      required: true,
+    },
+    departmentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Department",
+      required: true,
     },
     owner: {
       type: Schema.Types.ObjectId,

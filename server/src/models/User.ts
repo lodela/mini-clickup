@@ -4,7 +4,11 @@ import bcrypt from "bcrypt";
 /**
  * User Role Enum
  */
-export type UserRole = "user" | "admin";
+export type UserRole = 
+  | "GOD_MODE" 
+  | "CLIENT_A" | "CLIENT_B" | "CLIENT_C" 
+  | "DIRECTOR" | "EXECUTIVE" | "MANAGER" 
+  | "USER_A" | "USER_B" | "USER_C";
 
 /**
  * User Document Interface
@@ -14,28 +18,26 @@ export interface IUser extends Document {
   password: string;
   name: string;
   role: UserRole;
+  companyId?: mongoose.Types.ObjectId;
   teams: mongoose.Types.ObjectId[];
   avatar?: string;
   isActive: boolean;
   lastLogin?: Date;
   passwordResetToken?: string | null;
   passwordResetExpires?: Date | null;
+  // Onboarding fields
+  phone?: string;
+  phoneVerified: boolean;
+  emailVerified: boolean;
+  onboardingStep: number; // 0=pending OTP, 1=about you, 2=company, 3=invite, 4=complete
+  onboardingToken?: string | null;
+  onboardingTokenExpires?: Date | null;
+  jobTitle?: string;
+  useCase?: string;
+  emailDomain?: string; // extracted from email for fast company matching
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
-  toJSON(): {
-    _id: mongoose.Types.ObjectId;
-    email: string;
-    name: string;
-    role: UserRole;
-    teams: mongoose.Types.ObjectId[];
-    avatar?: string;
-    isActive: boolean;
-    lastLogin?: Date;
-    createdAt: Date;
-    updatedAt: Date;
-    __v: number;
-  };
 }
 
 /**
@@ -46,7 +48,6 @@ const userSchema = new Schema<IUser>(
     email: {
       type: String,
       required: [true, "Email is required"],
-      unique: true,
       lowercase: true,
       trim: true,
       match: [
@@ -69,8 +70,18 @@ const userSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: [
+        "GOD_MODE", 
+        "CLIENT_A", "CLIENT_B", "CLIENT_C", 
+        "DIRECTOR", "EXECUTIVE", "MANAGER", 
+        "USER_A", "USER_B", "USER_C"
+      ],
+      default: "USER_C",
+    },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: "Company",
+      default: null,
     },
     teams: [
       {
@@ -100,6 +111,16 @@ const userSchema = new Schema<IUser>(
       default: null,
       select: false,
     },
+    // Onboarding fields
+    phone: { type: String, default: null, trim: true },
+    phoneVerified: { type: Boolean, default: false },
+    emailVerified: { type: Boolean, default: false },
+    onboardingStep: { type: Number, default: 0, min: 0, max: 4 },
+    onboardingToken: { type: String, default: null, select: false },
+    onboardingTokenExpires: { type: Date, default: null, select: false },
+    jobTitle: { type: String, default: null, trim: true },
+    useCase: { type: String, default: null, trim: true },
+    emailDomain: { type: String, default: null, lowercase: true, trim: true, index: true },
   },
   {
     timestamps: true,

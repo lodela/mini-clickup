@@ -42,14 +42,15 @@ export default function TasksPage() {
             <p className="text-neutral-500 mt-1">Track and manage your tasks</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" leftIcon={<Filter className="w-4 h-4" />}>
+            <Button variant="outline">
+              <Filter className="w-4 h-4" />
               Filter
             </Button>
             <Button
-              variant="accent"
-              leftIcon={<Plus className="w-4 h-4" />}
+              variant="default"
               onClick={handleCreateTask}
             >
+              <Plus className="w-4 h-4" />
               New Task
             </Button>
           </div>
@@ -70,14 +71,15 @@ export default function TasksPage() {
             <p className="text-neutral-500 mt-1">Track and manage your tasks</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" leftIcon={<Filter className="w-4 h-4" />}>
+            <Button variant="outline">
+              <Filter className="w-4 h-4" />
               Filter
             </Button>
             <Button
-              variant="accent"
-              leftIcon={<Plus className="w-4 h-4" />}
+              variant="default"
               onClick={handleCreateTask}
             >
+              <Plus className="w-4 h-4" />
               New Task
             </Button>
           </div>
@@ -98,14 +100,15 @@ export default function TasksPage() {
           <p className="text-neutral-500 mt-1">Track and manage your tasks</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" leftIcon={<Filter className="w-4 h-4" />}>
+          <Button variant="outline">
+            <Filter className="w-4 h-4" />
             Filter
           </Button>
           <Button
-            variant="accent"
-            leftIcon={<Plus className="w-4 h-4" />}
+            variant="default"
             onClick={handleCreateTask}
           >
+            <Plus className="w-4 h-4" />
             New Task
           </Button>
         </div>
@@ -121,7 +124,7 @@ export default function TasksPage() {
 
       <div className="space-y-4">
         {tasks.map((task) => (
-          <Card key={task._id} glass hoverable>
+          <Card key={task._id} className="glass hover:shadow-md transition-shadow">
             <CardHeader>
               <CardTitle>{task.title}</CardTitle>
             </CardHeader>
@@ -148,7 +151,9 @@ export default function TasksPage() {
                   <span className="text-neutral-500">Assignee</span>
                   <span className="font-medium">
                     {task.assignee
-                      ? task.assignee.name || task.assignee
+                      ? typeof task.assignee === "object"
+                        ? task.assignee.name
+                        : task.assignee
                       : "Unassigned"}
                   </span>
                 </div>

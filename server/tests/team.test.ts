@@ -44,6 +44,8 @@ let mongoServer: MongoMemoryServer;
 let testApp: Express;
 let testUsers: Record<string, TestUser> = {};
 let testTeams: Record<string, TestTeam> = {};
+let testCompanyId: mongoose.Types.ObjectId;
+let testDeptId: mongoose.Types.ObjectId;
 
 /**
  * Helper function to generate auth token
@@ -75,7 +77,7 @@ async function createUser(userData: Partial<TestUser> = {}): Promise<TestUser> {
     email,
     password: userData.password || 'Test123!@#',
     name: userData.name || 'Test User',
-    role: userData.role || 'user',
+    role: userData.role || 'USER_C',
   });
 
   const token = generateToken(user._id.toString(), user.email, user.role);
@@ -100,6 +102,8 @@ async function createTeam(teamData: Partial<TestTeam> & { owner: string }): Prom
     name: teamData.name || `Team_${Date.now()}`,
     description: teamData.description || 'Test team description',
     owner: teamData.owner,
+    companyId: testCompanyId,
+    departmentId: testDeptId,
     members: [
       {
         user: teamData.owner,
@@ -157,6 +161,10 @@ describe('Team API', () => {
     // Connect to in-memory MongoDB
     await mongoose.connect(mongoUri);
 
+    // Initialize stub IDs for required Team references
+    testCompanyId = new mongoose.Types.ObjectId();
+    testDeptId = new mongoose.Types.ObjectId();
+
     // Set test environment variables
     process.env.NODE_ENV = 'test';
     process.env.MONGODB_URI = mongoUri;
@@ -199,6 +207,8 @@ describe('Team API', () => {
       name: 'Test Team',
       description: 'A test team for unit tests',
       owner: testUsers.owner._id,
+      companyId: testCompanyId,
+      departmentId: testDeptId,
       members: [
         { user: testUsers.owner._id, role: 'admin', joinedAt: new Date() },
         { user: testUsers.admin._id, role: 'admin', joinedAt: new Date() },
@@ -243,6 +253,7 @@ describe('Team API', () => {
     testUsers.owner = await createUser({ email: 'owner@test.com', name: 'Team Owner' });
     testUsers.admin = await createUser({ email: 'admin@test.com', name: 'Team Admin' });
     testUsers.member = await createUser({ email: 'member@test.com', name: 'Team Member' });
+    testUsers.guest = await createUser({ email: 'guest@test.com', name: 'Team Guest' });
     testUsers.nonMember = await createUser({ email: 'nonmember@test.com', name: 'Non Member' });
 
     // Create test team with all members initially
@@ -250,6 +261,8 @@ describe('Team API', () => {
       name: 'Test Team',
       description: 'A test team for unit tests',
       owner: testUsers.owner._id,
+      companyId: testCompanyId,
+      departmentId: testDeptId,
       members: [
         { user: testUsers.owner._id, role: 'admin', joinedAt: new Date() },
         { user: testUsers.admin._id, role: 'admin', joinedAt: new Date() },
@@ -275,6 +288,8 @@ describe('Team API', () => {
       const teamData = {
         name: 'New Test Team',
         description: 'Test description',
+        companyId: testCompanyId.toString(),
+        departmentId: testDeptId.toString(),
       };
 
       const response = await request(testApp)
@@ -400,7 +415,7 @@ describe('Team API', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      expect(response.body.data._id).toBe(testTeams.main._id);
+      expect(response.body.data._id).toBe(testTeams.main._id.toString());
       expect(response.body.data.name).toBe('Test Team');
       expect(response.body.data.members).toBeDefined();
     });
@@ -549,7 +564,7 @@ describe('Team API', () => {
 
       // Verify member was added
       const team = await Team.findById(testTeams.main._id);
-      expect(team?.members.length).toBe(4);
+      expect(team?.members.length).toBe(5);
     });
 
     it('should validate email', async () => {

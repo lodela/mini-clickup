@@ -1,6 +1,7 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import * as authController from "../controllers/authController.js";
+import * as onboardingController from "../controllers/onboardingController.js";
 import { authenticate } from "../middleware/auth.js";
 import { validate } from "../middleware/validation.js";
 import { z } from "zod";
@@ -54,6 +55,7 @@ const loginLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === "development",
   keyGenerator: (req) => {
     return req.body?.email || req.ip;
   },
@@ -141,5 +143,33 @@ router.post("/forgot-password", authController.forgotPassword);
  * Reset password using valid token
  */
 router.post("/reset-password", authController.resetPassword);
+
+// ---------------------------------------------------------------------------
+// OTP & Onboarding routes (multi-step registration)
+// ---------------------------------------------------------------------------
+
+const otpLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 5,
+  message: { success: false, error: "Too many OTP requests — try again in 5 minutes" },
+});
+
+/** POST /api/auth/otp/send */
+router.post("/otp/send", otpLimiter, onboardingController.sendOtp);
+
+/** POST /api/auth/otp/verify */
+router.post("/otp/verify", otpLimiter, onboardingController.verifyOtp);
+
+/** PATCH /api/auth/onboarding/step1 — About yourself */
+router.patch("/onboarding/step1", onboardingController.step1AboutYou);
+
+/** POST /api/auth/onboarding/company — Company info */
+router.post("/onboarding/company", onboardingController.onboardingCompany);
+
+/** POST /api/auth/onboarding/invite — Invite team members */
+router.post("/onboarding/invite", onboardingController.onboardingInvite);
+
+/** POST /api/auth/register/complete — Finalize registration */
+router.post("/register/complete", onboardingController.registerComplete);
 
 export default router;

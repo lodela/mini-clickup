@@ -15,7 +15,6 @@ const ResetPasswordPage = lazy(
   () => import("@/components/pages/ResetPasswordPage"),
 );
 const DashboardPage = lazy(() => import("@/components/pages/DashboardPage"));
-const DashboardPageFigma = lazy(() => import("@/components/pages/DashboardPage.figma"));
 const ProjectsPage = lazy(() => import("@/components/pages/ProjectsPage"));
 const TasksPage = lazy(() => import("@/components/pages/TasksPage"));
 const TeamPage = lazy(() => import("@/components/pages/TeamPage"));
@@ -23,6 +22,17 @@ const ChatPage = lazy(() => import("@/components/pages/ChatPage"));
 const CalendarPage = lazy(() => import("@/components/pages/CalendarPage"));
 const SettingsPage = lazy(() => import("@/components/pages/SettingsPage"));
 const BacklogPage = lazy(() => import("@/components/pages/BacklogPage"));
+const VacationsPage = lazy(() => import("@/components/pages/VacationsPage"));
+const InfoPortalPage = lazy(() => import("@/components/pages/InfoPortalPage"));
+const AdminCompaniesPage = lazy(
+  () => import("@/components/pages/AdminCompaniesPage"),
+);
+const AdminDepartmentsPage = lazy(
+  () => import("@/components/pages/AdminDepartmentsPage"),
+);
+const AdminTeamsPage = lazy(
+  () => import("@/components/pages/AdminTeamsPage"),
+);
 
 // ── Router ────────────────────────────────────────────────────────────────────
 export const router = createBrowserRouter([
@@ -42,7 +52,6 @@ export const router = createBrowserRouter([
     element: <ProtectedLayout />,
     children: [
       { path: "/dashboard", element: <DashboardPage /> },
-      { path: "/dashboard-2", element: <DashboardPageFigma /> },
       { path: "/projects", element: <ProjectsPage /> },
       { path: "/tasks", element: <TasksPage /> },
       { path: "/team", element: <TeamPage /> },
@@ -50,6 +59,11 @@ export const router = createBrowserRouter([
       { path: "/calendar", element: <CalendarPage /> },
       { path: "/settings", element: <SettingsPage /> },
       { path: "/backlog", element: <BacklogPage /> },
+      { path: "/vacations", element: <VacationsPage /> },
+      { path: "/info", element: <InfoPortalPage /> },
+      { path: "/admin/companies", element: <AdminCompaniesPage /> },
+      { path: "/admin/companies/:companyId/departments", element: <AdminDepartmentsPage /> },
+      { path: "/admin/companies/:companyId/departments/:departmentId/teams", element: <AdminTeamsPage /> },
     ],
   },
 

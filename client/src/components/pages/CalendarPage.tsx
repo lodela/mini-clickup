@@ -12,7 +12,7 @@ export default function CalendarPage() {
         <p className="text-neutral-500 mt-1">View deadlines and events</p>
       </div>
 
-      <Card glass className="h-[600px]">
+      <Card className="glass h-[600px]">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5" />

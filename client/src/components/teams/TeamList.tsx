@@ -68,15 +68,15 @@ export function TeamList({
           <Button
             variant="outline"
             onClick={onRefresh}
-            leftIcon={<RefreshCw className="w-4 h-4" />}
           >
+            <RefreshCw className="w-4 h-4" />
             Try Again
           </Button>
           <Button
-            variant="accent"
+            variant="default"
             onClick={onCreateTeam}
-            leftIcon={<Plus className="w-4 h-4" />}
           >
+            <Plus className="w-4 h-4" />
             Create Team
           </Button>
           <Button
@@ -91,9 +91,9 @@ export function TeamList({
                 updatedAt: "",
               } as Team)
             }
-            leftIcon={<Mail className="w-4 h-4" />}
             disabled={teams.length === 0}
           >
+            <Mail className="w-4 h-4" />
             Invite Members
           </Button>
         </div>
@@ -117,18 +117,18 @@ export function TeamList({
           Create your first team to get started
         </p>
         <Button
-          variant="accent"
+          variant="default"
           onClick={onCreateTeam}
-          leftIcon={<Plus className="w-4 h-4" />}
         >
+          <Plus className="w-4 h-4" />
           Create Team
         </Button>
         {teams.length > 0 && (
           <Button
             variant="outline"
             onClick={() => onInvite?.(teams[0])}
-            leftIcon={<Mail className="w-4 h-4" />}
           >
+            <Mail className="w-4 h-4" />
             Invite Members
           </Button>
         )}

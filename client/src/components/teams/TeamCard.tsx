@@ -75,9 +75,7 @@ export const TeamCard = memo(function TeamCard({
   return (
     <div className="group relative">
       <Card
-        glass
-        hoverable
-        className="transition-all duration-200 hover:shadow-lg"
+        className="glass hover:shadow-lg transition-all duration-200"
       >
         <CardHeader className="pb-4">
           <div className="flex items-start justify-between">

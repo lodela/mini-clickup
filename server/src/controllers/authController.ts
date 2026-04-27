@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import crypto from "crypto";
 import User from "../models/User.js";
 import * as tokenService from "../services/tokenService.js";
+import { sendPasswordResetEmail } from "../services/emailService.js";
 
 /**
  * API Response Interface
@@ -103,7 +104,7 @@ export async function register(
       email,
       password,
       name,
-      role: "user",
+      role: "USER_C",
       isActive: true,
     });
 
@@ -432,8 +433,13 @@ export async function forgotPassword(
     await user.save();
 
     const resetUrl = `${process.env.CLIENT_URL ?? "http://localhost:5173"}/reset-password?token=${rawToken}`;
-    // TODO: Replace with email service in production
-    console.log(`\n[PASSWORD RESET] Link for ${user.email}:\n${resetUrl}\n`);
+
+    try {
+      await sendPasswordResetEmail(user.email, resetUrl);
+    } catch (emailErr) {
+      console.error(`[PASSWORD RESET] Failed to send email to ${user.email}:`, emailErr);
+      // Token is already saved — user can retry if email doesn't arrive
+    }
 
     res
       .status(200)

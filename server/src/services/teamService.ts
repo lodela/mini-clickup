@@ -1,4 +1,4 @@
-import { Types, ClientSession } from "mongoose";
+import { Types } from "mongoose";
 import Team, { ITeam, ITeamMember } from "../models/Team.js";
 import User, { IUser } from "../models/User.js";
 import { AppError } from "../middleware/errorHandler.js";
@@ -45,6 +45,8 @@ export async function createTeamService(
     // Create team with owner as first member
     const team = new Team({
       ...teamData,
+      companyId: new Types.ObjectId(teamData.companyId),
+      departmentId: new Types.ObjectId(teamData.departmentId),
       owner: new Types.ObjectId(userId),
       members: [
         {
@@ -122,12 +124,13 @@ export async function getUserTeamsService(
 
     // Transform teams to response format
     return teams.map((team) => {
-      const userRole =
+      const isOwner =
         team.owner && (team.owner as any)._id
           ? (team.owner as any)._id.toString() === userId
-          : team.owner.toString() === userId
-            ? "admin"
-            : team.getMemberRole(userObjectId) || "member";
+          : team.owner.toString() === userId;
+      const userRole: TeamMemberRole = isOwner
+        ? "admin"
+        : team.getMemberRole(userObjectId) || "member";
 
       // Count members: owner + all members in array (excluding owner if duplicated)
       const ownerObjectId =
@@ -217,10 +220,10 @@ export async function getTeamByIdService(
       }));
 
     // Add owner to members if not already included
-    const ownerData = team.owner as IUser;
+    const ownerData = team.owner as unknown as IUser;
     if (ownerData && ownerData._id) {
       const ownerAlreadyInMembers = team.members.some(
-        (m) => m.user.toString() === ownerData._id.toString(),
+        (m) => m.user != null && m.user.toString() === ownerData._id.toString(),
       );
 
       if (!ownerAlreadyInMembers) {
@@ -282,13 +285,13 @@ export async function updateTeamService(
   teamId: string,
   updateData: UpdateTeamDTO,
 ): Promise<TeamResponse> {
-  const session = await Team.startSession();
+  // For standalone MongoDB instances, we cannot use transactions
+  // Instead we'll handle potential inconsistencies with error checking
 
   try {
     const teamObjectId = new Types.ObjectId(teamId);
 
     const team = await Team.findById(teamObjectId)
-      .session(session)
       .populate("owner", "name email")
       .populate("members.user", "name email");
 
@@ -309,9 +312,7 @@ export async function updateTeamService(
       team.avatar = updateData.avatar;
     }
 
-    await team.save({ session });
-
-    await session.commitTransaction();
+    await team.save();
 
     // Build response directly
     const ownerData = team.owner as any;
@@ -327,7 +328,7 @@ export async function updateTeamService(
 
     // Add owner if not already in members
     const ownerInMembers = team.members.some(
-      (m: any) => m.user && m.user._id.toString() === ownerData._id.toString(),
+      (m: any) => m.user && m.user._id && m.user._id.toString() === ownerData._id.toString(),
     );
 
     if (!ownerInMembers && ownerData) {
@@ -359,8 +360,6 @@ export async function updateTeamService(
       updatedAt: team.updatedAt,
     };
   } catch (error) {
-    await session.abortTransaction();
-
     if (error instanceof AppError) {
       throw error;
     }
@@ -374,8 +373,6 @@ export async function updateTeamService(
     }
 
     throw AppError.internal("Failed to update team");
-  } finally {
-    await session.endSession();
   }
 }
 
@@ -446,12 +443,13 @@ export async function addMemberService(
   memberData: AddMemberDTO,
   actorUserId: string,
 ): Promise<TeamResponse> {
-  const session = await Team.startSession();
+  // For standalone MongoDB instances, we cannot use transactions
+  // Instead we'll handle potential inconsistencies with error checking
 
   try {
     const teamObjectId = new Types.ObjectId(teamId);
 
-    const team = await Team.findById(teamObjectId).session(session);
+    const team = await Team.findById(teamObjectId);
 
     if (!team) {
       throw AppError.notFound("Team not found");
@@ -460,7 +458,7 @@ export async function addMemberService(
     // Find user by email
     const userToAdd = await User.findOne({
       email: memberData.email.toLowerCase().trim(),
-    }).session(session);
+    });
 
     if (!userToAdd) {
       throw AppError.notFound(
@@ -477,15 +475,6 @@ export async function addMemberService(
       throw AppError.conflict("User is already a member of this team");
     }
 
-    // Check if user is trying to add themselves as owner
-    if (
-      memberData.role === "admin" &&
-      userToAdd._id.toString() !== actorUserId
-    ) {
-      // Only the person being added can be admin via self-registration
-      // For now, allow admins to add other admins
-    }
-
     // Add member to team
     team.members.push({
       user: userToAdd._id,
@@ -493,21 +482,17 @@ export async function addMemberService(
       joinedAt: new Date(),
     });
 
-    await team.save({ session });
+    await team.save();
 
     // Add team to user's teams array
     if (!userToAdd.teams.includes(teamObjectId)) {
       userToAdd.teams.push(teamObjectId);
-      await userToAdd.save({ session });
+      await userToAdd.save();
     }
-
-    await session.commitTransaction();
 
     // Fetch updated team
     return await getTeamByIdService(teamId, actorUserId);
   } catch (error) {
-    await session.abortTransaction();
-
     if (error instanceof AppError) {
       throw error;
     }
@@ -521,8 +506,6 @@ export async function addMemberService(
     }
 
     throw AppError.internal("Failed to add member");
-  } finally {
-    await session.endSession();
   }
 }
 
@@ -541,13 +524,14 @@ export async function removeMemberService(
   userIdToRemove: string,
   actorUserId: string,
 ): Promise<TeamResponse> {
-  const session = await Team.startSession();
+  // For standalone MongoDB instances, we cannot use transactions
+  // Instead we'll handle potential inconsistencies with error checking
 
   try {
     const teamObjectId = new Types.ObjectId(teamId);
     const userToRemoveObjectId = new Types.ObjectId(userIdToRemove);
 
-    const team = await Team.findById(teamObjectId).session(session);
+    const team = await Team.findById(teamObjectId);
 
     if (!team) {
       throw AppError.notFound("Team not found");
@@ -579,22 +563,17 @@ export async function removeMemberService(
       (m) => m.user.toString() !== userIdToRemove,
     );
 
-    await team.save({ session });
+    await team.save();
 
     // Remove team from user's teams array
     await User.findByIdAndUpdate(
       userToRemoveObjectId,
       { $pull: { teams: teamObjectId } },
-      { session },
     );
-
-    await session.commitTransaction();
 
     // Fetch updated team
     return await getTeamByIdService(teamId, actorUserId);
   } catch (error) {
-    await session.abortTransaction();
-
     if (error instanceof AppError) {
       throw error;
     }
@@ -608,8 +587,6 @@ export async function removeMemberService(
     }
 
     throw AppError.internal("Failed to remove member");
-  } finally {
-    await session.endSession();
   }
 }
 
@@ -630,13 +607,14 @@ export async function updateMemberRoleService(
   newRole: TeamMemberRole,
   actorUserId: string,
 ): Promise<TeamResponse> {
-  const session = await Team.startSession();
+  // For standalone MongoDB instances, we cannot use transactions
+  // Instead we'll handle potential inconsistencies with error checking
 
   try {
     const teamObjectId = new Types.ObjectId(teamId);
     const userObjectId = new Types.ObjectId(userId);
 
-    const team = await Team.findById(teamObjectId).session(session);
+    const team = await Team.findById(teamObjectId);
 
     if (!team) {
       throw AppError.notFound("Team not found");
@@ -664,15 +642,11 @@ export async function updateMemberRoleService(
     // Update member role
     team.members[memberIndex].role = newRole;
 
-    await team.save({ session });
-
-    await session.commitTransaction();
+    await team.save();
 
     // Fetch updated team
     return await getTeamByIdService(teamId, actorUserId);
   } catch (error) {
-    await session.abortTransaction();
-
     if (error instanceof AppError) {
       throw error;
     }
@@ -686,8 +660,6 @@ export async function updateMemberRoleService(
     }
 
     throw AppError.internal("Failed to update member role");
-  } finally {
-    await session.endSession();
   }
 }
 
@@ -730,7 +702,7 @@ export async function getTeamMembersService(
     const members: TeamMemberResponse[] = [];
 
     // Add owner first
-    const ownerData = team.owner as IUser;
+    const ownerData = team.owner as unknown as IUser;
     const ownerObjectId =
       team.owner && (team.owner as any)._id
         ? (team.owner as any)._id
