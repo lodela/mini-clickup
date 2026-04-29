@@ -122,6 +122,8 @@ export interface CorporateInviteParams {
   companyId: string | mongoose.Types.ObjectId | null;
   companyName: string;
   adminName: string;
+  locale?: string;
+  phone?: string;
 }
 
 export interface CorporateInviteResult {
@@ -137,7 +139,7 @@ export interface CorporateInviteResult {
 export async function createCorporateInvitation(
   params: CorporateInviteParams,
 ): Promise<CorporateInviteResult> {
-  const { email, name, role, companyName, adminName } = params;
+  const { email, name, role, companyName, adminName, locale = "en", phone } = params;
 
   try {
     const w1 = DEFAULT_WORDS[Math.floor(Math.random() * DEFAULT_WORDS.length)];
@@ -160,11 +162,12 @@ export async function createCorporateInvitation(
       invitationToken: token,
       emailDomain,
       isActive: true,
+      ...(phone ? { phone } : {}),
     });
 
     const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
     const inviteUrl = `${CLIENT_URL}/login?invitation=${token}`;
-    await sendInvitationEmail(email, adminName, companyName, inviteUrl).catch((err) => {
+    await sendInvitationEmail(email, adminName, companyName, inviteUrl, locale).catch((err) => {
       console.error(`[CorporateInvite] Email failed for ${email}:`, err.message);
     });
 

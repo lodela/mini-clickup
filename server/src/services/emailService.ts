@@ -65,32 +65,54 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
   });
 }
 
-/** Send team invitation email */
+/** Send team invitation email (locale: "en" | "es", defaults to "en") */
 export async function sendInvitationEmail(
   to: string,
   inviterName: string,
   companyName: string,
-  inviteUrl: string
+  inviteUrl: string,
+  locale: string = "en"
 ): Promise<void> {
   const safeInviter = escapeHtml(inviterName);
   const safeCompany = escapeHtml(companyName);
   const safeUrl = encodeURI(inviteUrl);
-  await getTransporter().sendMail({
-    from: FROM(),
-    to,
-    subject: `${safeInviter} invited you to join ${safeCompany} on mini-clickup`,
-    html: `
-      <div style="font-family:sans-serif;max-width:400px;margin:auto">
-        <h2>You're invited!</h2>
+  const isEs = locale.startsWith("es");
+
+  const subject = isEs
+    ? `${safeInviter} te invitó a unirte a ${safeCompany} en mini-clickup`
+    : `${safeInviter} invited you to join ${safeCompany} on mini-clickup`;
+
+  const html = isEs
+    ? `
+      <div style="font-family:sans-serif;max-width:420px;margin:auto;color:#1e293b">
+        <h2 style="color:#6366f1">¡Fuiste invitado!</h2>
+        <p><strong>${safeInviter}</strong> te invitó a unirte a <strong>${safeCompany}</strong> en mini-clickup.</p>
+        <p>Usa el enlace a continuación para acceder con tu contraseña temporal.</p>
+        <a href="${safeUrl}" style="display:inline-block;padding:12px 28px;background:#6366f1;
+           color:#fff;border-radius:9999px;text-decoration:none;font-weight:600;margin:16px 0">
+          Aceptar invitación
+        </a>
+        <p style="color:#6b7280;font-size:13px">
+          Esta invitación expira en 7 días. Si no esperabas este correo, ignóralo.
+        </p>
+      </div>
+    `
+    : `
+      <div style="font-family:sans-serif;max-width:420px;margin:auto;color:#1e293b">
+        <h2 style="color:#6366f1">You're invited!</h2>
         <p><strong>${safeInviter}</strong> invited you to join <strong>${safeCompany}</strong> on mini-clickup.</p>
-        <a href="${safeUrl}" style="display:inline-block;padding:12px 24px;background:#6366f1;
-           color:#fff;border-radius:6px;text-decoration:none;margin:16px 0">
+        <p>Use the link below to sign in with your temporary password.</p>
+        <a href="${safeUrl}" style="display:inline-block;padding:12px 28px;background:#6366f1;
+           color:#fff;border-radius:9999px;text-decoration:none;font-weight:600;margin:16px 0">
           Accept Invitation
         </a>
-        <p style="color:#6b7280;font-size:13px">This invitation expires in 7 days.</p>
+        <p style="color:#6b7280;font-size:13px">
+          This invitation expires in 7 days. If you weren't expecting this email, you can ignore it.
+        </p>
       </div>
-    `,
-  });
+    `;
+
+  await getTransporter().sendMail({ from: FROM(), to, subject, html });
 }
 
 /** Send welcome email after registration complete */

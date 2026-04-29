@@ -1,5 +1,8 @@
 # Git Ignore Pattern
 
+# Playwright MCP snapshots (runtime artefacts)
+.playwright-mcp/
+
 # Dependencies
 node_modules/
 .pnp

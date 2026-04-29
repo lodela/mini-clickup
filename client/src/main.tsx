@@ -1,3 +1,4 @@
+import "@/locales";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";

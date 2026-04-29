@@ -22,6 +22,27 @@ const en = {
       haveAccount: 'Already have an account?',
       signUp: 'Create Account',
       signIn: 'Sign In',
+      welcomeBack: 'Welcome back! Please enter your details.',
+      emailAddress: 'Email Address',
+      signingIn: 'Signing in...',
+      forgotPasswordTitle: 'Forgot Password?',
+      forgotPasswordSubtitle: "No worries! Enter your email and we'll send you a link to reset your password.",
+      sending: 'Sending...',
+      sendResetLink: 'Send Reset Link',
+      backToSignIn: 'Back to Sign In',
+      checkYourEmail: 'Check your email',
+      didntReceive: "Didn't receive the email? Check your spam folder or",
+      tryAnotherAddress: 'try another address',
+      setNewPassword: 'Set New Password',
+      setNewPasswordSubtitle: 'Choose a strong password for your account.',
+      newPassword: 'New Password',
+      updating: 'Updating...',
+      resetPassword: 'Reset Password',
+      passwordReset: 'Password reset!',
+      passwordResetSuccess: 'Your password has been updated. Redirecting to Sign In…',
+      invalidResetLink: 'Invalid or expired reset link.',
+      requestNewLink: 'Request a new one',
+      resetFailed: 'Reset failed. The link may have expired.',
     },
 
     // Common
@@ -70,6 +91,20 @@ const en = {
       chat: 'Chat',
       calendar: 'Calendar',
       settings: 'Settings',
+      vacations: 'Vacations',
+      employees: 'Employees',
+      messenger: 'Messenger',
+      infoPortal: 'Info Portal',
+      support: 'Support',
+      logout: 'Sign Out',
+    },
+
+    // User menu
+    user: {
+      profile: 'My Profile',
+      settings: 'Settings',
+      teams: 'My Teams',
+      signOut: 'Sign Out',
     },
 
     // Tasks
@@ -122,7 +157,8 @@ const en = {
       minLength: 'Must be at least {{length}} characters',
       maxLength: 'Cannot exceed {{length}} characters',
       passwordMatch: 'Passwords do not match',
-      passwordStrength: 'Password must be at least 8 characters',
+      passwordStrength: 'Password must be at least 10 characters',
+      passwordRules: 'Must include uppercase, lowercase, number, and special char',
     },
 
     // Errors
@@ -155,6 +191,27 @@ const es = {
       haveAccount: '¿Ya tienes una cuenta?',
       signUp: 'Crear Cuenta',
       signIn: 'Iniciar Sesión',
+      welcomeBack: '¡Bienvenido! Por favor ingresa tus datos.',
+      emailAddress: 'Correo Electrónico',
+      signingIn: 'Iniciando sesión...',
+      forgotPasswordTitle: '¿Olvidaste tu contraseña?',
+      forgotPasswordSubtitle: '¡Sin problema! Ingresa tu correo y te enviaremos un enlace para restablecerla.',
+      sending: 'Enviando...',
+      sendResetLink: 'Enviar Enlace de Restablecimiento',
+      backToSignIn: 'Volver a Iniciar Sesión',
+      checkYourEmail: 'Revisa tu correo',
+      didntReceive: '¿No recibiste el correo? Revisa tu carpeta de spam o',
+      tryAnotherAddress: 'intenta con otro correo',
+      setNewPassword: 'Establecer Nueva Contraseña',
+      setNewPasswordSubtitle: 'Elige una contraseña segura para tu cuenta.',
+      newPassword: 'Nueva Contraseña',
+      updating: 'Actualizando...',
+      resetPassword: 'Restablecer Contraseña',
+      passwordReset: '¡Contraseña restablecida!',
+      passwordResetSuccess: 'Tu contraseña ha sido actualizada. Redirigiendo al inicio de sesión…',
+      invalidResetLink: 'Enlace inválido o expirado.',
+      requestNewLink: 'Solicitar uno nuevo',
+      resetFailed: 'Restablecimiento fallido. El enlace puede haber expirado.',
     },
 
     // Common
@@ -203,6 +260,20 @@ const es = {
       chat: 'Chat',
       calendar: 'Calendario',
       settings: 'Configuración',
+      vacations: 'Vacaciones',
+      employees: 'Empleados',
+      messenger: 'Mensajería',
+      infoPortal: 'Portal Info',
+      support: 'Soporte',
+      logout: 'Cerrar Sesión',
+    },
+
+    // User menu
+    user: {
+      profile: 'Mi Perfil',
+      settings: 'Configuración',
+      teams: 'Mis Equipos',
+      signOut: 'Cerrar Sesión',
     },
 
     // Tasks
@@ -255,7 +326,8 @@ const es = {
       minLength: 'Debe tener al menos {{length}} caracteres',
       maxLength: 'No puede exceder {{length}} caracteres',
       passwordMatch: 'Las contraseñas no coinciden',
-      passwordStrength: 'La contraseña debe tener al menos 8 caracteres',
+      passwordStrength: 'La contraseña debe tener al menos 10 caracteres',
+      passwordRules: 'Debe incluir mayúscula, minúscula, número y carácter especial',
     },
 
     // Errors
