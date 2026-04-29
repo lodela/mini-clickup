@@ -35,6 +35,11 @@ export interface IUser extends Document {
   jobTitle?: string;
   useCase?: string;
   emailDomain?: string; // extracted from email for fast company matching
+  // Password ritual fields
+  tempPassword?: string | null;
+  tempPasswordUses?: number;
+  mustChangePassword?: boolean;
+  invitationToken?: string | null;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -118,6 +123,10 @@ const userSchema = new Schema<IUser>(
     onboardingStep: { type: Number, default: 0, min: 0, max: 4 },
     onboardingToken: { type: String, default: null, select: false },
     onboardingTokenExpires: { type: Date, default: null, select: false },
+    tempPassword: { type: String, default: null, select: false },
+    tempPasswordUses: { type: Number, default: 0 },
+    mustChangePassword: { type: Boolean, default: false },
+    invitationToken: { type: String, default: null, unique: true, index: true },
     jobTitle: { type: String, default: null, trim: true },
     useCase: { type: String, default: null, trim: true },
     emailDomain: { type: String, default: null, lowercase: true, trim: true, index: true },

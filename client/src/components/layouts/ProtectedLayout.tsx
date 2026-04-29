@@ -19,6 +19,7 @@ import {
 import { ProtectedLayoutTemplate } from "@/components/ui/templates/ProtectedLayoutTemplate";
 import { SidebarOrganism } from "@/components/ui/organisms/SidebarOrganism";
 import { HeaderOrganism } from "@/components/ui/organisms/HeaderOrganism";
+import { PasswordChangeModal } from "@/components/modals/PasswordChangeModal";
 
 export default function ProtectedLayout() {
   const { user, isLoading, logout } = useAuth();
@@ -128,28 +129,36 @@ export default function ProtectedLayout() {
   ];
 
   return (
-    <ProtectedLayoutTemplate
-      isSidebarOpen={isSidebarOpen}
-      sidebar={
-        <SidebarOrganism
-          navItems={navItems}
-          currentPath={location.pathname}
-          onNavigate={(path) => navigate(path)}
-          onLogout={async () => { await logout(); navigate("/login"); }}
-          onSupport={() => console.log("Support clicked")}
-        />
-      }
-      header={
-        <HeaderOrganism
-          user={mockUser}
-          notificationCount={3}
-          onSearch={(val) => console.log("Search:", val)}
-          onNotificationClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          userMenuItems={userMenuItems}
-        />
-      }
-    >
-      <Outlet />
-    </ProtectedLayoutTemplate>
+    <>
+      <PasswordChangeModal 
+        isOpen={true} 
+        onClose={() => {}} 
+        passwordChangeRequired={user?.passwordChangeRequired ?? false} 
+        remainingLogins={user?.remainingLogins ?? 0}
+      />
+      <ProtectedLayoutTemplate
+        isSidebarOpen={isSidebarOpen}
+        sidebar={
+          <SidebarOrganism
+            navItems={navItems}
+            currentPath={location.pathname}
+            onNavigate={(path) => navigate(path)}
+            onLogout={async () => { await logout(); navigate("/login"); }}
+            onSupport={() => console.log("Support clicked")}
+          />
+        }
+        header={
+          <HeaderOrganism
+            user={mockUser}
+            notificationCount={3}
+            onSearch={(val) => console.log("Search:", val)}
+            onNotificationClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            userMenuItems={userMenuItems}
+          />
+        }
+      >
+        <Outlet />
+      </ProtectedLayoutTemplate>
+    </>
   );
 }

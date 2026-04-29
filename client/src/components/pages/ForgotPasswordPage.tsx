@@ -13,6 +13,9 @@ export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [apiMessage, setApiMessage] = useState("");
+
+  const FALLBACK_MESSAGE = "If that email exists, you will receive a reset link.";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,16 +25,22 @@ export default function ForgotPasswordPage() {
     }
     setLoading(true);
     setError("");
+    let resultMessage = FALLBACK_MESSAGE;
     try {
-      await api.post("/auth/forgot-password", { email });
+      const { data } = await api.post<{ success: boolean; message: string }>(
+        "/auth/forgot-password",
+        { email },
+      );
+      resultMessage = data.message ?? FALLBACK_MESSAGE;
     } catch (err) {
-      // Always show success to avoid email enumeration
+      // 404 = email not found — show generic message anyway (anti-enumeration)
       if (err instanceof ApiRequestError && err.status !== 404) {
         setError(err.data?.message ?? "Something went wrong");
         setLoading(false);
         return;
       }
     }
+    setApiMessage(resultMessage);
     setLoading(false);
     setSubmitted(true);
   };
@@ -287,21 +296,11 @@ export default function ForgotPasswordPage() {
                 style={{
                   fontSize: 15,
                   color: "#7D8592",
-                  margin: "0 0 8px",
+                  margin: "0 0 32px",
                   lineHeight: "22px",
                 }}
               >
-                We sent a password reset link to
-              </p>
-              <p
-                style={{
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: "#0A1628",
-                  margin: "0 0 32px",
-                }}
-              >
-                {email}
+                {apiMessage}
               </p>
               <p
                 style={{

@@ -66,6 +66,16 @@
   --sidebar-accent-foreground: #3F8CFF;
   --sidebar-border: rgba(10, 22, 40, 0.06);
   --sidebar-ring: #3F8CFF;
+  /* Corporate Glass Palette */
+  --corp-glass-indigo: rgba(99, 102, 241, 0.2);
+  --corp-glass-indigo-dark: rgba(99, 102, 241, 0.5);
+  --corp-glass-slate: rgba(100, 116, 139, 0.2);
+  --corp-glass-slate-dark: rgba(100, 116, 139, 0.5);
+  --corp-glass-emerald: rgba(16, 185, 129, 0.2);
+  --corp-glass-emerald-dark: rgba(16, 185, 129, 0.5);
+  --corp-glass-complementary: rgba(203, 213, 225, 0.4);
+  --corp-glass-ring: rgba(63, 140, 255, 0.4);
+  --corp-glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
 }
 
 .dark {
@@ -105,6 +115,16 @@
   --sidebar-accent-foreground: #007aff;
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #007aff;
+  /* Corporate Glass Palette (Dark) */
+  --corp-glass-indigo: rgba(99, 102, 241, 0.1);
+  --corp-glass-indigo-dark: rgba(99, 102, 241, 0.3);
+  --corp-glass-slate: rgba(100, 116, 139, 0.1);
+  --corp-glass-slate-dark: rgba(100, 116, 139, 0.3);
+  --corp-glass-emerald: rgba(16, 185, 129, 0.1);
+  --corp-glass-emerald-dark: rgba(16, 185, 129, 0.3);
+  --corp-glass-complementary: rgba(30, 41, 59, 0.4);
+  --corp-glass-ring: rgba(0, 122, 255, 0.3);
+  --corp-glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
@@ -158,6 +178,15 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-corp-glass-indigo: var(--corp-glass-indigo);
+  --color-corp-glass-indigo-dark: var(--corp-glass-indigo-dark);
+  --color-corp-glass-slate: var(--corp-glass-slate);
+  --color-corp-glass-slate-dark: var(--corp-glass-slate-dark);
+  --color-corp-glass-emerald: var(--corp-glass-emerald);
+  --color-corp-glass-emerald-dark: var(--corp-glass-emerald-dark);
+  --color-corp-glass-complementary: var(--corp-glass-complementary);
+  --color-corp-glass-ring: var(--corp-glass-ring);
+  --shadow-corp-glass: var(--corp-glass-shadow);
 }
 
 @layer base {

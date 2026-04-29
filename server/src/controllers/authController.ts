@@ -3,6 +3,7 @@ import crypto from "crypto";
 import User from "../models/User.js";
 import * as tokenService from "../services/tokenService.js";
 import { sendPasswordResetEmail } from "../services/emailService.js";
+import { validatePassword } from "../types/auth.types.js";
 
 /**
  * API Response Interface
@@ -191,12 +192,56 @@ export async function login(
       return;
     }
 
+    // Password Change Ritual Interception
+    if (user.mustChangePassword || user.tempPassword) {
+      // Increment temp password uses
+      user.tempPasswordUses = (user.tempPasswordUses || 0) + 1;
+      await user.save();
+
+      const remainingLogins = 3 - user.tempPasswordUses;
+
+      // If they exceed limits, lock account or force reset
+      if (remainingLogins <= 0 && user.tempPassword) {
+        res.status(403).json({
+          success: false,
+          error: "Temporary password expired",
+          message: "You have exceeded the login attempts for your temporary password. Please request a new one.",
+        });
+        return;
+      }
+
+      // Generate limited-scope token
+      const limitedToken = tokenService.generateAccessToken({
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      }, "password_change");
+
+      res.status(200).json({
+        success: true,
+        data: {
+          user: user.toJSON(),
+          tokens: {
+            accessToken: limitedToken,
+            refreshToken: "", // No refresh token for limited session
+            expiresIn: 900,    // 15 minutes
+            tokenType: "Bearer",
+          },
+          passwordChangeRequired: true,
+          remainingLogins,
+        },
+        message: "Password change required",
+      });
+      return;
+    }
+
     // Generate token pair
     const accessToken = tokenService.generateAccessToken({
       id: user._id,
       email: user.email,
       role: user.role,
     });
+
 
     const refreshToken = tokenService.generateRefreshToken({
       id: user._id,
@@ -392,6 +437,103 @@ export async function getCurrentUser(
       data: {
         user: user.toJSON(),
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Change password ritual
+ * PATCH /api/auth/change-password
+ */
+export async function changePassword(
+  req: Request<unknown, ApiResponse, { newPassword: string }>,
+  res: Response<ApiResponse>,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const { newPassword } = req.body;
+    const userId = (req as any).user?.userId;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        error: "Unauthorized",
+        message: "User not authenticated",
+      });
+      return;
+    }
+
+    // Validate new password against ritual rules:
+    // Min 10 chars, 1 Upper, 1 Num, 1 Special [!#$%&_-?*@]
+    const ritualRequirements: any = {
+      minLength: 10,
+      maxLength: 128,
+      requireUppercase: true,
+      requireLowercase: true,
+      requireNumbers: true,
+      requireSpecialChars: true,
+    };
+
+    const validation = validatePassword(newPassword, ritualRequirements);
+    if (!validation.valid) {
+      res.status(400).json({
+        success: false,
+        error: "Invalid password",
+        message: validation.errors[0],
+      });
+      return;
+    }
+
+    // Atomic update
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        password: newPassword,
+        mustChangePassword: false,
+        tempPassword: null,
+        tempPasswordUses: 0,
+      },
+      { new: true },
+    ).select("+password");
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        error: "User not found",
+        message: "User no longer exists",
+      });
+      return;
+    }
+
+    // Generate full token pair
+    const accessToken = tokenService.generateAccessToken({
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    });
+
+    const refreshToken = tokenService.generateRefreshToken({
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    });
+
+    setAuthCookies(res, accessToken, refreshToken);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        user: user.toJSON(),
+        tokens: {
+          accessToken,
+          refreshToken,
+          expiresIn: 900,
+          tokenType: "Bearer",
+        },
+      },
+      message: "Password updated successfully. You now have full access.",
     });
   } catch (error) {
     next(error);

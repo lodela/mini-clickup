@@ -15,7 +15,7 @@ export interface JWTPayload {
   userId: string;
   email: string;
   role: UserRole;
-  type: "access" | "refresh";
+  type: "access" | "refresh" | "password_change";
   iat?: number;                     // Issued at (timestamp)
   exp?: number;                     // Expiration (timestamp)
   iss?: string;                     // Issuer
@@ -80,8 +80,7 @@ export interface ResetPasswordRequestDTO {
  * Data for changing password (authenticated user)
  */
 export interface ChangePasswordRequestDTO {
-  currentPassword: string;          // required
-  newPassword: string;              // required, min 8 chars
+  newPassword: string;              // required, strict rules
 }
 
 /**
@@ -106,6 +105,8 @@ export interface AuthResponseDTO {
     tokenType: "Bearer";
   };
   message: string;
+  passwordChangeRequired?: boolean;
+  remainingLogins?: number;
 }
 
 /**

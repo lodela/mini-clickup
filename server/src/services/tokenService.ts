@@ -9,7 +9,7 @@ interface TokenPayload extends JwtPayload {
   userId: string;
   email: string;
   role: string;
-  type: "access" | "refresh";
+  type: "access" | "refresh" | "password_change";
 }
 
 /**
@@ -95,14 +95,14 @@ export function generateAccessToken(user: {
   id: Types.ObjectId | string;
   email: string;
   role: string;
-}): string {
+}, type: "access" | "password_change" = "access"): string {
   const { secret, accessExpiresIn } = getJwtConfig();
 
   const payload: TokenPayload = {
     userId: user.id.toString(),
     email: user.email,
     role: user.role,
-    type: "access",
+    type,
   };
 
   const options: SignOptions = {

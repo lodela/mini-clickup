@@ -94,7 +94,7 @@ export default function CreateCompanyModal({ isOpen, onClose, onSuccess }: Creat
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px]" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Nueva Empresa / Cliente</DialogTitle>
           <DialogDescription>

@@ -40,6 +40,17 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+const changePasswordSchema = z.object({
+  newPassword: z
+    .string()
+    .min(10, "Password must be at least 10 characters")
+    .max(128, "Password too long")
+    .regex(
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&_\-?*@]).+$/,
+      "Password must contain at least one uppercase letter, one number, and one special character [!#$%&_-?*@]",
+    ),
+});
+
 /**
  * Rate limiters for auth endpoints
  */
@@ -131,6 +142,17 @@ router.post("/logout", authController.logout);
  * Get current authenticated user
  */
 router.get("/me", authenticate(), authController.getCurrentUser);
+
+/**
+ * PATCH /api/auth/change-password
+ * Change password for temporary account/forced change
+ */
+router.patch(
+  "/change-password",
+  authenticate(),
+  validate(changePasswordSchema),
+  authController.changePassword,
+);
 
 /**
  * POST /api/auth/forgot-password

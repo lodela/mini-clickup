@@ -83,6 +83,7 @@ export default {
       boxShadow: {
         glass: 'var(--shadow-glass)',
         float: 'var(--shadow-float)',
+        'corp-glass': 'var(--shadow-corp-glass)',
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',

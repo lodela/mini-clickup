@@ -1,4 +1,11 @@
 /**
+ * Get a random element from an array
+ */
+export function randomElement<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
  * Date formatting utilities
  */
 

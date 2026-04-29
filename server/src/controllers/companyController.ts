@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
+import mongoose, { HydratedDocument, Types } from "mongoose";
 import Company, { ICompany } from "../models/Company";
-import User from "../models/User";
+import User, { IUser } from "../models/User";
 import ActionLog from "../models/ActionLog";
-import { Types } from "mongoose";
+import * as invitationService from "../services/invitationService.js";
 
 /**
  * Helper to log actions
@@ -65,21 +66,37 @@ export const getAllCompanies = async (req: Request, res: Response) => {
 /**
  * Create a new company and its initial Admin (CLIENT_A)
  */
-export const createCompany = async (req: Request, res: Response) => {
+export const createCompany = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, legalName, rfc, fiscalAddress, primaryContactData } = req.body;
+    const { name, legalName, rfc, fiscalAddress, primaryContactData, sendInvitation } = req.body;
 
-    // 1. Create the primary contact user (CLIENT_A) first if it's new data
-    // Or link to an existing user. For PoC, let's assume we create a new user.
-    const newAdmin = await User.create({
-      name: primaryContactData.name,
-      email: primaryContactData.email,
-      password: "ChangeMe123!", // Default password for first login
-      role: "CLIENT_A",
-      isActive: true,
-    });
+    let newAdmin: HydratedDocument<IUser> | null = null;
 
-    // 2. Create the company linked to this admin
+    if (sendInvitation) {
+      const inviteResult = await invitationService.createCorporateInvitation({
+        email: primaryContactData.email,
+        name: primaryContactData.name,
+        role: "CLIENT_A",
+        companyId: null,
+        companyName: name,
+        adminName: "System Administrator",
+      });
+
+      if (!inviteResult.success || !inviteResult.data) {
+        res.status(400).json({ success: false, message: inviteResult.error ?? "Invitation failed" });
+        return;
+      }
+      newAdmin = inviteResult.data as HydratedDocument<IUser>;
+    } else {
+      newAdmin = await User.create({
+        name: primaryContactData.name,
+        email: primaryContactData.email,
+        password: "ChangeMe123!",
+        role: "CLIENT_A",
+        isActive: true,
+      });
+    }
+
     const company = await Company.create({
       name,
       legalName,
@@ -89,18 +106,16 @@ export const createCompany = async (req: Request, res: Response) => {
       logo: req.file ? `/uploads/logos/${req.file.filename}` : null,
     });
 
-    // 3. Link user back to company
     newAdmin.companyId = company._id as Types.ObjectId;
     await newAdmin.save();
 
-    // 4. Log the action
     await logAction(
       (req as any).user._id,
       "CREATE",
       "Company",
       company._id,
       `Created company ${name} and linked admin ${newAdmin.email}`,
-      { company, admin: newAdmin.email }
+      { company, admin: newAdmin.email },
     );
 
     res.status(201).json({

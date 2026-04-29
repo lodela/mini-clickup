@@ -25,6 +25,8 @@ export interface User {
   companyId?: string;
   teams?: string[];
   isActive: boolean;
+  passwordChangeRequired?: boolean;
+  remainingLogins?: number;
   lastLogin?: string;
   createdAt: string;
   updatedAt: string;

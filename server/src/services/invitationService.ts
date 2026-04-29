@@ -2,9 +2,21 @@
  * Invitation Service — create bulk invitations, validate corporate emails.
  */
 import crypto from "crypto";
+import bcrypt from "bcrypt";
+import mongoose, { HydratedDocument } from "mongoose";
 import Invitation from "../models/Invitation.js";
+import User, { IUser } from "../models/User.js";
 import { sendInvitationEmail } from "./emailService.js";
-import mongoose from "mongoose";
+import { generateFunnyPassword } from "../utils/passwordRitual.js";
+
+/** Default word pool for temporary password generation */
+const DEFAULT_WORDS = [
+  "Alpha", "Bravo", "Delta", "Echo", "Foxtrot",
+  "Golf", "Hotel", "India", "Juliet", "Kilo",
+  "Lima", "Metro", "Ninja", "Oscar", "Papa",
+  "Quest", "Romeo", "Sierra", "Tango", "Ultra",
+  "Victor", "Whisky", "Xtra", "Yankee", "Zulu",
+];
 
 /** Free/personal email provider domains — blocked for invitations */
 const FREE_EMAIL_DOMAINS = new Set([
@@ -101,4 +113,64 @@ export async function createBulkInvitations(
   }
 
   return results;
+}
+
+export interface CorporateInviteParams {
+  email: string;
+  name: string;
+  role: string;
+  companyId: string | mongoose.Types.ObjectId | null;
+  companyName: string;
+  adminName: string;
+}
+
+export interface CorporateInviteResult {
+  success: boolean;
+  data?: HydratedDocument<IUser>;
+  error?: string;
+}
+
+/**
+ * Create a user account with a temporary password and send an invitation email.
+ * Used by GOD_MODE admins when adding a company's primary contact.
+ */
+export async function createCorporateInvitation(
+  params: CorporateInviteParams,
+): Promise<CorporateInviteResult> {
+  const { email, name, role, companyName, adminName } = params;
+
+  try {
+    const w1 = DEFAULT_WORDS[Math.floor(Math.random() * DEFAULT_WORDS.length)];
+    const w2 = DEFAULT_WORDS[Math.floor(Math.random() * DEFAULT_WORDS.length)];
+    const tempPassword = generateFunnyPassword([w1, w2]);
+    const saltRounds = parseInt(process.env.BCRYPT_ROUNDS || "12", 10);
+    const hashedTemp = await bcrypt.hash(tempPassword, saltRounds);
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const emailDomain = email.split("@")[1]?.toLowerCase() ?? "";
+
+    const newUser = await User.create({
+      email,
+      name,
+      role,
+      password: hashedTemp,
+      tempPassword: hashedTemp,
+      tempPasswordUses: 0,
+      mustChangePassword: true,
+      invitationToken: token,
+      emailDomain,
+      isActive: true,
+    });
+
+    const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
+    const inviteUrl = `${CLIENT_URL}/login?invitation=${token}`;
+    await sendInvitationEmail(email, adminName, companyName, inviteUrl).catch((err) => {
+      console.error(`[CorporateInvite] Email failed for ${email}:`, err.message);
+    });
+
+    return { success: true, data: newUser };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return { success: false, error: message };
+  }
 }
