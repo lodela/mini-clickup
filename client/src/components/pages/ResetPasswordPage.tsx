@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
 import * as Label from "@radix-ui/react-label";
 import { api, ApiRequestError } from "@/services/api";
+import { useTranslation } from "react-i18next";
+import i18n from "@/locales";
 
 /**
  * Reset Password Page
@@ -12,6 +14,8 @@ export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") ?? "";
+  const { t } = useTranslation();
+  const lang = i18n.language;
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -24,13 +28,12 @@ export default function ResetPasswordPage() {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!password) errs.password = "Password is required";
-    else if (password.length < 8) errs.password = "Min 8 characters";
+    if (!password) errs.password = t("validation.required");
+    else if (password.length < 8) errs.password = t("validation.passwordStrength");
     else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(password))
-      errs.password =
-        "Must include uppercase, lowercase, number, and special char";
-    if (!confirm) errs.confirm = "Please confirm password";
-    else if (password !== confirm) errs.confirm = "Passwords do not match";
+      errs.password = t("validation.passwordRules");
+    if (!confirm) errs.confirm = t("validation.required");
+    else if (password !== confirm) errs.confirm = t("validation.passwordMatch");
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -47,8 +50,8 @@ export default function ResetPasswordPage() {
     } catch (err) {
       setError(
         err instanceof ApiRequestError
-          ? (err.data?.message ?? "Reset failed")
-          : "Reset failed. The link may have expired.",
+          ? (err.data?.message ?? t("auth.resetFailed"))
+          : t("auth.resetFailed"),
       );
     } finally {
       setLoading(false);
@@ -146,13 +149,13 @@ export default function ResetPasswordPage() {
           {!token ? (
             <div style={{ textAlign: "center" }}>
               <p style={{ color: "#DC2626", fontSize: 15 }}>
-                Invalid or expired reset link.
+                {t("auth.invalidResetLink")}
               </p>
               <Link
                 to="/forgot-password"
                 style={{ color: "#3F8CFF", fontWeight: 700 }}
               >
-                Request a new one
+                {t("auth.requestNewLink")}
               </Link>
             </div>
           ) : success ? (
@@ -179,14 +182,38 @@ export default function ResetPasswordPage() {
                   margin: "0 0 12px",
                 }}
               >
-                Password reset!
+                {t("auth.passwordReset")}
               </h1>
               <p style={{ fontSize: 15, color: "#7D8592", lineHeight: "22px" }}>
-                Your password has been updated. Redirecting to Sign In…
+                {t("auth.passwordResetSuccess")}
               </p>
             </div>
           ) : (
             <>
+              {/* Language toggle */}
+              <div style={{ display: "flex", gap: 6, marginBottom: 24 }}>
+                {(["en", "es"] as const).map((lng) => (
+                  <button
+                    key={lng}
+                    type="button"
+                    onClick={() => i18n.changeLanguage(lng)}
+                    style={{
+                      padding: "4px 12px",
+                      borderRadius: 8,
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      background: lang.startsWith(lng) ? "#3F8CFF" : "transparent",
+                      color: lang.startsWith(lng) ? "#fff" : "#7D8592",
+                      transition: "background 0.15s, color 0.15s",
+                    }}
+                  >
+                    {lng.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+
               <h1
                 style={{
                   fontSize: 28,
@@ -195,7 +222,7 @@ export default function ResetPasswordPage() {
                   margin: "0 0 8px",
                 }}
               >
-                Set New Password
+                {t("auth.setNewPassword")}
               </h1>
               <p
                 style={{
@@ -205,7 +232,7 @@ export default function ResetPasswordPage() {
                   lineHeight: "22px",
                 }}
               >
-                Choose a strong password for your account.
+                {t("auth.setNewPasswordSubtitle")}
               </p>
 
               {error && (
@@ -237,7 +264,7 @@ export default function ResetPasswordPage() {
                       marginBottom: 8,
                     }}
                   >
-                    New Password
+                    {t("auth.newPassword")}
                   </Label.Root>
                   <div style={{ position: "relative" }}>
                     <input
@@ -301,7 +328,7 @@ export default function ResetPasswordPage() {
                       marginBottom: 8,
                     }}
                   >
-                    Confirm Password
+                    {t("auth.confirmPassword")}
                   </Label.Root>
                   <div style={{ position: "relative" }}>
                     <input
@@ -374,7 +401,7 @@ export default function ResetPasswordPage() {
                     boxShadow: "0px 6px 12px rgba(63,140,255,0.264)",
                   }}
                 >
-                  {loading ? "Updating..." : "Reset Password"}
+                  {loading ? t("auth.updating") : t("auth.resetPassword")}
                   {!loading && <ArrowRight size={18} strokeWidth={2.5} />}
                 </button>
               </form>

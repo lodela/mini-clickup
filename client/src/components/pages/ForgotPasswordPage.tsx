@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
 import * as Label from "@radix-ui/react-label";
+import { useTranslation } from "react-i18next";
+import i18n from "@/locales";
 import { api, ApiRequestError } from "@/services/api";
 
 /**
@@ -9,6 +11,7 @@ import { api, ApiRequestError } from "@/services/api";
  * Sends reset link to email
  */
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -20,7 +23,7 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address");
+      setError(t('validation.email'));
       return;
     }
     setLoading(true);
@@ -35,7 +38,7 @@ export default function ForgotPasswordPage() {
     } catch (err) {
       // 404 = email not found — show generic message anyway (anti-enumeration)
       if (err instanceof ApiRequestError && err.status !== 404) {
-        setError(err.data?.message ?? "Something went wrong");
+        setError(err.data?.message ?? t('errors.generic'));
         setLoading(false);
         return;
       }
@@ -75,6 +78,7 @@ export default function ForgotPasswordPage() {
             borderRadius: 24,
             padding: "48px 48px 40px",
             boxShadow: "0px 6px 58px rgba(196,203,214,0.12)",
+            position: "relative",
           }}
         >
           {/* Logo */}
@@ -133,6 +137,44 @@ export default function ForgotPasswordPage() {
             </span>
           </div>
 
+          {/* Language toggle */}
+          <div
+            style={{
+              position: "absolute",
+              top: 20,
+              right: 24,
+              display: "flex",
+              gap: 4,
+              background: "#F4F9FE",
+              borderRadius: 8,
+              padding: 3,
+            }}
+          >
+            {(["en", "es"] as const).map((lang) => (
+              <button
+                key={lang}
+                onClick={() => i18n.changeLanguage(lang)}
+                style={{
+                  padding: "3px 10px",
+                  borderRadius: 6,
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  background:
+                    i18n.language === lang ? "#3F8CFF" : "transparent",
+                  color:
+                    i18n.language === lang ? "#ffffff" : "#7D8592",
+                  transition: "background 0.15s, color 0.15s",
+                }}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
+
           {!submitted ? (
             <>
               <h1
@@ -143,7 +185,7 @@ export default function ForgotPasswordPage() {
                   margin: "0 0 8px",
                 }}
               >
-                Forgot Password?
+                {t('auth.forgotPasswordTitle')}
               </h1>
               <p
                 style={{
@@ -153,8 +195,7 @@ export default function ForgotPasswordPage() {
                   lineHeight: "22px",
                 }}
               >
-                No worries! Enter your email and we'll send you a link to reset
-                your password.
+                {t('auth.forgotPasswordSubtitle')}
               </p>
 
               {error && (
@@ -184,7 +225,7 @@ export default function ForgotPasswordPage() {
                     marginBottom: 8,
                   }}
                 >
-                  Email Address
+                  {t('auth.emailAddress')}
                 </Label.Root>
                 <div style={{ position: "relative", marginBottom: 28 }}>
                   <Mail
@@ -242,7 +283,7 @@ export default function ForgotPasswordPage() {
                     boxShadow: "0px 6px 12px rgba(63,140,255,0.264)",
                   }}
                 >
-                  {loading ? "Sending..." : "Send Reset Link"}
+                  {loading ? t('auth.sending') : t('auth.sendResetLink')}
                   {!loading && <ArrowRight size={18} strokeWidth={2.5} />}
                 </button>
               </form>
@@ -261,7 +302,7 @@ export default function ForgotPasswordPage() {
                   }}
                 >
                   <ArrowLeft size={14} />
-                  Back to Sign In
+                  {t('auth.backToSignIn')}
                 </Link>
               </div>
             </>
@@ -290,7 +331,7 @@ export default function ForgotPasswordPage() {
                   margin: "0 0 12px",
                 }}
               >
-                Check your email
+                {t('auth.checkYourEmail')}
               </h1>
               <p
                 style={{
@@ -310,7 +351,7 @@ export default function ForgotPasswordPage() {
                   marginBottom: 32,
                 }}
               >
-                Didn't receive the email? Check your spam folder or{" "}
+                {t('auth.didntReceive')}{" "}
                 <button
                   onClick={() => setSubmitted(false)}
                   style={{
@@ -322,7 +363,7 @@ export default function ForgotPasswordPage() {
                     fontSize: 13,
                   }}
                 >
-                  try another address
+                  {t('auth.tryAnotherAddress')}
                 </button>
               </p>
               <Link
@@ -338,7 +379,7 @@ export default function ForgotPasswordPage() {
                 }}
               >
                 <ArrowLeft size={14} />
-                Back to Sign In
+                {t('auth.backToSignIn')}
               </Link>
             </div>
           )}

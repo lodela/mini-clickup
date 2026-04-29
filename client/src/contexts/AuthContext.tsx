@@ -58,8 +58,10 @@ interface AuthResponse {
   success: boolean;
   data: {
     user: User;
-    accessToken: string;
-    refreshToken: string;
+    accessToken?: string;
+    refreshToken?: string;
+    passwordChangeRequired?: boolean;
+    remainingLogins?: number;
   };
   message?: string;
 }
@@ -140,7 +142,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (response.data.success && response.data.data.user) {
-        setUser(response.data.data.user);
+        // Merge passwordChangeRequired and remainingLogins from the login response
+        // (the server returns these as top-level fields in data, separate from the user object)
+        const loginData = response.data.data;
+        setUser({
+          ...loginData.user,
+          passwordChangeRequired: loginData.passwordChangeRequired ?? false,
+          remainingLogins: loginData.remainingLogins ?? 0,
+        });
         // Tokens are stored in HttpOnly cookies by backend
       } else {
         throw new Error(response.data.message || "Login failed");

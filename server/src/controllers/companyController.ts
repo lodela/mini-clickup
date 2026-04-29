@@ -68,7 +68,69 @@ export const getAllCompanies = async (req: Request, res: Response) => {
  */
 export const createCompany = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, legalName, rfc, fiscalAddress, primaryContactData, sendInvitation } = req.body;
+    const { name, legalName, rfc, fiscalAddress } = req.body;
+    const sendInvitation = req.body.sendInvitation === "true" || req.body.sendInvitation === true;
+    const locale = (req.body.locale as string) || "en";
+
+    // primaryContactData arrives as JSON string when sent via FormData
+    const rawContact = req.body.primaryContactData;
+    const primaryContactData = typeof rawContact === "string" ? JSON.parse(rawContact) : rawContact;
+
+    if (!primaryContactData?.email || !primaryContactData?.name) {
+      res.status(400).json({ success: false, message: "Datos del administrador incompletos (email y nombre requeridos)" });
+      return;
+    }
+
+    // ── Comprehensive duplicate checks ──────────────────────────────────────
+    type FieldError = { field: string; message: string };
+    const fieldErrors: FieldError[] = [];
+
+    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    // 1. Company name (case-insensitive)
+    const existingByName = await Company.findOne({ name: { $regex: new RegExp(`^${escapeRegex(name)}$`, "i") } });
+    if (existingByName) {
+      fieldErrors.push({ field: "name", message: `La empresa "${name}" ya existe` });
+    }
+
+    // 2. Company legalName (case-insensitive)
+    if (legalName) {
+      const existingByLegal = await Company.findOne({ legalName: { $regex: new RegExp(`^${escapeRegex(legalName)}$`, "i") } });
+      if (existingByLegal) {
+        fieldErrors.push({ field: "legalName", message: `La razón social "${legalName}" ya está registrada` });
+      }
+    }
+
+    // 3. RFC (exact, case-insensitive)
+    if (rfc) {
+      const existingByRfc = await Company.findOne({ rfc: rfc.toUpperCase().trim() });
+      if (existingByRfc) {
+        fieldErrors.push({ field: "rfc", message: `El RFC "${rfc.toUpperCase()}" ya está registrado` });
+      }
+    }
+
+    // 4. Admin email
+    const existingByEmail = await User.findOne({ email: primaryContactData.email.toLowerCase().trim() });
+    if (existingByEmail) {
+      fieldErrors.push({ field: "adminEmail", message: `El email "${primaryContactData.email}" ya está en uso` });
+    }
+
+    // 5. Admin cell phone (stored as 'phone' in User model)
+    if (primaryContactData?.cellPhone) {
+      const existingByPhone = await User.findOne({ phone: primaryContactData.cellPhone.trim() });
+      if (existingByPhone) {
+        fieldErrors.push({ field: "adminCellPhone", message: `El teléfono "${primaryContactData.cellPhone}" ya está registrado` });
+      }
+    }
+
+    if (fieldErrors.length > 0) {
+      res.status(409).json({
+        success: false,
+        message: "Ya existen registros con estos datos. Verifica los campos marcados.",
+        fieldErrors,
+      });
+      return;
+    }
 
     let newAdmin: HydratedDocument<IUser> | null = null;
 
@@ -80,6 +142,8 @@ export const createCompany = async (req: Request, res: Response): Promise<void> 
         companyId: null,
         companyName: name,
         adminName: "System Administrator",
+        locale,
+        phone: primaryContactData.cellPhone ?? undefined,
       });
 
       if (!inviteResult.success || !inviteResult.data) {
@@ -94,17 +158,33 @@ export const createCompany = async (req: Request, res: Response): Promise<void> 
         password: "ChangeMe123!",
         role: "CLIENT_A",
         isActive: true,
+        ...(primaryContactData.cellPhone ? { phone: primaryContactData.cellPhone } : {}),
       });
     }
 
-    const company = await Company.create({
-      name,
-      legalName,
-      rfc,
-      fiscalAddress,
-      primaryContact: newAdmin._id,
-      logo: req.file ? `/uploads/logos/${req.file.filename}` : null,
-    });
+    const slug = name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+
+    let company;
+    try {
+      company = await Company.create({
+        name,
+        legalName,
+        rfc: rfc || undefined,
+        fiscalAddress,
+        slug,
+        primaryContact: newAdmin._id,
+        logo: req.file ? `/uploads/logos/${req.file.filename}` : null,
+      });
+    } catch (companyError: any) {
+      // Rollback: delete the user we just created to avoid orphans
+      await User.findByIdAndDelete(newAdmin._id).catch(() => {});
+      throw companyError;
+    }
 
     newAdmin.companyId = company._id as Types.ObjectId;
     await newAdmin.save();

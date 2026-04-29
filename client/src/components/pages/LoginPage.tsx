@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 
@@ -8,6 +9,7 @@ import { Eye, EyeOff, ArrowRight } from "lucide-react";
  * Split layout: blue brand panel (left) + login form (right)
  */
 export default function LoginPage() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { login, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -21,12 +23,12 @@ export default function LoginPage() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.email) newErrors.email = t('validation.required');
     else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Please enter a valid email";
-    if (!formData.password) newErrors.password = "Password is required";
+      newErrors.email = t('validation.email');
+    if (!formData.password) newErrors.password = t('validation.required');
     else if (formData.password.length < 8)
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = t('validation.passwordStrength');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -307,6 +309,35 @@ export default function LoginPage() {
               boxShadow: "0px 6px 58px rgba(196, 203, 214, 0.104)",
             }}
           >
+            {/* Language toggle EN / ES */}
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
+              {(["en", "es"] as const).map((lang, idx) => (
+                <button
+                  key={lang}
+                  type="button"
+                  onClick={() => i18n.changeLanguage(lang)}
+                  style={{
+                    padding: "4px 14px",
+                    border: "none",
+                    borderRadius: idx === 0 ? "8px 0 0 8px" : "0 8px 8px 0",
+                    cursor: "pointer",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    lineHeight: "18px",
+                    background: i18n.language.startsWith(lang) ? "#3F8CFF" : "transparent",
+                    color: i18n.language.startsWith(lang) ? "#FFFFFF" : "#7D8592",
+                    transition: "background 0.15s, color 0.15s",
+                    outline: "none",
+                    boxShadow: i18n.language.startsWith(lang)
+                      ? "0px 2px 8px rgba(63, 140, 255, 0.3)"
+                      : "none",
+                  }}
+                >
+                  {lang.toUpperCase()}
+                </button>
+              ))}
+            </div>
+
             {/* Card header */}
             <h1
               style={{
@@ -317,7 +348,7 @@ export default function LoginPage() {
                 lineHeight: "36px",
               }}
             >
-              Sign In
+              {t('auth.signIn')}
             </h1>
             <p
               style={{
@@ -328,7 +359,7 @@ export default function LoginPage() {
                 lineHeight: "21.82px",
               }}
             >
-              Welcome back! Please enter your details.
+              {t('auth.welcomeBack')}
             </p>
 
             {/* Server error */}
@@ -362,7 +393,7 @@ export default function LoginPage() {
                     lineHeight: "21.82px",
                   }}
                 >
-                  Email Address
+                  {t('auth.emailAddress')}
                 </label>
                 <input
                   id="email"
@@ -405,7 +436,7 @@ export default function LoginPage() {
                     lineHeight: "21.82px",
                   }}
                 >
-                  Password
+                  {t('auth.password')}
                 </label>
                 <div style={{ position: "relative" }}>
                   <input
@@ -520,7 +551,7 @@ export default function LoginPage() {
                       lineHeight: "21.82px",
                     }}
                   >
-                    Remember me
+                    {t('auth.rememberMe')}
                   </span>
                 </label>
 
@@ -534,7 +565,7 @@ export default function LoginPage() {
                     lineHeight: "21.82px",
                   }}
                 >
-                  Forgot Password?
+                  {t('auth.forgotPasswordTitle')}
                 </Link>
               </div>
 
@@ -588,11 +619,11 @@ export default function LoginPage() {
                         strokeLinecap="round"
                       />
                     </svg>
-                    Signing in...
+                    {t('auth.signingIn')}
                   </>
                 ) : (
                   <>
-                    Sign In
+                    {t('auth.signIn')}
                     <ArrowRight size={20} strokeWidth={2.5} />
                   </>
                 )}
@@ -608,7 +639,7 @@ export default function LoginPage() {
                   lineHeight: "21.82px",
                 }}
               >
-                Don't have an account?{" "}
+                {t('auth.noAccount')}{" "}
                 <Link
                   to="/register"
                   className="login-signup"
@@ -618,7 +649,7 @@ export default function LoginPage() {
                     textDecoration: "none",
                   }}
                 >
-                  Sign up
+                  {t('auth.signUp')}
                 </Link>
               </p>
             </form>

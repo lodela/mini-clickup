@@ -14,6 +14,10 @@ export { cn } from "./utils";
 // Button
 export { Button, buttonVariants } from "./button";
 
+// AppButton
+export { AppButton } from "./app-button";
+export type { AppButtonProps } from "./app-button";
+
 // Input
 export { Input } from "./input";
 

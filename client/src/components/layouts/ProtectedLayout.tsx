@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -37,8 +37,7 @@ export default function ProtectedLayout() {
   }
 
   if (!user) {
-    navigate("/login", { replace: true });
-    return null;
+    return <Navigate to="/login" replace />;
   }
 
   const mockUser = {
@@ -131,7 +130,7 @@ export default function ProtectedLayout() {
   return (
     <>
       <PasswordChangeModal 
-        isOpen={true} 
+        isOpen={user?.passwordChangeRequired ?? false}
         onClose={() => {}} 
         passwordChangeRequired={user?.passwordChangeRequired ?? false} 
         remainingLogins={user?.remainingLogins ?? 0}
