@@ -131,7 +131,7 @@ export default function ProtectedLayout() {
   return (
     <>
       <PasswordChangeModal 
-        isOpen={true} 
+        isOpen={user?.passwordChangeRequired ?? false}
         onClose={() => {}} 
         passwordChangeRequired={user?.passwordChangeRequired ?? false} 
         remainingLogins={user?.remainingLogins ?? 0}
