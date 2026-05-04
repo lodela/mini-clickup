@@ -184,7 +184,7 @@ export default function EditCompanyModal({
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
-      await api.delete(`/api/admin/companies/${company._id}`);
+      await api.delete(`/admin/companies/${company._id}`);
       toast.success(`Empresa "${company.name}" eliminada exitosamente.`);
       onSuccess();
       onClose();
@@ -204,7 +204,7 @@ export default function EditCompanyModal({
       <DialogContent
         className="sm:max-w-[680px] max-h-[90vh] overflow-y-auto glass-dialog"
         onInteractOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={onClose}
+        onEscapeKeyDown={isDeleting ? (e) => e.preventDefault() : onClose}
       >
         <DialogHeader className="pb-2">
           <div className="flex items-center gap-3 mb-1">

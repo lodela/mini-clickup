@@ -375,7 +375,7 @@ export const deleteCompany = async (req: Request, res: Response): Promise<void> 
     }
 
     const companyName = company.name;
-    const requesterId = (req as any).user._id;
+    const requesterId = (req as any).user?.userId;
 
     const deletedCounts = await deleteCompanyWithCascade(id);
 

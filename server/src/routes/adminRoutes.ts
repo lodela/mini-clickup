@@ -12,7 +12,8 @@ import {
   updateDepartment,
   deleteDepartment
 } from "../controllers/departmentController.js";
-import { protect, authorize } from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/authMiddleware.js";
+import { authorize } from "../middleware/auth.js";
 import multer from "multer";
 import path from "path";
 
