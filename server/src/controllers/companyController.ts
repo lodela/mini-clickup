@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import mongoose, { HydratedDocument, Types } from "mongoose";
-import Company, { ICompany } from "../models/Company";
-import User, { IUser } from "../models/User";
-import ActionLog from "../models/ActionLog";
+import crypto from "crypto";
+import Company, { ICompany } from "../models/Company.js";
+import User, { IUser } from "../models/User.js";
+import ActionLog from "../models/ActionLog.js";
 import * as invitationService from "../services/invitationService.js";
 
 /**
@@ -155,7 +156,8 @@ export const createCompany = async (req: Request, res: Response): Promise<void> 
       newAdmin = await User.create({
         name: primaryContactData.name,
         email: primaryContactData.email,
-        password: "ChangeMe123!",
+        password: crypto.randomBytes(24).toString("base64url"),
+        mustChangePassword: true,
         role: "CLIENT_A",
         isActive: true,
         ...(primaryContactData.cellPhone ? { phone: primaryContactData.cellPhone } : {}),

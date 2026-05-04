@@ -9,6 +9,7 @@ interface TokenPayload extends JwtPayload {
   userId: string;
   email: string;
   role: string;
+  companyId?: string;
   type: "access" | "refresh" | "password_change";
 }
 
@@ -95,6 +96,7 @@ export function generateAccessToken(user: {
   id: Types.ObjectId | string;
   email: string;
   role: string;
+  companyId?: Types.ObjectId | string | null;
 }, type: "access" | "password_change" = "access"): string {
   const { secret, accessExpiresIn } = getJwtConfig();
 
@@ -102,6 +104,7 @@ export function generateAccessToken(user: {
     userId: user.id.toString(),
     email: user.email,
     role: user.role,
+    ...(user.companyId && { companyId: user.companyId.toString() }),
     type,
   };
 
@@ -123,6 +126,7 @@ export function generateRefreshToken(user: {
   id: Types.ObjectId | string;
   email: string;
   role: string;
+  companyId?: Types.ObjectId | string | null;
 }): string {
   const { secret, refreshExpiresIn } = getJwtConfig();
 
@@ -130,6 +134,7 @@ export function generateRefreshToken(user: {
     userId: user.id.toString(),
     email: user.email,
     role: user.role,
+    ...(user.companyId && { companyId: user.companyId.toString() }),
     type: "refresh",
   };
 
@@ -219,7 +224,7 @@ export function verifyRefreshToken(token: string): TokenPayload {
  */
 export function rotateRefreshToken(
   oldRefreshToken: string,
-  user: { id: Types.ObjectId | string; email: string; role: string },
+  user: { id: Types.ObjectId | string; email: string; role: string; companyId?: Types.ObjectId | string | null },
 ): TokenPair {
   // Blacklist the old refresh token
   try {

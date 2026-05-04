@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import { Types } from "mongoose";
+import { AuthRequest } from "../middleware/auth.js";
 import ProjectService from "../services/projectService.js";
 
 /**
@@ -6,13 +8,14 @@ import ProjectService from "../services/projectService.js";
  */
 export class ProjectController {
   static async createProject(
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     try {
+      const { companyId } = req.user ?? {};
       const projectData = req.body;
-      const project = await ProjectService.createProject(projectData);
+      const project = await ProjectService.createProject(projectData, companyId);
       res.status(201).json(project);
     } catch (error) {
       next(error);
@@ -20,13 +23,13 @@ export class ProjectController {
   }
 
   static async getProjects(
-    req: Request,
+    req: AuthRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     try {
-      const filters = req.query;
-      const projects = await ProjectService.getProjects(filters);
+      const { companyId } = req.user ?? {};
+      const projects = await ProjectService.getProjects(companyId);
       res.json(projects);
     } catch (error) {
       next(error);

@@ -2,9 +2,19 @@ import { Request, Response, NextFunction } from "express";
 import * as tokenService from "../services/tokenService.js";
 
 /**
- * User Role Type
+ * User Role Type — matches User model's full enum
  */
-export type UserRole = "user" | "admin";
+export type UserRole =
+  | "GOD_MODE"
+  | "CLIENT_A"
+  | "CLIENT_B"
+  | "CLIENT_C"
+  | "DIRECTOR"
+  | "EXECUTIVE"
+  | "MANAGER"
+  | "USER_A"
+  | "USER_B"
+  | "USER_C";
 
 /**
  * Authenticated Request Interface
@@ -14,6 +24,7 @@ export interface AuthRequest extends Request {
     userId: string;
     email: string;
     role: UserRole;
+    companyId?: string;
   };
 }
 
@@ -52,6 +63,7 @@ export function authenticate() {
         userId: payload.userId,
         email: payload.email,
         role: payload.role as UserRole,
+        ...(payload.companyId && { companyId: payload.companyId }),
       };
 
       next();

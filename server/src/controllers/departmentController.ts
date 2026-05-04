@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Department, { IDepartment } from "../models/Department";
-import Company from "../models/Company";
-import ActionLog from "../models/ActionLog";
+import Department, { IDepartment } from "../models/Department.js";
+import Company from "../models/Company.js";
+import ActionLog from "../models/ActionLog.js";
 
 /**
  * Get all departments for the user's company

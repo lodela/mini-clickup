@@ -1,5 +1,5 @@
 import { Router } from "express";
-import SprintController from "../controllers/sprintController";
+import SprintController from "../controllers/sprintController.js";
 import { authenticate } from "../middleware/auth.js";
 
 const router = Router();

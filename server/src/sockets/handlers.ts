@@ -6,6 +6,8 @@
  */
 
 import { Server, Socket } from "socket.io";
+import Team from "../models/Team.js";
+import Project from "../models/Project.js";
 import { getSocketUser, broadcastToTeam, broadcastToProject } from "./index.js";
 
 /**
@@ -19,27 +21,56 @@ export function setupSocketHandlers(io: Server): void {
     console.log(`🔌 User connected: ${socket.id} (userId: ${user?.userId})`);
 
     /**
-     * Join team room
-     * Allows user to receive real-time updates for a specific team
+     * Join team room — requires verified team membership
      */
-    socket.on("join-team", (teamId: string) => {
-      socket.join(`team:${teamId}`);
-      console.log(`User ${socket.id} joined team ${teamId}`);
-      
-      // Confirm join to sender
-      socket.emit("team-joined", { teamId });
+    socket.on("join-team", async (teamId: string) => {
+      if (!user) {
+        socket.emit("error", { message: "Authentication required" });
+        return;
+      }
+      try {
+        const team = await Team.findOne({
+          _id: teamId,
+          "members.user": user.userId,
+        }).lean();
+        if (!team) {
+          socket.emit("error", { message: "Not a member of this team" });
+          return;
+        }
+        socket.join(`team:${teamId}`);
+        socket.emit("team-joined", { teamId });
+      } catch {
+        socket.emit("error", { message: "Failed to join team room" });
+      }
     });
 
     /**
-     * Join project room
-     * Allows user to receive real-time updates for a specific project
+     * Join project room — requires verified project membership via team
      */
-    socket.on("join-project", (projectId: string) => {
-      socket.join(`project:${projectId}`);
-      console.log(`User ${socket.id} joined project ${projectId}`);
-      
-      // Confirm join to sender
-      socket.emit("project-joined", { projectId });
+    socket.on("join-project", async (projectId: string) => {
+      if (!user) {
+        socket.emit("error", { message: "Authentication required" });
+        return;
+      }
+      try {
+        const project = await Project.findById(projectId).lean();
+        if (!project) {
+          socket.emit("error", { message: "Project not found" });
+          return;
+        }
+        const team = await Team.findOne({
+          _id: project.team,
+          "members.user": user.userId,
+        }).lean();
+        if (!team) {
+          socket.emit("error", { message: "Not a member of this project's team" });
+          return;
+        }
+        socket.join(`project:${projectId}`);
+        socket.emit("project-joined", { projectId });
+      } catch {
+        socket.emit("error", { message: "Failed to join project room" });
+      }
     });
 
     /**

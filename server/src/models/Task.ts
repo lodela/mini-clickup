@@ -42,6 +42,8 @@ export interface ITask extends Document {
   updatedAt: Date;
   updateStatus(newStatus: TaskStatus): Promise<void>;
   addComment(content: string, author: Types.ObjectId): Promise<ITaskComment>;
+  convertToBug(reason: string): Promise<ITask>;
+  approveForSprint(sprintId: Types.ObjectId): Promise<ITask>;
   toJSON(): {
     _id: Types.ObjectId;
     taskNumber: string;
@@ -248,6 +250,34 @@ taskSchema.methods.addComment = async function (
 
   return comment;
 };
+
+/**
+ * Instance method: Convert task to bug (when QA rejects)
+ */
+taskSchema.methods.convertToBug = async function (reason: string): Promise<ITask> {
+  this.type = "bug";
+  this.status = "backlog";
+  this.comments = this.comments ?? [];
+  this.comments.push({
+    id: new Types.ObjectId().toString(),
+    content: `Converted to bug: ${reason}`,
+    author: this.reporter,
+    createdAt: new Date(),
+  });
+  await this.save();
+  return this as ITask;
+};
+
+/**
+ * Instance method: Approve task for a sprint (when QA approves)
+ */
+taskSchema.methods.approveForSprint = async function (sprintId: Types.ObjectId): Promise<ITask> {
+  this.sprintId = sprintId;
+  this.status = "approved";
+  await this.save();
+  return this as ITask;
+};
+
 
 /**
  * Static method: Generate task number

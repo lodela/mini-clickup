@@ -1,31 +1,49 @@
 import { Types } from "mongoose";
 import Project from "../models/Project.js";
 import { IProject } from "../models/Project.js";
+import Team from "../models/Team.js";
 
 /**
  * Service layer for Project business logic
  */
 export class ProjectService {
   /**
-   * Create a new project
+   * Create a new project — validates team belongs to caller's company
    */
   static async createProject(
     projectData: Partial<IProject>,
+    companyId?: string,
   ): Promise<IProject> {
+    if (companyId && projectData.team) {
+      const team = await Team.findOne({
+        _id: projectData.team,
+        companyId: new Types.ObjectId(companyId),
+      }).lean();
+      if (!team) {
+        throw Object.assign(new Error("Team not found or not in your company"), { status: 403 });
+      }
+    }
     const project = new Project(projectData);
     return await project.save();
   }
 
   /**
-   * Get projects with optional filtering
+   * Get projects scoped to the caller's company
    */
-  static async getProjects(
-    filters: Record<string, unknown> = {},
-  ): Promise<IProject[]> {
-    return await Project.find(filters).populate(
-      "owner members",
-      "name email avatar",
-    );
+  static async getProjects(companyId?: string): Promise<IProject[]> {
+    if (companyId) {
+      const teams = await Team.find(
+        { companyId: new Types.ObjectId(companyId) },
+        { _id: 1 },
+      ).lean();
+      const teamIds = teams.map((t) => t._id);
+      return await Project.find({ team: { $in: teamIds } }).populate(
+        "owner members",
+        "name email avatar",
+      );
+    }
+    // GOD_MODE: no company filter
+    return await Project.find().populate("owner members", "name email avatar");
   }
 
   /**

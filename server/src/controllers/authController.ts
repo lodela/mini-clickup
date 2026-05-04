@@ -114,12 +114,14 @@ export async function register(
       id: user._id,
       email: user.email,
       role: user.role,
+      companyId: user.companyId,
     });
 
     const refreshToken = tokenService.generateRefreshToken({
       id: user._id,
       email: user.email,
       role: user.role,
+      companyId: user.companyId,
     });
 
     // Set cookies
@@ -215,6 +217,7 @@ export async function login(
         id: user._id,
         email: user.email,
         role: user.role,
+        companyId: user.companyId,
       }, "password_change");
 
       res.status(200).json({
@@ -240,6 +243,7 @@ export async function login(
       id: user._id,
       email: user.email,
       role: user.role,
+      companyId: user.companyId,
     });
 
 
@@ -247,6 +251,7 @@ export async function login(
       id: user._id,
       email: user.email,
       role: user.role,
+      companyId: user.companyId,
     });
 
     // Set cookies
@@ -325,6 +330,7 @@ export async function refreshToken(
         id: user._id,
         email: user.email,
         role: user.role,
+        companyId: user.companyId,
       });
 
     // Set new cookies
@@ -486,17 +492,8 @@ export async function changePassword(
       return;
     }
 
-    // Atomic update
-    const user = await User.findByIdAndUpdate(
-      userId,
-      {
-        password: newPassword,
-        mustChangePassword: false,
-        tempPassword: null,
-        tempPasswordUses: 0,
-      },
-      { new: true },
-    ).select("+password");
+    // Load user and use save() so the pre('save') bcrypt hook fires
+    const user = await User.findById(userId).select("+password");
 
     if (!user) {
       res.status(404).json({
@@ -507,17 +504,25 @@ export async function changePassword(
       return;
     }
 
+    user.password = newPassword;
+    user.mustChangePassword = false;
+    user.tempPassword = null;
+    user.tempPasswordUses = 0;
+    await user.save();
+
     // Generate full token pair
     const accessToken = tokenService.generateAccessToken({
       id: user._id,
       email: user.email,
       role: user.role,
+      companyId: user.companyId,
     });
 
     const refreshToken = tokenService.generateRefreshToken({
       id: user._id,
       email: user.email,
       role: user.role,
+      companyId: user.companyId,
     });
 
     setAuthCookies(res, accessToken, refreshToken);

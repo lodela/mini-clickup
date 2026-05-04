@@ -3,14 +3,14 @@ import {
   createCompany, 
   getAllCompanies, 
   getCompanyById 
-} from "../controllers/companyController";
+} from "../controllers/companyController.js";
 import { 
   getDepartments, 
   createDepartment,
   updateDepartment,
   deleteDepartment
-} from "../controllers/departmentController";
-import { protect, authorize } from "../middleware/authMiddleware";
+} from "../controllers/departmentController.js";
+import { protect, authorize } from "../middleware/authMiddleware.js";
 import multer from "multer";
 import path from "path";
 
