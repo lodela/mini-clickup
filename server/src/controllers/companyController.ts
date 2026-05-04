@@ -5,6 +5,7 @@ import Company, { ICompany } from "../models/Company.js";
 import User, { IUser } from "../models/User.js";
 import ActionLog from "../models/ActionLog.js";
 import * as invitationService from "../services/invitationService.js";
+import { deleteCompanyWithCascade } from "../services/companyService.js";
 
 /**
  * Helper to log actions
@@ -349,6 +350,49 @@ export const getCompanyById = async (req: Request, res: Response): Promise<void>
     }
 
     res.status(200).json({ success: true, data: company });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Delete a company and all of its associated data (cascade).
+ * Restricted to GOD_MODE only.
+ */
+export const deleteCompany = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+
+    if (!mongoose.isValidObjectId(id)) {
+      res.status(400).json({ success: false, message: "ID de empresa inválido" });
+      return;
+    }
+
+    const company = await Company.findById(id);
+    if (!company) {
+      res.status(404).json({ success: false, message: "Empresa no encontrada" });
+      return;
+    }
+
+    const companyName = company.name;
+    const requesterId = (req as any).user._id;
+
+    const deletedCounts = await deleteCompanyWithCascade(id);
+
+    await logAction(
+      requesterId,
+      "DELETE",
+      "Company",
+      id,
+      `Deleted company "${companyName}" and all related data`,
+      { deletedCounts },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Empresa "${companyName}" y todo su contenido han sido eliminados.`,
+      data: { deletedCounts },
+    });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }

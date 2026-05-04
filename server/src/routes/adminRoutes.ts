@@ -4,6 +4,7 @@ import {
   getAllCompanies, 
   getCompanyById,
   updateCompany,
+  deleteCompany,
 } from "../controllers/companyController.js";
 import { 
   getDepartments, 
@@ -50,7 +51,8 @@ router.route("/companies")
 
 router.route("/companies/:id")
   .get(getCompanyById)
-  .patch(upload.single("logo"), updateCompany);
+  .patch(upload.single("logo"), updateCompany)
+  .delete(authorize("GOD_MODE"), deleteCompany);
 
 router.route("/departments")
   .get(getDepartments)

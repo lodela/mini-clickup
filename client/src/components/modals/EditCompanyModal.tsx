@@ -27,9 +27,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AppButton } from "@/components/ui/app-button";
-import { Building2, Loader2 } from "lucide-react";
+import { AlertTriangle, Building2, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { compressImage } from "@/utils/compressImage";
+import { api, ApiRequestError } from "@/services/api";
 
 const formSchema = z.object({
   name: z.string().min(2, "Nombre comercial es requerido"),
@@ -76,6 +77,8 @@ export default function EditCompanyModal({
   const [logo, setLogo] = useState<File | null>(null);
   const [logoCompressing, setLogoCompressing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<FormValues>({
@@ -100,6 +103,7 @@ export default function EditCompanyModal({
         status: company.status || "Active",
       });
       setLogo(null);
+      setConfirmDelete(false);
       const timer = setTimeout(() => nameInputRef.current?.focus(), 120);
       return () => clearTimeout(timer);
     }
@@ -174,6 +178,24 @@ export default function EditCompanyModal({
       toast.error("Error de conexión con el servidor");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      await api.delete(`/api/admin/companies/${company._id}`);
+      toast.success(`Empresa "${company.name}" eliminada exitosamente.`);
+      onSuccess();
+      onClose();
+    } catch (err) {
+      const message = err instanceof ApiRequestError
+        ? (err.data?.message ?? "Error al eliminar la empresa")
+        : "Error de conexión con el servidor";
+      toast.error(message);
+    } finally {
+      setIsDeleting(false);
+      setConfirmDelete(false);
     }
   };
 
@@ -347,21 +369,68 @@ export default function EditCompanyModal({
               )}
             />
 
-            <DialogFooter className="pt-2 gap-2">
-              <AppButton
-                type="button"
-                variant="cancel"
-                onClick={onClose}
-              >
-                Cancelar
-              </AppButton>
-              <AppButton
-                type="submit"
-                variant="primary"
-                loading={isLoading}
-              >
-                {isLoading ? "Guardando..." : "Actualizar Empresa"}
-              </AppButton>
+            <DialogFooter className="pt-2 gap-2 flex-col sm:flex-col">
+              {/* Inline delete confirmation zone */}
+              {confirmDelete ? (
+                <div className="w-full rounded-xl border border-red-200 bg-red-50/80 p-3 flex flex-col gap-2">
+                  <div className="flex items-start gap-2 text-red-700">
+                    <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                    <span className="text-sm font-medium">
+                      ¿Estás seguro? Se eliminarán <strong>"{company.name}"</strong> y{" "}
+                      <strong>todo su contenido</strong> (departamentos, equipos, proyectos, tareas,
+                      usuarios, etc.). <span className="underline">Esta acción no puede deshacerse.</span>
+                    </span>
+                  </div>
+                  <div className="flex gap-2 justify-end">
+                    <AppButton
+                      type="button"
+                      variant="cancel"
+                      onClick={() => setConfirmDelete(false)}
+                      disabled={isDeleting}
+                    >
+                      No, cancelar
+                    </AppButton>
+                    <AppButton
+                      type="button"
+                      variant="primary"
+                      loading={isDeleting}
+                      onClick={handleDelete}
+                      className="bg-red-600 hover:bg-red-700 focus-visible:ring-red-500"
+                    >
+                      {isDeleting ? "Eliminando..." : "Sí, eliminar todo"}
+                    </AppButton>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between w-full gap-2 flex-wrap">
+                  <AppButton
+                    type="button"
+                    variant="cancel"
+                    onClick={() => setConfirmDelete(true)}
+                    disabled={isLoading}
+                    className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+                  >
+                    <Trash2 className="w-4 h-4 mr-1.5" />
+                    Eliminar empresa y todo su contenido
+                  </AppButton>
+                  <div className="flex gap-2">
+                    <AppButton
+                      type="button"
+                      variant="cancel"
+                      onClick={onClose}
+                    >
+                      Cancelar
+                    </AppButton>
+                    <AppButton
+                      type="submit"
+                      variant="primary"
+                      loading={isLoading}
+                    >
+                      {isLoading ? "Guardando..." : "Actualizar Empresa"}
+                    </AppButton>
+                  </div>
+                </div>
+              )}
             </DialogFooter>
           </form>
         </Form>
