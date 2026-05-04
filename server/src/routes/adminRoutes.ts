@@ -2,7 +2,8 @@ import express from "express";
 import { 
   createCompany, 
   getAllCompanies, 
-  getCompanyById 
+  getCompanyById,
+  updateCompany,
 } from "../controllers/companyController.js";
 import { 
   getDepartments, 
@@ -48,7 +49,8 @@ router.route("/companies")
   .post(upload.single("logo"), createCompany);
 
 router.route("/companies/:id")
-  .get(getCompanyById);
+  .get(getCompanyById)
+  .patch(upload.single("logo"), updateCompany);
 
 router.route("/departments")
   .get(getDepartments)

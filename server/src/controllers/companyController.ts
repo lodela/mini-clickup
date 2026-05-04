@@ -210,6 +210,132 @@ export const createCompany = async (req: Request, res: Response): Promise<void> 
 };
 
 /**
+ * Update company details
+ */
+export const updateCompany = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { name, legalName, rfc, fiscalAddress, status } = req.body;
+
+    // Fetch existing company
+    const existing = await Company.findById(id);
+    if (!existing) {
+      res.status(404).json({ success: false, message: "Company not found" });
+      return;
+    }
+
+    // ── Duplicate checks (exclude current company) ──────────────────────────
+    type FieldError = { field: string; message: string };
+    const fieldErrors: FieldError[] = [];
+
+    const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    // 1. Company name (case-insensitive)
+    if (name !== undefined && name !== existing.name) {
+      const existingByName = await Company.findOne({
+        _id: { $ne: id },
+        name: { $regex: new RegExp(`^${escapeRegex(name)}$`, "i") },
+      });
+      if (existingByName) {
+        fieldErrors.push({ field: "name", message: `La empresa "${name}" ya existe` });
+      }
+    }
+
+    // 2. Company legalName (case-insensitive)
+    if (legalName !== undefined && legalName !== existing.legalName) {
+      const existingByLegal = await Company.findOne({
+        _id: { $ne: id },
+        legalName: { $regex: new RegExp(`^${escapeRegex(legalName)}$`, "i") },
+      });
+      if (existingByLegal) {
+        fieldErrors.push({ field: "legalName", message: `La razón social "${legalName}" ya está registrada` });
+      }
+    }
+
+    // 3. RFC (exact, case-insensitive)
+    if (rfc !== undefined && rfc.toUpperCase().trim() !== existing.rfc) {
+      const existingByRfc = await Company.findOne({
+        _id: { $ne: id },
+        rfc: rfc.toUpperCase().trim(),
+      });
+      if (existingByRfc) {
+        fieldErrors.push({ field: "rfc", message: `El RFC "${rfc.toUpperCase()}" ya está registrado` });
+      }
+    }
+
+    if (fieldErrors.length > 0) {
+      res.status(409).json({
+        success: false,
+        message: "Ya existen registros con estos datos. Verifica los campos marcados.",
+        fieldErrors,
+      });
+      return;
+    }
+
+    // ── Build update payload (only provided fields) ─────────────────────────
+    const updateData: Record<string, any> = {};
+
+    if (name !== undefined) updateData.name = name;
+    if (legalName !== undefined) updateData.legalName = legalName;
+    if (rfc !== undefined) updateData.rfc = rfc.toUpperCase().trim();
+    if (fiscalAddress !== undefined) updateData.fiscalAddress = fiscalAddress;
+    if (status !== undefined) updateData.status = status;
+
+    // Logo uploaded via multer
+    if (req.file) {
+      updateData.logo = `/uploads/logos/${req.file.filename}`;
+    }
+
+    // Nothing to update
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({ success: false, message: "No hay campos para actualizar" });
+      return;
+    }
+
+    const company = await Company.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    }).populate("primaryContact", "name email role");
+
+    // Build changes object for audit log
+    const changes = {
+      old: {
+        name: existing.name,
+        legalName: existing.legalName,
+        rfc: existing.rfc,
+        fiscalAddress: existing.fiscalAddress,
+        status: existing.status,
+        logo: existing.logo,
+      },
+      new: {
+        name: updateData.name ?? existing.name,
+        legalName: updateData.legalName ?? existing.legalName,
+        rfc: updateData.rfc ?? existing.rfc,
+        fiscalAddress: updateData.fiscalAddress ?? existing.fiscalAddress,
+        status: updateData.status ?? existing.status,
+        logo: updateData.logo ?? existing.logo,
+      },
+    };
+
+    await logAction(
+      (req as any).user._id,
+      "UPDATE",
+      "Company",
+      id,
+      `Updated company ${company!.name}`,
+      changes,
+    );
+
+    res.status(200).json({
+      success: true,
+      data: company,
+    });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+/**
  * Get company details with deep stats
  */
 export const getCompanyById = async (req: Request, res: Response): Promise<void> => {

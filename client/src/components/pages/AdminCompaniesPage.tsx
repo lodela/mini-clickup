@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Plus, LayoutGrid, List, Folder, History, Ticket, Building2, User, Search } from "lucide-react";
+import { Plus, LayoutGrid, List, Folder, History, Ticket, Building2, User, Search, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import CreateCompanyModal from "@/components/modals/CreateCompanyModal";
+import EditCompanyModal from "@/components/modals/EditCompanyModal";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 interface CompanyStats {
@@ -30,8 +32,10 @@ interface Company {
 }
 
 export default function AdminCompaniesPage() {
+  const { user } = useAuth();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editCompany, setEditCompany] = useState<Company | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState("");
@@ -83,6 +87,14 @@ export default function AdminCompaniesPage() {
         onClose={() => setIsModalOpen(false)} 
         onSuccess={() => fetchCompanies(true)} 
       />
+      {editCompany && (
+        <EditCompanyModal
+          isOpen={!!editCompany}
+          onClose={() => setEditCompany(null)}
+          onSuccess={() => fetchCompanies(true)}
+          company={editCompany}
+        />
+      )}
 
       <div className="flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -159,6 +171,19 @@ export default function AdminCompaniesPage() {
               >
                 {viewMode === "grid" ? (
                   <>
+                    {user?.role === "GOD_MODE" && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setEditCompany(company);
+                        }}
+                        className="absolute top-4 left-4 z-10 p-1.5 rounded-lg bg-white/80 border border-slate-200 shadow-sm text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 opacity-0 group-hover:opacity-100 transition-all duration-200"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                     <Avatar className="h-24 w-24 border-4 border-background shadow-lg ring-1 ring-muted/50 group-hover:scale-110 transition-transform duration-300">
                       <AvatarImage src={company.logo || ""} alt={company.name} className="object-cover" />
                       <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary font-bold text-2xl">
@@ -233,7 +258,22 @@ export default function AdminCompaniesPage() {
                           <span className="text-[8px] uppercase opacity-60">Tickets</span>
                         </div>
                       </div>
-                      <Badge variant="outline" className="text-[10px] h-6 px-3 font-bold uppercase">{company.status}</Badge>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="text-[10px] h-6 px-3 font-bold uppercase">{company.status}</Badge>
+                        {user?.role === "GOD_MODE" && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setEditCompany(company);
+                            }}
+                            className="p-1.5 rounded-lg bg-white/80 border border-slate-200 shadow-sm text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-all duration-200"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </>
                 )}
