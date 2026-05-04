@@ -26,7 +26,7 @@ export function ProtectedLayoutTemplate({
   isSidebarOpen,
 }: ProtectedLayoutTemplateProps) {
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f5f6fa]">
+    <div className="flex h-screen overflow-hidden glass-bg">
       {/* Sidebar — slides in/out */}
       <div
         className="fixed left-0 top-0 bottom-0 z-20 p-5 transition-transform duration-300 ease-in-out"

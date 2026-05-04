@@ -46,7 +46,7 @@ export function SidebarOrganism({
 
   return (
     <aside
-      className="w-[240px] h-full bg-white rounded-[24px] shadow-[0px_6px_58px_0px_rgba(196,203,214,0.1)] flex flex-col"
+      className="w-[240px] h-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-[24px] shadow-[0px_6px_58px_0px_rgba(196,203,214,0.1)] flex flex-col"
       role="navigation"
       aria-label={t('aria.mainNav')}
     >

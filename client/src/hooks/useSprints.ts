@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import { api, ApiRequestError } from '@/services/api';
 
 interface ISprint {
   _id: string;
@@ -25,10 +25,14 @@ export const useSprints = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('/api/sprints');
+      const response = await api.get<ISprint[]>('/sprints');
       setSprints(response.data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch sprints');
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to fetch sprints';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -39,12 +43,16 @@ export const useSprints = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('/api/sprints', sprintData);
+      const response = await api.post<ISprint>('/sprints', sprintData);
       setSprints((prev) => [...prev, response.data]);
       return response.data;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create sprint');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to create sprint';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -55,12 +63,16 @@ export const useSprints = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`/api/sprints/${id}`, updateData);
+      const response = await api.put<ISprint>(`/sprints/${id}`, updateData);
       setSprints((prev) => prev.map((sprint) => (sprint._id === id ? response.data : sprint)));
       return response.data;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update sprint');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to update sprint';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -71,11 +83,15 @@ export const useSprints = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.delete(`/api/sprints/${id}`);
+      await api.delete<{ message: string }>(`/sprints/${id}`);
       setSprints((prev) => prev.filter((sprint) => sprint._id !== id));
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete sprint');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to delete sprint';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }

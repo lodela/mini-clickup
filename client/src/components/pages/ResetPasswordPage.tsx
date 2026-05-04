@@ -69,11 +69,10 @@ export default function ResetPasswordPage() {
       `}</style>
 
       <div
-        className="rp-root"
+        className="rp-root glass-theme"
         style={{
           minHeight: "100vh",
           minWidth: "100vw",
-          background: "#F4F9FE",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AppCatalogProvider } from "@/contexts/AppCatalogContext";
 import { SocketProvider } from "@/contexts/SocketContext";
 import { router } from "./router";
 import "./index.css";
@@ -10,9 +11,11 @@ import "./index.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <SocketProvider>
-        <RouterProvider router={router} />
-      </SocketProvider>
+      <AppCatalogProvider>
+        <SocketProvider>
+          <RouterProvider router={router} />
+        </SocketProvider>
+      </AppCatalogProvider>
     </AuthProvider>
   </StrictMode>,
 );

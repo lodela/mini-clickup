@@ -505,11 +505,10 @@ export default function RegisterPage() {
       `}</style>
 
       <div
-        className="reg-root"
+        className="reg-root glass-theme"
         style={{
           position: "fixed",
           inset: 0,
-          background: "#F4F9FE",
           display: "flex",
           flexDirection: "column",
         }}

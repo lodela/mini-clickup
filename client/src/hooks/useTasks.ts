@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Task as ITask } from '../types/index';
-import axios from 'axios';
+import { api, ApiRequestError } from '@/services/api';
 
 /**
  * Custom hook for managing task data
@@ -15,10 +15,14 @@ export const useTasks = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('/api/tasks');
+      const response = await api.get<ITask[]>('/tasks');
       setTasks(response.data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch tasks');
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to fetch tasks';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -29,12 +33,16 @@ export const useTasks = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('/api/tasks', taskData);
+      const response = await api.post<ITask>('/tasks', taskData);
       setTasks((prev) => [...prev, response.data]);
       return response.data;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create task');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to create task';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -45,12 +53,16 @@ export const useTasks = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`/api/tasks/${id}`, updateData);
+      const response = await api.put<ITask>(`/tasks/${id}`, updateData);
       setTasks((prev) => prev.map((task) => (task._id === id ? response.data : task)));
       return response.data;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update task');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to update task';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -61,11 +73,15 @@ export const useTasks = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.delete(`/api/tasks/${id}`);
+      await api.delete<{ message: string }>(`/tasks/${id}`);
       setTasks((prev) => prev.filter((task) => task._id !== id));
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete task');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to delete task';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }

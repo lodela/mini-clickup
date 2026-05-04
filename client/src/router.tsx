@@ -3,6 +3,7 @@ import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import GuestLayout from "@/components/layouts/GuestLayout";
+import AdminLayout from "@/components/layouts/AdminLayout";
 
 // ── Lazy pages ────────────────────────────────────────────────────────────────
 // Suspense is handled inside ProtectedLayout / GuestLayout wrapping their Outlet.
@@ -16,6 +17,7 @@ const ResetPasswordPage = lazy(
 );
 const DashboardPage = lazy(() => import("@/components/pages/DashboardPage"));
 const ProjectsPage = lazy(() => import("@/components/pages/ProjectsPage"));
+const ProjectDetailPage = lazy(() => import("@/components/pages/ProjectDetailPage"));
 const TasksPage = lazy(() => import("@/components/pages/TasksPage"));
 const TeamPage = lazy(() => import("@/components/pages/TeamPage"));
 const ChatPage = lazy(() => import("@/components/pages/ChatPage"));
@@ -53,6 +55,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/dashboard", element: <DashboardPage /> },
       { path: "/projects", element: <ProjectsPage /> },
+      { path: "/projects/:id", element: <ProjectDetailPage /> },
       { path: "/tasks", element: <TasksPage /> },
       { path: "/team", element: <TeamPage /> },
       { path: "/chat", element: <ChatPage /> },
@@ -61,9 +64,21 @@ export const router = createBrowserRouter([
       { path: "/backlog", element: <BacklogPage /> },
       { path: "/vacations", element: <VacationsPage /> },
       { path: "/info", element: <InfoPortalPage /> },
-      { path: "/admin/companies", element: <AdminCompaniesPage /> },
-      { path: "/admin/companies/:companyId/departments", element: <AdminDepartmentsPage /> },
-      { path: "/admin/companies/:companyId/departments/:departmentId/teams", element: <AdminTeamsPage /> },
+    ],
+  },
+
+  // Admin routes — scoped AdminProvider via AdminLayout
+  {
+    element: <ProtectedLayout />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { path: "/admin/companies", element: <AdminCompaniesPage /> },
+          { path: "/admin/companies/:companyId/departments", element: <AdminDepartmentsPage /> },
+          { path: "/admin/companies/:companyId/departments/:departmentId/teams", element: <AdminTeamsPage /> },
+        ],
+      },
     ],
   },
 

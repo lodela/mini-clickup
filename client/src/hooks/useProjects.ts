@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Project as IProject } from '../types/index';
-import axios from 'axios';
+import { api, ApiRequestError } from '@/services/api';
 
 /**
  * Custom hook for managing project data
@@ -15,10 +15,14 @@ export const useProjects = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('/api/projects');
+      const response = await api.get<IProject[]>('/projects');
       setProjects(response.data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch projects');
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to fetch projects';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -29,12 +33,16 @@ export const useProjects = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('/api/projects', projectData);
+      const response = await api.post<IProject>('/projects', projectData);
       setProjects((prev) => [...prev, response.data]);
       return response.data;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create project');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to create project';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -45,12 +53,16 @@ export const useProjects = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`/api/projects/${id}`, updateData);
+      const response = await api.put<IProject>(`/projects/${id}`, updateData);
       setProjects((prev) => prev.map((project) => (project._id === id ? response.data : project)));
       return response.data;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update project');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to update project';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -61,11 +73,15 @@ export const useProjects = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.delete(`/api/projects/${id}`);
+      await api.delete<{ message: string }>(`/projects/${id}`);
       setProjects((prev) => prev.filter((project) => project._id !== id));
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete project');
-      throw err;
+      const errorMessage =
+        err instanceof ApiRequestError
+          ? err.data?.message
+          : err?.message || 'Failed to delete project';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }

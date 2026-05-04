@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, LayoutGrid, List, Users, ArrowLeft, Shield, MoreVertical } from 'lucide-react';
+import { useAdmin } from '@/contexts/AdminContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { toast } from 'sonner';
 
 interface Team {
   _id: string;
@@ -25,34 +25,23 @@ export default function AdminTeamsPage() {
   const { companyId, departmentId } = useParams();
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [departmentName, setDepartmentName] = useState('');
 
-  const fetchTeams = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/teams?departmentId=${departmentId}`);
-      const data = await response.json();
-      if (data.success) {
-        setTeams(data.data);
-        // Assuming the first team can give us the department context or we fetch it separately
-        // For PoC, let's just use a placeholder if empty
-        setDepartmentName('Departamento Seleccionado');
-      }
-    } catch (error) {
-      toast.error('Error al cargar los equipos');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    teams: ctxTeams,
+    isLoadingTeams,
+    fetchTeams,
+  } = useAdmin();
+  const teams = ctxTeams as Team[];
+  const departmentName = 'Departamento Seleccionado';
 
   useEffect(() => {
-    fetchTeams();
-  }, [departmentId]);
+    if (departmentId) {
+      fetchTeams(departmentId);
+    }
+  }, [departmentId, fetchTeams]);
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-6 p-6 min-h-full glass-bg">
       {/* Header Section */}
       <div className="flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -103,7 +92,7 @@ export default function AdminTeamsPage() {
       </div>
 
       {/* Main Content Area */}
-      {teams.length === 0 && !isLoading ? (
+      {teams.length === 0 && !isLoadingTeams ? (
         <div className="border-muted bg-muted/5 flex h-[400px] flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center">
           <Users className="text-muted-foreground/40 mb-4 h-12 w-12" />
           <h2 className="text-xl font-semibold italic">No hay equipos en este departamento.</h2>
@@ -127,8 +116,8 @@ export default function AdminTeamsPage() {
               key={team._id}
               className={
                 viewMode === 'grid'
-                  ? 'group bg-card hover:border-primary/40 flex flex-col rounded-2xl border p-6 shadow-sm transition-all hover:shadow-lg'
-                  : 'bg-card hover:bg-muted/30 flex items-center justify-between rounded-xl border p-4 transition-all'
+                  ? 'group bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 flex flex-col rounded-2xl border p-6 shadow-sm transition-all hover:shadow-lg'
+                  : 'bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 flex items-center justify-between rounded-xl border p-4 transition-all'
               }
             >
               <div className="flex items-start justify-between">

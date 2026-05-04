@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Plus, LayoutGrid, List, Users, ArrowLeft, Building2, MoreVertical } from 'lucide-react';
+import { useAdmin } from '@/contexts/AdminContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { toast } from 'sonner';
 
 interface Department {
   _id: string;
@@ -26,34 +26,24 @@ export default function AdminDepartmentsPage() {
   const { companyId } = useParams();
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [companyName, setCompanyName] = useState('');
 
-  const fetchDepartments = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/admin/departments?companyId=${companyId}`);
-      const data = await response.json();
-      if (data.success) {
-        setDepartments(data.data);
-        if (data.data.length > 0) {
-          setCompanyName(data.data[0].companyId.name);
-        }
-      }
-    } catch (error) {
-      toast.error('Error al cargar los departamentos');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    departments: ctxDepartments,
+    isLoadingDepartments,
+    fetchDepartments,
+  } = useAdmin();
+  const departments = ctxDepartments as unknown as Department[];
+  const companyName =
+    departments.length > 0 ? (departments[0] as Department).companyId.name : '';
 
   useEffect(() => {
-    fetchDepartments();
-  }, [companyId]);
+    if (companyId) {
+      fetchDepartments(companyId);
+    }
+  }, [companyId, fetchDepartments]);
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-6 p-6 min-h-full glass-bg">
       {/* Header Section */}
       <div className="flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
@@ -101,7 +91,7 @@ export default function AdminDepartmentsPage() {
       </div>
 
       {/* Main Content Area */}
-      {departments.length === 0 && !isLoading ? (
+      {departments.length === 0 && !isLoadingDepartments ? (
         <div className="border-muted bg-muted/5 flex h-[400px] flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center">
           <Building2 className="text-muted-foreground/40 mb-4 h-12 w-12" />
           <h2 className="text-xl font-semibold italic">
@@ -132,8 +122,8 @@ export default function AdminDepartmentsPage() {
               key={dept._id}
               className={
                 viewMode === 'grid'
-                  ? 'group bg-card hover:border-primary/40 flex cursor-pointer flex-col rounded-2xl border p-6 shadow-sm transition-all hover:shadow-lg'
-                  : 'bg-card hover:bg-muted/30 flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all'
+                  ? 'group bg-white/5 backdrop-blur-xl border-white/10 hover:border-primary/40 flex cursor-pointer flex-col rounded-2xl border p-6 shadow-sm transition-all hover:shadow-lg'
+                  : 'bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-all'
               }
             >
               <div className="flex items-start justify-between">

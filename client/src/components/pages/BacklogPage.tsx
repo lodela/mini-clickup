@@ -103,7 +103,7 @@ export default function BacklogPage() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="p-6 glass-bg">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900">

@@ -140,12 +140,12 @@ export default function TeamPage() {
   );
 
   return (
-    <div className="flex-1 overflow-y-auto p-6">
+    <div className="flex-1 overflow-y-auto p-6 glass-bg rounded-3xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">Teams</h1>
-          <p className="text-neutral-500 mt-1">
+          <h1 className="text-2xl font-bold text-white/90">Teams</h1>
+          <p className="text-white/50 mt-1">
             Manage your teams and collaborate with your members
           </p>
         </div>
@@ -167,7 +167,7 @@ export default function TeamPage() {
             placeholder="Search teams..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-electric-blue focus:border-transparent text-sm"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg glass-input text-sm"
           />
         </div>
       </div>

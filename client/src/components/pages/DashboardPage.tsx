@@ -6,7 +6,7 @@ import { Calendar, Clock, Paperclip, Plus, ArrowUp } from 'lucide-react';
  */
 export default function DashboardPage() {
   return (
-    <div className="flex min-h-full gap-6">
+    <div className="flex min-h-full gap-6 glass-bg rounded-3xl p-6">
       {/* ── Left Column ── */}
       <div className="flex min-w-0 flex-1 flex-col gap-6">
         {/* 1. Workload Card */}
@@ -165,9 +165,9 @@ function Avatar({
 
 function WorkloadCard() {
   return (
-    <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-lg">
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-neutral-900">Workload</h2>
+        <h2 className="text-base font-semibold text-white/90">Workload</h2>
         <a href="#" className="text-electric-blue text-sm hover:underline">
           View all
         </a>
@@ -201,8 +201,8 @@ type ProjectData = (typeof PROJECTS)[number];
 
 function ProjectCard({ project }: { project: ProjectData }) {
   return (
-    <div className="flex flex-col gap-3 rounded-3xl bg-white p-5 shadow-lg">
-      <div className="flex items-center gap-1.5 text-xs text-neutral-400">
+    <div className="flex flex-col gap-3 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-5 shadow-lg">
+      <div className="flex items-center gap-1.5 text-xs text-white/50">
         <Calendar className="h-3.5 w-3.5" />
         <span>Created {project.created}</span>
       </div>
@@ -247,8 +247,8 @@ function ProjectCard({ project }: { project: ProjectData }) {
 
 function NearestEventsCard() {
   return (
-    <div className="rounded-3xl bg-white p-6 shadow-lg">
-      <h2 className="mb-4 text-base font-semibold text-neutral-900">Nearest Events</h2>
+    <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-lg">
+      <h2 className="mb-4 text-base font-semibold text-white/90">Nearest Events</h2>
       <div className="space-y-4">
         {EVENTS.map((event) => (
           <div key={event.title} className="flex gap-3">
@@ -283,9 +283,9 @@ const ACTION_ICONS = {
 
 function ActivityStreamCard() {
   return (
-    <div className="rounded-3xl bg-white p-6 shadow-lg">
+    <div className="rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 p-6 shadow-lg">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-neutral-900">Activity Stream</h2>
+        <h2 className="text-base font-semibold text-white/90">Activity Stream</h2>
       </div>
       <div className="space-y-5">
         {ACTIVITIES.map((activity) => (

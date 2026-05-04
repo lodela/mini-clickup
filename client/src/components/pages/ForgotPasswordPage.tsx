@@ -59,11 +59,10 @@ export default function ForgotPasswordPage() {
       `}</style>
 
       <div
-        className="fp-root"
+        className="fp-root glass-theme"
         style={{
           minHeight: "100vh",
           minWidth: "100vw",
-          background: "#F4F9FE",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

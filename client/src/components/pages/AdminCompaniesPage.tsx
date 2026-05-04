@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import CreateCompanyModal from "@/components/modals/CreateCompanyModal";
 import EditCompanyModal from "@/components/modals/EditCompanyModal";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { useAdmin } from "@/contexts/AdminContext";
 
 interface CompanyStats {
   projectsCount: number;
@@ -33,44 +33,30 @@ interface Company {
 
 export default function AdminCompaniesPage() {
   const { user } = useAuth();
+  const { companies, isLoadingCompanies, fetchCompanies, companiesPagination } = useAdmin();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editCompany, setEditCompany] = useState<Company | null>(null);
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [hasMore, setPagesMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
-
-  const fetchCompanies = useCallback(async (isNewSearch = false) => {
-    try {
-      setIsLoading(true);
-      const currentPage = isNewSearch ? 1 : page;
-      const response = await fetch(`/api/admin/companies?page=${currentPage}&limit=12&search=${search}`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setCompanies(prev => isNewSearch ? data.data : [...prev, ...data.data]);
-        setPagesMore(data.pagination.page < data.pagination.pages);
-      }
-    } catch (error) {
-      toast.error("Error al cargar las empresas");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page, search]);
+  const hasMore = companiesPagination
+    ? companiesPagination.page < companiesPagination.pages
+    : true;
 
   useEffect(() => {
-    fetchCompanies(true);
-  }, [search]);
+    // Reset to page 1 when search changes
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPage(1);
+    fetchCompanies({ search, page: 1 });
+  }, [search, fetchCompanies]);
 
   useEffect(() => {
-    if (page > 1) fetchCompanies();
-  }, [page]);
+    if (page > 1) fetchCompanies({ search, page });
+  }, [page, fetchCompanies, search]);
 
   const lastElementRef = useCallback((node: HTMLAnchorElement) => {
-    if (isLoading) return;
+    if (isLoadingCompanies) return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
@@ -78,20 +64,20 @@ export default function AdminCompaniesPage() {
       }
     });
     if (node) observer.current.observe(node);
-  }, [isLoading, hasMore]);
+  }, [isLoadingCompanies, hasMore]);
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-6 p-6 min-h-full glass-bg">
       <CreateCompanyModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSuccess={() => fetchCompanies(true)} 
+        onSuccess={() => fetchCompanies({ search, page: 1 })} 
       />
       {editCompany && (
         <EditCompanyModal
           isOpen={!!editCompany}
           onClose={() => setEditCompany(null)}
-          onSuccess={() => fetchCompanies(true)}
+          onSuccess={() => fetchCompanies({ search, page: 1 })}
           company={editCompany}
         />
       )}
@@ -141,7 +127,7 @@ export default function AdminCompaniesPage() {
         </div>
       </div>
 
-      {companies.length === 0 && !isLoading ? (
+      {companies.length === 0 && !isLoadingCompanies ? (
         <div className="flex h-[450px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-muted p-12 text-center bg-muted/10">
           <Building2 className="h-16 w-16 text-muted-foreground/50 mb-6" />
           <h2 className="text-xl font-semibold">Sin resultados</h2>
@@ -165,8 +151,8 @@ export default function AdminCompaniesPage() {
                 key={company._id} 
                 ref={isLast ? lastElementRef : null}
                 className={viewMode === "grid" 
-                  ? "group relative flex flex-col items-center rounded-2xl border bg-card p-6 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 hover:border-primary/40 overflow-hidden cursor-pointer" 
-                  : "flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-muted/30 transition-all shadow-sm cursor-pointer"
+                  ? "group relative flex flex-col items-center rounded-2xl border bg-white/5 backdrop-blur-xl border-white/10 p-6 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 hover:border-primary/40 overflow-hidden cursor-pointer" 
+                  : "flex items-center justify-between p-4 rounded-xl border bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 transition-all shadow-sm cursor-pointer"
                 }
               >
                 {viewMode === "grid" ? (
@@ -282,7 +268,7 @@ export default function AdminCompaniesPage() {
           })}
         </div>
       )}
-      {isLoading && (
+      {isLoadingCompanies && (
         <div className="flex justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>

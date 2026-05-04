@@ -36,6 +36,7 @@ export interface ITask extends Document {
   estimatedTime?: number;       // En horas (ej: 2.5 = 2d 4h)
   spentTime?: number;           // Tiempo invertido en horas
   sprintId?: Types.ObjectId;
+  story?: Types.ObjectId;
   attachments?: string[];
   comments?: ITaskComment[];
   createdAt: Date;
@@ -60,6 +61,7 @@ export interface ITask extends Document {
     tags: string[];
     estimatedTime?: number;
     spentTime?: number;
+    story?: Types.ObjectId;
     attachments?: string[];
     comments?: ITaskComment[];
     createdAt: string;
@@ -182,6 +184,11 @@ const taskSchema = new Schema<ITask>(
       min: [0, "Spent time cannot be negative"],
       default: null,
     },
+    story: {
+      type: Schema.Types.ObjectId,
+      ref: "Story",
+      default: null,
+    },
     attachments: {
       type: [String],
       default: [],
@@ -210,6 +217,7 @@ taskSchema.index({ status: 1, dueDate: 1 });
 taskSchema.index({ reporter: 1 });
 taskSchema.index({ tags: 1 });
 taskSchema.index({ type: 1 }); // Índice para filtrar por Tarea/Bug
+taskSchema.index({ story: 1 }); // Índice para filtrar por Story
 
 /**
  * Instance method: Update task status

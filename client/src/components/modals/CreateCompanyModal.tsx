@@ -181,7 +181,7 @@ export default function CreateCompanyModal({ isOpen, onClose, onSuccess }: Creat
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="sm:max-w-[680px] max-h-[90vh] overflow-y-auto bg-white/85 backdrop-blur-xl border border-white/30 ring-1 ring-white/20 shadow-2xl shadow-slate-900/20 rounded-2xl"
+        className="sm:max-w-[680px] max-h-[90vh] overflow-y-auto glass-dialog"
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={onClose}
       >

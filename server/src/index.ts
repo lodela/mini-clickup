@@ -19,6 +19,9 @@ import './models/ActionLog.js';
 import './models/Role.js';
 import './models/OtpToken.js';
 import './models/Invitation.js';
+import './models/Epic.js';
+import './models/Story.js';
+import './models/Catalog.js';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -29,6 +32,9 @@ import sprintRoutes from './routes/sprint.js';
 import employeeRoutes from './routes/employees.js';
 import adminRoutes from './routes/adminRoutes.js';
 import companyRoutes from './routes/companies.js';
+import epicRoutes from './routes/epics.js';
+import storyRoutes from './routes/stories.js';
+import catalogRoutes from './routes/catalogs.js';
 
 // Import middleware
 import { notFound, errorHandler } from './middleware/errorHandler.js';
@@ -109,6 +115,9 @@ app.use('/api/employees', employeeRoutes);
 app.use('/api/sprints', sprintRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/companies', companyRoutes);
+app.use('/api/epics', epicRoutes);
+app.use('/api/stories', storyRoutes);
+app.use('/api/catalogs', catalogRoutes);
 
 // ============================================================================
 // Error Handling

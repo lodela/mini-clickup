@@ -6,7 +6,7 @@ import { Calendar } from "lucide-react";
  */
 export default function CalendarPage() {
   return (
-    <div className="p-6">
+    <div className="p-6 glass-bg">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-neutral-900">Calendar</h1>
         <p className="text-neutral-500 mt-1">View deadlines and events</p>

@@ -78,12 +78,11 @@ export default function LoginPage() {
       `}</style>
 
       <div
-        className="login-root"
+        className="login-root glass-theme"
         style={{
           minHeight: '100vh',
           minWidth: '100vw',
           display: 'flex',
-          background: '#F4F9FE',
         }}
       >
         {/* ── LEFT PANEL: dark navy branding ───────────────────── */}

@@ -70,7 +70,12 @@ export interface Project {
 /**
  * Task Status
  */
-export type TaskStatus = 'todo' | 'in-progress' | 'review' | 'done';
+export type TaskStatus = 'backlog' | 'todo' | 'in-progress' | 'review' | 'done' | 'qa' | 'approved';
+
+/**
+ * Task Type (Tarea/Bug)
+ */
+export type TaskType = 'task' | 'bug';
 
 /**
  * Task Priority
@@ -78,22 +83,36 @@ export type TaskStatus = 'todo' | 'in-progress' | 'review' | 'done';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 /**
- * Task Interface
+ * Embedded Task Comment (backend ITaskComment)
+ */
+export interface TaskComment {
+  id: string;
+  content: string;
+  author: string | User;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+/**
+ * Task Interface (matches backend ITask / TaskResponse)
  */
 export interface Task {
   _id: string;
+  taskNumber: string;
   title: string;
   description?: string;
+  type: TaskType;
   status: TaskStatus;
   priority: TaskPriority;
   assignee?: string | User;
   reporter?: string | User;
-  project: string | Project;
-  team: string | Team;
+  project: string | Project | { _id: string; name: string; color?: string };
+  team: string | Team | { _id: string; name: string; avatar?: string };
   dueDate?: string;
   tags: string[];
-  estimatedHours?: number;
-  actualHours?: number;
+  estimatedTime?: number;
+  spentTime?: number;
+  comments?: TaskComment[];
   attachments?: Attachment[];
   createdAt: string;
   updatedAt: string;

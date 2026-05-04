@@ -66,6 +66,22 @@ const en = {
       confirm: 'Confirm',
     },
 
+    // Catalogs
+    catalogs: {
+      projectStatus: {
+        planning: 'Planning',
+        active: 'Active',
+        'on-hold': 'On Hold',
+        completed: 'Completed',
+      },
+      taskPriority: {
+        low: 'Low',
+        medium: 'Medium',
+        high: 'High',
+        urgent: 'Urgent',
+      },
+    },
+
     // Dashboard
     dashboard: {
       title: 'Dashboard',
@@ -233,6 +249,22 @@ const es = {
       previous: 'Anterior',
       submit: 'Enviar',
       confirm: 'Confirmar',
+    },
+
+    // Catalogs
+    catalogs: {
+      projectStatus: {
+        planning: 'Planificación',
+        active: 'Activo',
+        'on-hold': 'En Espera',
+        completed: 'Completado',
+      },
+      taskPriority: {
+        low: 'Baja',
+        medium: 'Media',
+        high: 'Alta',
+        urgent: 'Urgente',
+      },
     },
 
     // Dashboard
