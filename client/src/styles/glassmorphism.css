@@ -1,0 +1,107 @@
+/* ══════════════════════════════════════════════════════════════
+   Glassmorphism Design System — Mini ClickUp
+   Reference: https://i.pinimg.com/736x/64/a5/40/64a540dbf2cda82588438ae9eb478ce5.jpg
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Glassmorphism Utility Classes ─────────────────────────── */
+
+/** Base glass effect — use on any container */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/** Elevated glass card with hover effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/** Dialog / Modal glass surface */
+.glass-dialog {
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+/** Glass input fields */
+.glass-input {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.glass-input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+/** Glass button */
+.glass-button {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Page Background Gradient ──────────────────────────────── */
+body.glass-body,
+.glass-bg {
+  background: linear-gradient(135deg, #0f0f1a 0%, #1a0a2e 50%, #0f0f1a 100%);
+  min-height: 100vh;
+}
+
+/* ── shadcn/ui CSS Variable Overrides for Glass Theme ─────── */
+@layer base {
+  .glass-theme {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 10% / 0.5;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 10% / 0.8;
+    --popover-foreground: 0 0% 95%;
+    --primary: 260 80% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 15% / 0.5;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 0 0% 15% / 0.4;
+    --muted-foreground: 0 0% 60%;
+    --accent: 260 60% 50% / 0.3;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 80% 50% / 0.3;
+    --destructive-foreground: 0 0% 95%;
+    --border: 0 0% 100% / 0.1;
+    --input: 0 0% 100% / 0.1;
+    --ring: 260 80% 60%;
+    --radius: 1rem;
+  }
+}
