@@ -1,16 +1,16 @@
-import { Router } from "express";
-import ProjectController from "../controllers/projectController.js";
-import { authenticate } from "../middleware/auth.js";
+import { Router } from 'express';
+import ProjectController from '../controllers/projectController.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
 
 // All routes require authentication
 router.use(authenticate());
 
-router.post("/", ProjectController.createProject);
-router.get("/", ProjectController.getProjects);
-router.get("/:id", ProjectController.getProjectById);
-router.put("/:id", ProjectController.updateProject);
-router.delete("/:id", ProjectController.deleteProject);
+router.post('/', ProjectController.createProject);
+router.get('/', ProjectController.getProjects);
+router.get('/:id', ProjectController.getProjectById);
+router.put('/:id', ProjectController.updateProject);
+router.delete('/:id', ProjectController.deleteProject);
 
 export default router;

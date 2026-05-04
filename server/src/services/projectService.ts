@@ -1,7 +1,7 @@
-import { Types } from "mongoose";
-import Project from "../models/Project.js";
-import { IProject } from "../models/Project.js";
-import Team from "../models/Team.js";
+import { Types } from 'mongoose';
+import Project from '../models/Project.js';
+import { IProject } from '../models/Project.js';
+import Team from '../models/Team.js';
 
 /**
  * Service layer for Project business logic
@@ -20,7 +20,7 @@ export class ProjectService {
         companyId: new Types.ObjectId(companyId),
       }).lean();
       if (!team) {
-        throw Object.assign(new Error("Team not found or not in your company"), { status: 403 });
+        throw Object.assign(new Error('Team not found or not in your company'), { status: 403 });
       }
     }
     const project = new Project(projectData);
@@ -38,12 +38,12 @@ export class ProjectService {
       ).lean();
       const teamIds = teams.map((t) => t._id);
       return await Project.find({ team: { $in: teamIds } }).populate(
-        "owner members",
-        "name email avatar",
+        'owner members',
+        'name email avatar',
       );
     }
     // GOD_MODE: no company filter
-    return await Project.find().populate("owner members", "name email avatar");
+    return await Project.find().populate('owner members', 'name email avatar');
   }
 
   /**
@@ -53,19 +53,13 @@ export class ProjectService {
     if (!Types.ObjectId.isValid(id)) {
       return null;
     }
-    return await Project.findById(id).populate(
-      "owner members",
-      "name email avatar",
-    );
+    return await Project.findById(id).populate('owner members', 'name email avatar');
   }
 
   /**
    * Update project by ID
    */
-  static async updateProject(
-    id: string,
-    updateData: Partial<IProject>,
-  ): Promise<IProject | null> {
+  static async updateProject(id: string, updateData: Partial<IProject>): Promise<IProject | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
     }
@@ -74,7 +68,7 @@ export class ProjectService {
       id,
       { ...updateData, updatedAt: new Date() },
       { new: true, runValidators: true },
-    ).populate("owner members", "name email avatar");
+    ).populate('owner members', 'name email avatar');
 
     return project;
   }

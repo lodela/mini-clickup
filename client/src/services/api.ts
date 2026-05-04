@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -21,60 +20,49 @@ export class ApiRequestError extends Error {
   data: ApiError;
   constructor(status: number, data: ApiError) {
     super(data?.message || `Request failed with status ${status}`);
-    this.name = "ApiRequestError";
+    this.name = 'ApiRequestError';
     this.status = status;
     this.data = data;
   }
 }
 
-const GUEST_PATHS = [
-  "/login",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-];
+const GUEST_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
 
 function handleErrorStatus(status: number, data: ApiError) {
   switch (status) {
     case 401: {
-      const isGuestPath = GUEST_PATHS.some((p) =>
-        window.location.pathname.startsWith(p),
-      );
+      const isGuestPath = GUEST_PATHS.some((p) => window.location.pathname.startsWith(p));
       if (!isGuestPath) {
-        window.location.href = "/login";
+        window.location.href = '/login';
       }
       break;
     }
     case 403:
-      console.error("Forbidden access:", data?.message);
+      console.error('Forbidden access:', data?.message);
       break;
     case 404:
-      console.error("Resource not found:", data?.message);
+      console.error('Resource not found:', data?.message);
       break;
     case 429:
-      console.error("Too many requests - please try again later");
+      console.error('Too many requests - please try again later');
       break;
     case 500:
-      console.error("Server error:", data?.message);
+      console.error('Server error:', data?.message);
       break;
     default:
-      console.error("API error:", data?.message);
+      console.error('API error:', data?.message);
   }
 }
 
-async function request<T>(
-  method: string,
-  url: string,
-  body?: unknown,
-): Promise<{ data: T }> {
+async function request<T>(method: string, url: string, body?: unknown): Promise<{ data: T }> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30_000);
 
   try {
     const res = await fetch(`${API_BASE_URL}${url}`, {
       method,
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       signal: controller.signal,
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
@@ -90,7 +78,7 @@ async function request<T>(
     return { data: json };
   } catch (err) {
     if (err instanceof ApiRequestError) throw err;
-    console.error("No response from server - please check your connection");
+    console.error('No response from server - please check your connection');
     throw err;
   } finally {
     clearTimeout(timeout);
@@ -98,9 +86,9 @@ async function request<T>(
 }
 
 export const api = {
-  get: <T>(url: string) => request<T>("GET", url),
-  post: <T>(url: string, data?: unknown) => request<T>("POST", url, data),
-  put: <T>(url: string, data?: unknown) => request<T>("PUT", url, data),
-  patch: <T>(url: string, data?: unknown) => request<T>("PATCH", url, data),
-  delete: <T>(url: string) => request<T>("DELETE", url),
+  get: <T>(url: string) => request<T>('GET', url),
+  post: <T>(url: string, data?: unknown) => request<T>('POST', url, data),
+  put: <T>(url: string, data?: unknown) => request<T>('PUT', url, data),
+  patch: <T>(url: string, data?: unknown) => request<T>('PATCH', url, data),
+  delete: <T>(url: string) => request<T>('DELETE', url),
 };

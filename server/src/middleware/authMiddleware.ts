@@ -1,5 +1,5 @@
-import { authenticate } from "./auth.js";
-import { Request, Response, NextFunction } from "express";
+import { authenticate } from './auth.js';
+import { Request, Response, NextFunction } from 'express';
 
 /**
  * Authentication middleware (direct, not factory)

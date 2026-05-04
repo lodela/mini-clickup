@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "@/hooks/useAuth";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/hooks/useAuth';
+import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 /**
  * Login Page — Figma design: CRM Woorkroom (node 0:6914)
@@ -14,8 +14,8 @@ export default function LoginPage() {
   const { login, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     rememberMe: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -24,11 +24,9 @@ export default function LoginPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.email) newErrors.email = t('validation.required');
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = t('validation.email');
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = t('validation.email');
     if (!formData.password) newErrors.password = t('validation.required');
-    else if (formData.password.length < 8)
-      newErrors.password = t('validation.passwordStrength');
+    else if (formData.password.length < 8) newErrors.password = t('validation.passwordStrength');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -45,9 +43,9 @@ export default function LoginPage() {
         password: formData.password,
         rememberMe: formData.rememberMe,
       });
-      navigate("/dashboard");
+      navigate('/dashboard');
     } catch (err) {
-      console.error("Login failed:", err);
+      console.error('Login failed:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -57,9 +55,9 @@ export default function LoginPage() {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   return (
@@ -82,58 +80,58 @@ export default function LoginPage() {
       <div
         className="login-root"
         style={{
-          minHeight: "100vh",
-          minWidth: "100vw",
-          display: "flex",
-          background: "#F4F9FE",
+          minHeight: '100vh',
+          minWidth: '100vw',
+          display: 'flex',
+          background: '#F4F9FE',
         }}
       >
         {/* ── LEFT PANEL: dark navy branding ───────────────────── */}
         <div
           style={{
-            width: "440px",
+            width: '440px',
             flexShrink: 0,
-            background: "#0A1628",
-            display: "flex",
-            flexDirection: "column",
-            padding: "48px 40px",
-            position: "relative",
-            overflow: "hidden",
+            background: '#0A1628',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '48px 40px',
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
           {/* Subtle decorative circles */}
           <div
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: -80,
               right: -80,
               width: 280,
               height: 280,
-              borderRadius: "50%",
-              background: "rgba(63,140,255,0.08)",
-              pointerEvents: "none",
+              borderRadius: '50%',
+              background: 'rgba(63,140,255,0.08)',
+              pointerEvents: 'none',
             }}
           />
           <div
             style={{
-              position: "absolute",
+              position: 'absolute',
               bottom: -60,
               left: -60,
               width: 220,
               height: 220,
-              borderRadius: "50%",
-              background: "rgba(63,140,255,0.06)",
-              pointerEvents: "none",
+              borderRadius: '50%',
+              background: 'rgba(63,140,255,0.06)',
+              pointerEvents: 'none',
             }}
           />
 
           {/* Logo + Brand */}
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
+              display: 'flex',
+              alignItems: 'center',
               gap: 14,
-              position: "relative",
+              position: 'relative',
               zIndex: 1,
             }}
           >
@@ -142,50 +140,26 @@ export default function LoginPage() {
                 width: 50,
                 height: 50,
                 borderRadius: 12,
-                background: "#FFFFFF",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                background: '#FFFFFF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 flexShrink: 0,
               }}
             >
               <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
                 <rect x="4" y="4" width="8" height="8" rx="2" fill="#3F8CFF" />
-                <rect
-                  x="16"
-                  y="4"
-                  width="8"
-                  height="8"
-                  rx="2"
-                  fill="#3F8CFF"
-                  opacity="0.6"
-                />
-                <rect
-                  x="4"
-                  y="16"
-                  width="8"
-                  height="8"
-                  rx="2"
-                  fill="#3F8CFF"
-                  opacity="0.6"
-                />
-                <rect
-                  x="16"
-                  y="16"
-                  width="8"
-                  height="8"
-                  rx="2"
-                  fill="#3F8CFF"
-                  opacity="0.3"
-                />
+                <rect x="16" y="4" width="8" height="8" rx="2" fill="#3F8CFF" opacity="0.6" />
+                <rect x="4" y="16" width="8" height="8" rx="2" fill="#3F8CFF" opacity="0.6" />
+                <rect x="16" y="16" width="8" height="8" rx="2" fill="#3F8CFF" opacity="0.3" />
               </svg>
             </div>
             <span
               style={{
-                color: "#FFFFFF",
+                color: '#FFFFFF',
                 fontWeight: 700,
                 fontSize: 30,
-                lineHeight: "40.92px",
+                lineHeight: '40.92px',
               }}
             >
               Woorkroom
@@ -195,18 +169,18 @@ export default function LoginPage() {
           {/* Tagline */}
           <div
             style={{
-              marginTop: "auto",
-              marginBottom: "auto",
-              position: "relative",
+              marginTop: 'auto',
+              marginBottom: 'auto',
+              position: 'relative',
               zIndex: 1,
             }}
           >
             <p
               style={{
-                color: "#FFFFFF",
+                color: '#FFFFFF',
                 fontWeight: 700,
                 fontSize: 40,
-                lineHeight: "56px",
+                lineHeight: '56px',
                 margin: 0,
               }}
             >
@@ -214,10 +188,10 @@ export default function LoginPage() {
             </p>
             <p
               style={{
-                color: "#FFFFFF",
+                color: '#FFFFFF',
                 fontWeight: 700,
                 fontSize: 40,
-                lineHeight: "56px",
+                lineHeight: '56px',
                 margin: 0,
               }}
             >
@@ -229,31 +203,31 @@ export default function LoginPage() {
           <div
             style={{
               borderRadius: 16,
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              padding: "16px",
-              position: "relative",
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              padding: '16px',
+              position: 'relative',
               zIndex: 1,
             }}
           >
             <div
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
                 gap: 8,
               }}
             >
               {[
                 {
-                  label: "To Do",
-                  color: "#94A3B8",
+                  label: 'To Do',
+                  color: '#94A3B8',
                   cards: [{ h: 36 }, { h: 28 }],
                 },
-                { label: "In Progress", color: "#3F8CFF", cards: [{ h: 56 }] },
-                { label: "In Review", color: "#F59E0B", cards: [{ h: 40 }] },
+                { label: 'In Progress', color: '#3F8CFF', cards: [{ h: 56 }] },
+                { label: 'In Review', color: '#F59E0B', cards: [{ h: 40 }] },
                 {
-                  label: "Done",
-                  color: "#10B981",
+                  label: 'Done',
+                  color: '#10B981',
                   cards: [{ h: 32 }, { h: 24 }],
                 },
               ].map((col) => (
@@ -263,9 +237,9 @@ export default function LoginPage() {
                       color: col.color,
                       fontSize: 10,
                       fontWeight: 700,
-                      margin: "0 0 6px",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
+                      margin: '0 0 6px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
                     {col.label}
@@ -292,45 +266,45 @@ export default function LoginPage() {
         <div
           style={{
             flex: 1,
-            background: "#F4F9FE",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "40px 24px",
+            background: '#F4F9FE',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '40px 24px',
           }}
         >
           <div
             style={{
-              width: "100%",
+              width: '100%',
               maxWidth: 440,
-              background: "#FFFFFF",
+              background: '#FFFFFF',
               borderRadius: 24,
               padding: 48,
-              boxShadow: "0px 6px 58px rgba(196, 203, 214, 0.104)",
+              boxShadow: '0px 6px 58px rgba(196, 203, 214, 0.104)',
             }}
           >
             {/* Language toggle EN / ES */}
-            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
-              {(["en", "es"] as const).map((lang, idx) => (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
+              {(['en', 'es'] as const).map((lang, idx) => (
                 <button
                   key={lang}
                   type="button"
                   onClick={() => i18n.changeLanguage(lang)}
                   style={{
-                    padding: "4px 14px",
-                    border: "none",
-                    borderRadius: idx === 0 ? "8px 0 0 8px" : "0 8px 8px 0",
-                    cursor: "pointer",
+                    padding: '4px 14px',
+                    border: 'none',
+                    borderRadius: idx === 0 ? '8px 0 0 8px' : '0 8px 8px 0',
+                    cursor: 'pointer',
                     fontSize: 13,
                     fontWeight: 700,
-                    lineHeight: "18px",
-                    background: i18n.language.startsWith(lang) ? "#3F8CFF" : "transparent",
-                    color: i18n.language.startsWith(lang) ? "#FFFFFF" : "#7D8592",
-                    transition: "background 0.15s, color 0.15s",
-                    outline: "none",
+                    lineHeight: '18px',
+                    background: i18n.language.startsWith(lang) ? '#3F8CFF' : 'transparent',
+                    color: i18n.language.startsWith(lang) ? '#FFFFFF' : '#7D8592',
+                    transition: 'background 0.15s, color 0.15s',
+                    outline: 'none',
                     boxShadow: i18n.language.startsWith(lang)
-                      ? "0px 2px 8px rgba(63, 140, 255, 0.3)"
-                      : "none",
+                      ? '0px 2px 8px rgba(63, 140, 255, 0.3)'
+                      : 'none',
                   }}
                 >
                   {lang.toUpperCase()}
@@ -343,9 +317,9 @@ export default function LoginPage() {
               style={{
                 fontSize: 28,
                 fontWeight: 700,
-                color: "#0A1628",
-                margin: "0 0 8px",
-                lineHeight: "36px",
+                color: '#0A1628',
+                margin: '0 0 8px',
+                lineHeight: '36px',
               }}
             >
               {t('auth.signIn')}
@@ -354,9 +328,9 @@ export default function LoginPage() {
               style={{
                 fontSize: 16,
                 fontWeight: 400,
-                color: "#7D8592",
-                margin: "0 0 32px",
-                lineHeight: "21.82px",
+                color: '#7D8592',
+                margin: '0 0 32px',
+                lineHeight: '21.82px',
               }}
             >
               {t('auth.welcomeBack')}
@@ -366,11 +340,11 @@ export default function LoginPage() {
             {error && (
               <div
                 style={{
-                  background: "#FEE2E2",
-                  border: "1px solid #FECACA",
+                  background: '#FEE2E2',
+                  border: '1px solid #FECACA',
                   borderRadius: 12,
-                  padding: "10px 14px",
-                  color: "#DC2626",
+                  padding: '10px 14px',
+                  color: '#DC2626',
                   fontSize: 14,
                   marginBottom: 20,
                 }}
@@ -385,12 +359,12 @@ export default function LoginPage() {
                 <label
                   htmlFor="email"
                   style={{
-                    display: "block",
+                    display: 'block',
                     fontSize: 16,
                     fontWeight: 600,
-                    color: "#0A1628",
+                    color: '#0A1628',
                     marginBottom: 8,
-                    lineHeight: "21.82px",
+                    lineHeight: '21.82px',
                   }}
                 >
                   {t('auth.emailAddress')}
@@ -405,21 +379,19 @@ export default function LoginPage() {
                   autoComplete="email"
                   className="login-input"
                   style={{
-                    width: "100%",
+                    width: '100%',
                     height: 56,
-                    border: `1px solid ${errors.email ? "#EF4444" : "#D9E0E6"}`,
+                    border: `1px solid ${errors.email ? '#EF4444' : '#D9E0E6'}`,
                     borderRadius: 14,
-                    padding: "0 16px",
+                    padding: '0 16px',
                     fontSize: 16,
-                    color: "#0A1628",
-                    background: "#FFFFFF",
-                    boxSizing: "border-box",
+                    color: '#0A1628',
+                    background: '#FFFFFF',
+                    boxSizing: 'border-box',
                   }}
                 />
                 {errors.email && (
-                  <p style={{ color: "#EF4444", fontSize: 13, marginTop: 4 }}>
-                    {errors.email}
-                  </p>
+                  <p style={{ color: '#EF4444', fontSize: 13, marginTop: 4 }}>{errors.email}</p>
                 )}
               </div>
 
@@ -428,20 +400,20 @@ export default function LoginPage() {
                 <label
                   htmlFor="password"
                   style={{
-                    display: "block",
+                    display: 'block',
                     fontSize: 16,
                     fontWeight: 600,
-                    color: "#0A1628",
+                    color: '#0A1628',
                     marginBottom: 8,
-                    lineHeight: "21.82px",
+                    lineHeight: '21.82px',
                   }}
                 >
                   {t('auth.password')}
                 </label>
-                <div style={{ position: "relative" }}>
+                <div style={{ position: 'relative' }}>
                   <input
                     id="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
@@ -449,15 +421,15 @@ export default function LoginPage() {
                     autoComplete="current-password"
                     className="login-input"
                     style={{
-                      width: "100%",
+                      width: '100%',
                       height: 56,
-                      border: `1px solid ${errors.password ? "#EF4444" : "#D9E0E6"}`,
+                      border: `1px solid ${errors.password ? '#EF4444' : '#D9E0E6'}`,
                       borderRadius: 14,
-                      padding: "0 48px 0 16px",
+                      padding: '0 48px 0 16px',
                       fontSize: 16,
-                      color: "#0A1628",
-                      background: "#FFFFFF",
-                      boxSizing: "border-box",
+                      color: '#0A1628',
+                      background: '#FFFFFF',
+                      boxSizing: 'border-box',
                     }}
                   />
                   <button
@@ -465,45 +437,43 @@ export default function LoginPage() {
                     tabIndex={-1}
                     onClick={() => setShowPassword((p) => !p)}
                     style={{
-                      position: "absolute",
+                      position: 'absolute',
                       right: 14,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "#7D8592",
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#7D8592',
                       padding: 0,
-                      display: "flex",
-                      alignItems: "center",
+                      display: 'flex',
+                      alignItems: 'center',
                     }}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p style={{ color: "#EF4444", fontSize: 13, marginTop: 4 }}>
-                    {errors.password}
-                  </p>
+                  <p style={{ color: '#EF4444', fontSize: 13, marginTop: 4 }}>{errors.password}</p>
                 )}
               </div>
 
               {/* Remember me + Forgot password */}
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                   marginBottom: 24,
                 }}
               >
                 <label
                   style={{
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     gap: 8,
-                    cursor: "pointer",
-                    userSelect: "none",
+                    cursor: 'pointer',
+                    userSelect: 'none',
                   }}
                 >
                   <div
@@ -517,23 +487,18 @@ export default function LoginPage() {
                       width: 24,
                       height: 24,
                       borderRadius: 6,
-                      border: `1px solid ${formData.rememberMe ? "#3F8CFF" : "#0A1628"}`,
-                      background: formData.rememberMe ? "#3F8CFF" : "#FFFFFF",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
+                      border: `1px solid ${formData.rememberMe ? '#3F8CFF' : '#0A1628'}`,
+                      background: formData.rememberMe ? '#3F8CFF' : '#FFFFFF',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
                       flexShrink: 0,
-                      transition: "background 0.15s, border-color 0.15s",
+                      transition: 'background 0.15s, border-color 0.15s',
                     }}
                   >
                     {formData.rememberMe && (
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 14 14"
-                        fill="none"
-                      >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                         <path
                           d="M2.5 7L5.5 10L11.5 4"
                           stroke="white"
@@ -547,8 +512,8 @@ export default function LoginPage() {
                   <span
                     style={{
                       fontSize: 16,
-                      color: "#7D8592",
-                      lineHeight: "21.82px",
+                      color: '#7D8592',
+                      lineHeight: '21.82px',
                     }}
                   >
                     {t('auth.rememberMe')}
@@ -560,9 +525,9 @@ export default function LoginPage() {
                   className="login-forgot"
                   style={{
                     fontSize: 16,
-                    color: "#7D8592",
-                    textDecoration: "none",
-                    lineHeight: "21.82px",
+                    color: '#7D8592',
+                    textDecoration: 'none',
+                    lineHeight: '21.82px',
                   }}
                 >
                   {t('auth.forgotPasswordTitle')}
@@ -575,23 +540,23 @@ export default function LoginPage() {
                 disabled={isSubmitting}
                 className="login-btn"
                 style={{
-                  width: "100%",
+                  width: '100%',
                   height: 48,
                   borderRadius: 14,
-                  background: isSubmitting ? "#8AB8FF" : "#3F8CFF",
-                  border: "none",
-                  color: "#FFFFFF",
+                  background: isSubmitting ? '#8AB8FF' : '#3F8CFF',
+                  border: 'none',
+                  color: '#FFFFFF',
                   fontSize: 16,
                   fontWeight: 700,
-                  lineHeight: "21.82px",
-                  cursor: isSubmitting ? "not-allowed" : "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  lineHeight: '21.82px',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   gap: 8,
-                  boxShadow: "0px 6px 12px rgba(63, 140, 255, 0.264)",
-                  transition: "opacity 0.15s",
-                  padding: "12px 24px",
+                  boxShadow: '0px 6px 12px rgba(63, 140, 255, 0.264)',
+                  transition: 'opacity 0.15s',
+                  padding: '12px 24px',
                   marginBottom: 24,
                 }}
               >
@@ -632,21 +597,21 @@ export default function LoginPage() {
               {/* Register link */}
               <p
                 style={{
-                  textAlign: "center",
+                  textAlign: 'center',
                   fontSize: 16,
-                  color: "#7D8592",
+                  color: '#7D8592',
                   margin: 0,
-                  lineHeight: "21.82px",
+                  lineHeight: '21.82px',
                 }}
               >
-                {t('auth.noAccount')}{" "}
+                {t('auth.noAccount')}{' '}
                 <Link
                   to="/register"
                   className="login-signup"
                   style={{
-                    color: "#3F8CFF",
+                    color: '#3F8CFF',
                     fontWeight: 600,
-                    textDecoration: "none",
+                    textDecoration: 'none',
                   }}
                 >
                   {t('auth.signUp')}

@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import crypto from "crypto";
-import User from "../models/User.js";
-import * as tokenService from "../services/tokenService.js";
-import { sendPasswordResetEmail } from "../services/emailService.js";
-import { validatePassword } from "../types/auth.types.js";
+import { Request, Response, NextFunction } from 'express';
+import crypto from 'crypto';
+import User from '../models/User.js';
+import * as tokenService from '../services/tokenService.js';
+import { sendPasswordResetEmail } from '../services/emailService.js';
+import { validatePassword } from '../types/auth.types.js';
 
 /**
  * API Response Interface
@@ -38,29 +38,25 @@ interface RegisterRequestBody {
  * @param accessToken - JWT access token
  * @param refreshToken - JWT refresh token
  */
-function setAuthCookies(
-  res: Response,
-  accessToken: string,
-  refreshToken: string,
-): void {
-  const isProduction = process.env.NODE_ENV === "production";
+function setAuthCookies(res: Response, accessToken: string, refreshToken: string): void {
+  const isProduction = process.env.NODE_ENV === 'production';
 
   // Access token cookie (short-lived)
-  res.cookie("accessToken", accessToken, {
+  res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "lax",
+    sameSite: 'lax',
     maxAge: 15 * 60 * 1000, // 15 minutes
-    path: "/",
+    path: '/',
   });
 
   // Refresh token cookie (long-lived)
-  res.cookie("refreshToken", refreshToken, {
+  res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "lax",
+    sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: "/",
+    path: '/',
   });
 }
 
@@ -69,8 +65,8 @@ function setAuthCookies(
  * @param res - Express response object
  */
 function clearAuthCookies(res: Response): void {
-  res.clearCookie("accessToken", { path: "/" });
-  res.clearCookie("refreshToken", { path: "/" });
+  res.clearCookie('accessToken', { path: '/' });
+  res.clearCookie('refreshToken', { path: '/' });
 }
 
 /**
@@ -94,8 +90,8 @@ export async function register(
     if (existingUser) {
       res.status(409).json({
         success: false,
-        error: "Email already registered",
-        message: "A user with this email already exists",
+        error: 'Email already registered',
+        message: 'A user with this email already exists',
       });
       return;
     }
@@ -105,7 +101,7 @@ export async function register(
       email,
       password,
       name,
-      role: "USER_C",
+      role: 'USER_C',
       isActive: true,
     });
 
@@ -137,7 +133,7 @@ export async function register(
       data: {
         user: user.toJSON(),
       },
-      message: "User registered successfully",
+      message: 'User registered successfully',
     });
   } catch (error) {
     next(error);
@@ -161,13 +157,13 @@ export async function login(
     const { email, password } = req.body;
 
     // Find user by email (include password for comparison)
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
       res.status(401).json({
         success: false,
-        error: "Invalid credentials",
-        message: "Email or password is incorrect",
+        error: 'Invalid credentials',
+        message: 'Email or password is incorrect',
       });
       return;
     }
@@ -176,8 +172,8 @@ export async function login(
     if (!user.isActive) {
       res.status(403).json({
         success: false,
-        error: "Account disabled",
-        message: "Your account has been disabled. Please contact support.",
+        error: 'Account disabled',
+        message: 'Your account has been disabled. Please contact support.',
       });
       return;
     }
@@ -188,8 +184,8 @@ export async function login(
     if (!isPasswordValid) {
       res.status(401).json({
         success: false,
-        error: "Invalid credentials",
-        message: "Email or password is incorrect",
+        error: 'Invalid credentials',
+        message: 'Email or password is incorrect',
       });
       return;
     }
@@ -206,19 +202,23 @@ export async function login(
       if (remainingLogins <= 0 && user.tempPassword) {
         res.status(403).json({
           success: false,
-          error: "Temporary password expired",
-          message: "You have exceeded the login attempts for your temporary password. Please request a new one.",
+          error: 'Temporary password expired',
+          message:
+            'You have exceeded the login attempts for your temporary password. Please request a new one.',
         });
         return;
       }
 
       // Generate limited-scope token
-      const limitedToken = tokenService.generateAccessToken({
-        id: user._id,
-        email: user.email,
-        role: user.role,
-        companyId: user.companyId,
-      }, "password_change");
+      const limitedToken = tokenService.generateAccessToken(
+        {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          companyId: user.companyId,
+        },
+        'password_change',
+      );
 
       res.status(200).json({
         success: true,
@@ -226,14 +226,14 @@ export async function login(
           user: user.toJSON(),
           tokens: {
             accessToken: limitedToken,
-            refreshToken: "", // No refresh token for limited session
-            expiresIn: 900,    // 15 minutes
-            tokenType: "Bearer",
+            refreshToken: '', // No refresh token for limited session
+            expiresIn: 900, // 15 minutes
+            tokenType: 'Bearer',
           },
           passwordChangeRequired: true,
           remainingLogins,
         },
-        message: "Password change required",
+        message: 'Password change required',
       });
       return;
     }
@@ -245,7 +245,6 @@ export async function login(
       role: user.role,
       companyId: user.companyId,
     });
-
 
     const refreshToken = tokenService.generateRefreshToken({
       id: user._id,
@@ -267,7 +266,7 @@ export async function login(
       data: {
         user: user.toJSON(),
       },
-      message: "Login successful",
+      message: 'Login successful',
     });
   } catch (error) {
     next(error);
@@ -293,8 +292,8 @@ export async function refreshToken(
     if (!refreshToken) {
       res.status(401).json({
         success: false,
-        error: "No refresh token provided",
-        message: "Please login again to obtain a new refresh token",
+        error: 'No refresh token provided',
+        message: 'Please login again to obtain a new refresh token',
       });
       return;
     }
@@ -303,13 +302,13 @@ export async function refreshToken(
     const payload = tokenService.verifyRefreshToken(refreshToken);
 
     // Find user
-    const user = await User.findById(payload.userId).select("+password");
+    const user = await User.findById(payload.userId).select('+password');
 
     if (!user) {
       res.status(401).json({
         success: false,
-        error: "User not found",
-        message: "User no longer exists",
+        error: 'User not found',
+        message: 'User no longer exists',
       });
       return;
     }
@@ -318,8 +317,8 @@ export async function refreshToken(
     if (!user.isActive) {
       res.status(403).json({
         success: false,
-        error: "Account disabled",
-        message: "Your account has been disabled",
+        error: 'Account disabled',
+        message: 'Your account has been disabled',
       });
       return;
     }
@@ -338,27 +337,27 @@ export async function refreshToken(
 
     res.status(200).json({
       success: true,
-      message: "Token refreshed successfully",
+      message: 'Token refreshed successfully',
     });
   } catch (error) {
     // Handle specific JWT errors
     if (error instanceof Error) {
-      if (error.name === "TokenExpiredError") {
+      if (error.name === 'TokenExpiredError') {
         clearAuthCookies(res);
         res.status(401).json({
           success: false,
-          error: "Refresh token expired",
-          message: "Please login again",
+          error: 'Refresh token expired',
+          message: 'Please login again',
         });
         return;
       }
 
-      if (error.name === "TokenRevokedError") {
+      if (error.name === 'TokenRevokedError') {
         clearAuthCookies(res);
         res.status(401).json({
           success: false,
-          error: "Token revoked",
-          message: "Please login again",
+          error: 'Token revoked',
+          message: 'Please login again',
         });
         return;
       }
@@ -394,7 +393,7 @@ export async function logout(
 
     res.status(200).json({
       success: true,
-      message: "Logout successful",
+      message: 'Logout successful',
     });
   } catch (error) {
     next(error);
@@ -418,22 +417,19 @@ export async function getCurrentUser(
     if (!req.user?.userId) {
       res.status(401).json({
         success: false,
-        error: "Not authenticated",
-        message: "Please login to access this resource",
+        error: 'Not authenticated',
+        message: 'Please login to access this resource',
       });
       return;
     }
 
-    const user = await User.findById(req.user.userId).populate(
-      "teams",
-      "name avatar",
-    );
+    const user = await User.findById(req.user.userId).populate('teams', 'name avatar');
 
     if (!user) {
       res.status(404).json({
         success: false,
-        error: "User not found",
-        message: "User no longer exists",
+        error: 'User not found',
+        message: 'User no longer exists',
       });
       return;
     }
@@ -465,8 +461,8 @@ export async function changePassword(
     if (!userId) {
       res.status(401).json({
         success: false,
-        error: "Unauthorized",
-        message: "User not authenticated",
+        error: 'Unauthorized',
+        message: 'User not authenticated',
       });
       return;
     }
@@ -486,20 +482,20 @@ export async function changePassword(
     if (!validation.valid) {
       res.status(400).json({
         success: false,
-        error: "Invalid password",
+        error: 'Invalid password',
         message: validation.errors[0],
       });
       return;
     }
 
     // Load user and use save() so the pre('save') bcrypt hook fires
-    const user = await User.findById(userId).select("+password");
+    const user = await User.findById(userId).select('+password');
 
     if (!user) {
       res.status(404).json({
         success: false,
-        error: "User not found",
-        message: "User no longer exists",
+        error: 'User not found',
+        message: 'User no longer exists',
       });
       return;
     }
@@ -535,10 +531,10 @@ export async function changePassword(
           accessToken,
           refreshToken,
           expiresIn: 900,
-          tokenType: "Bearer",
+          tokenType: 'Bearer',
         },
       },
-      message: "Password updated successfully. You now have full access.",
+      message: 'Password updated successfully. You now have full access.',
     });
   } catch (error) {
     next(error);
@@ -560,26 +556,21 @@ export async function forgotPassword(
 
     // Always 200 to prevent user enumeration attacks
     if (!user) {
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "If that email exists, you will receive a reset link.",
-        });
+      res.status(200).json({
+        success: true,
+        message: 'If that email exists, you will receive a reset link.',
+      });
       return;
     }
 
-    const rawToken = crypto.randomBytes(32).toString("hex");
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(rawToken)
-      .digest("hex");
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
 
     user.passwordResetToken = hashedToken;
     user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
     await user.save();
 
-    const resetUrl = `${process.env.CLIENT_URL ?? "http://localhost:5173"}/reset-password?token=${rawToken}`;
+    const resetUrl = `${process.env.CLIENT_URL ?? 'http://localhost:5173'}/reset-password?token=${rawToken}`;
 
     try {
       await sendPasswordResetEmail(user.email, resetUrl);
@@ -588,12 +579,10 @@ export async function forgotPassword(
       // Token is already saved — user can retry if email doesn't arrive
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "If that email exists, you will receive a reset link.",
-      });
+    res.status(200).json({
+      success: true,
+      message: 'If that email exists, you will receive a reset link.',
+    });
   } catch (error) {
     next(error);
   }
@@ -612,22 +601,18 @@ export async function resetPassword(
     const { token, password } = req.body;
 
     if (!token || !password) {
-      res
-        .status(400)
-        .json({ success: false, error: "Token and password are required" });
+      res.status(400).json({ success: false, error: 'Token and password are required' });
       return;
     }
 
-    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
     const user = await User.findOne({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: new Date() },
-    }).select("+password");
+    }).select('+password');
 
     if (!user) {
-      res
-        .status(400)
-        .json({ success: false, error: "Invalid or expired reset token" });
+      res.status(400).json({ success: false, error: 'Invalid or expired reset token' });
       return;
     }
 
@@ -636,12 +621,10 @@ export async function resetPassword(
     user.passwordResetExpires = null;
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Password reset successfully. You can now log in.",
-      });
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successfully. You can now log in.',
+    });
   } catch (error) {
     next(error);
   }

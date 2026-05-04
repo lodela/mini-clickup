@@ -1,19 +1,19 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 /** Escape HTML special characters to prevent injection in email templates (CWE-079) */
 function escapeHtml(unsafe: string): string {
   return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 // Lazy transporter — created on first use so dotenv has already loaded
 function getTransporter() {
   return nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
     auth: {
       user: process.env.GMAIL_USER!,
       pass: process.env.GMAIL_APP_PASSWORD!,
@@ -30,7 +30,7 @@ export async function sendOtpEmail(to: string, code: string): Promise<void> {
   await getTransporter().sendMail({
     from: FROM(),
     to,
-    subject: "Your mini-clickup verification code",
+    subject: 'Your mini-clickup verification code',
     html: `
       <div style="font-family:sans-serif;max-width:400px;margin:auto">
         <h2 style="color:#6366f1">Verify your email</h2>
@@ -50,7 +50,7 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
   await getTransporter().sendMail({
     from: FROM(),
     to,
-    subject: "Reset your mini-clickup password",
+    subject: 'Reset your mini-clickup password',
     html: `
       <div style="font-family:sans-serif;max-width:400px;margin:auto">
         <h2>Reset your password</h2>
@@ -71,12 +71,12 @@ export async function sendInvitationEmail(
   inviterName: string,
   companyName: string,
   inviteUrl: string,
-  locale: string = "en"
+  locale: string = 'en',
 ): Promise<void> {
   const safeInviter = escapeHtml(inviterName);
   const safeCompany = escapeHtml(companyName);
   const safeUrl = encodeURI(inviteUrl);
-  const isEs = locale.startsWith("es");
+  const isEs = locale.startsWith('es');
 
   const subject = isEs
     ? `${safeInviter} te invitó a unirte a ${safeCompany} en mini-clickup`
@@ -126,7 +126,7 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<void> 
       <div style="font-family:sans-serif;max-width:400px;margin:auto">
         <h2>Welcome, ${safeName}! 🎉</h2>
         <p>Your account is ready. Start managing your projects like a pro.</p>
-        <a href="${process.env.CLIENT_URL ?? "http://localhost:5173"}/dashboard"
+        <a href="${process.env.CLIENT_URL ?? 'http://localhost:5173'}/dashboard"
            style="display:inline-block;padding:12px 24px;background:#6366f1;
            color:#fff;border-radius:6px;text-decoration:none;margin:16px 0">
           Go to Dashboard

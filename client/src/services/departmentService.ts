@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_URL = "/api/admin/departments"; // To be created in backend
+const API_URL = '/api/admin/departments'; // To be created in backend
 
 export interface Department {
   _id: string;
   name: string;
   description?: string;
   manager: string;
-  status: "Active" | "Inactive";
+  status: 'Active' | 'Inactive';
 }
 
 export const getDepartments = async () => {

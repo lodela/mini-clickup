@@ -1,6 +1,6 @@
-import { Types } from "mongoose";
-import Task from "../models/Task.js";
-import { ITask } from "../models/Task.js";
+import { Types } from 'mongoose';
+import Task from '../models/Task.js';
+import { ITask } from '../models/Task.js';
 
 export class TaskService {
   static async createTask(taskData: Partial<ITask>): Promise<ITask> {
@@ -8,14 +8,12 @@ export class TaskService {
     return await task.save();
   }
 
-  static async getTasks(
-    filters: Record<string, unknown> = {},
-  ): Promise<ITask[]> {
+  static async getTasks(filters: Record<string, unknown> = {}): Promise<ITask[]> {
     return await Task.find(filters)
-      .populate("assignee", "name email avatar")
-      .populate("reporter", "name email avatar")
-      .populate("project", "name color")
-      .populate("team", "name avatar");
+      .populate('assignee', 'name email avatar')
+      .populate('reporter', 'name email avatar')
+      .populate('project', 'name color')
+      .populate('team', 'name avatar');
   }
 
   static async getTaskById(id: string): Promise<ITask | null> {
@@ -23,16 +21,13 @@ export class TaskService {
       return null;
     }
     return await Task.findById(id)
-      .populate("assignee", "name email avatar")
-      .populate("reporter", "name email avatar")
-      .populate("project", "name color")
-      .populate("team", "name avatar");
+      .populate('assignee', 'name email avatar')
+      .populate('reporter', 'name email avatar')
+      .populate('project', 'name color')
+      .populate('team', 'name avatar');
   }
 
-  static async updateTask(
-    id: string,
-    updateData: Partial<ITask>,
-  ): Promise<ITask | null> {
+  static async updateTask(id: string, updateData: Partial<ITask>): Promise<ITask | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
     }
@@ -42,10 +37,10 @@ export class TaskService {
       { ...updateData, updatedAt: new Date() },
       { new: true, runValidators: true },
     )
-      .populate("assignee", "name email avatar")
-      .populate("reporter", "name email avatar")
-      .populate("project", "name color")
-      .populate("team", "name avatar");
+      .populate('assignee', 'name email avatar')
+      .populate('reporter', 'name email avatar')
+      .populate('project', 'name color')
+      .populate('team', 'name avatar');
 
     return task;
   }
@@ -67,14 +62,16 @@ export class TaskService {
    */
   static async convertToBug(taskId: string, reason: string): Promise<ITask> {
     if (!Types.ObjectId.isValid(taskId)) {
-      throw new Error("Invalid task ID");
+      throw new Error('Invalid task ID');
     }
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("Task not found");
+      throw new Error('Task not found');
     }
     // Use the instance method (cast to ITask to access instance methods)
-    return await (task as unknown as ITask & { convertToBug: (reason: string) => Promise<ITask> }).convertToBug(reason);
+    return await (
+      task as unknown as ITask & { convertToBug: (reason: string) => Promise<ITask> }
+    ).convertToBug(reason);
   }
 
   /**
@@ -83,22 +80,21 @@ export class TaskService {
    * @param sprintId - ID of the sprint to assign to
    * @returns The updated task
    */
-  static async approveForSprint(
-    taskId: string,
-    sprintId: Types.ObjectId,
-  ): Promise<ITask> {
+  static async approveForSprint(taskId: string, sprintId: Types.ObjectId): Promise<ITask> {
     if (!Types.ObjectId.isValid(taskId)) {
-      throw new Error("Invalid task ID");
+      throw new Error('Invalid task ID');
     }
     if (!Types.ObjectId.isValid(sprintId)) {
-      throw new Error("Invalid sprint ID");
+      throw new Error('Invalid sprint ID');
     }
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("Task not found");
+      throw new Error('Task not found');
     }
     // Use the instance method (cast to ITask to access instance methods)
-    return await (task as unknown as ITask & { approveForSprint: (sprintId: Types.ObjectId) => Promise<ITask> }).approveForSprint(sprintId);
+    return await (
+      task as unknown as ITask & { approveForSprint: (sprintId: Types.ObjectId) => Promise<ITask> }
+    ).approveForSprint(sprintId);
   }
 }
 
