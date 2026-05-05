@@ -40,10 +40,10 @@
       "prettier --write"
     ],
     "client/src/**/*.{ts,tsx}": [
-      "eslint --fix"
+      "node ./client/node_modules/eslint/bin/eslint.js --fix"
     ],
     "server/src/**/*.{ts,tsx}": [
-      "eslint --fix"
+      "node ./server/node_modules/eslint/bin/eslint.js --fix"
     ],
     "**/*.{json,css,md,html}": [
       "prettier --write"

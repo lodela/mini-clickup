@@ -3,7 +3,12 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 /**
  * Task Status Enum
  */
-export type TaskStatus = "backlog" | "todo" | "in-progress" | "review" | "done" | "qa" | "approved";
+export type TaskStatus = "planning" | "backlog" | "todo" | "doing" | "qa" | "done";
+
+/**
+ * Task Sizing Enum (T-shirt sizes)
+ */
+export type TaskSizing = "xs" | "sm" | "md" | "lg" | "xl";
 
 /**
  * Task Type Enum (Tarea/Bug)
@@ -27,13 +32,14 @@ export interface ITask extends Document {
   type: TaskType;               // "task" | "bug" (switch visual)
   status: TaskStatus;
   priority: TaskPriority;
+  sizing: TaskSizing;           // T-shirt size instead of estimatedTime
   assignee?: Types.ObjectId;
   reporter: Types.ObjectId;
   project: Types.ObjectId;
   team: Types.ObjectId;
   dueDate?: Date;
+  acceptanceCriteria?: string;  // Mandatory Agile field
   tags: string[];               // Tags hasheados
-  estimatedTime?: number;       // En horas (ej: 2.5 = 2d 4h)
   spentTime?: number;           // Tiempo invertido en horas
   sprintId?: Types.ObjectId;
   story?: Types.ObjectId;
@@ -43,7 +49,7 @@ export interface ITask extends Document {
   updatedAt: Date;
   updateStatus(newStatus: TaskStatus): Promise<void>;
   addComment(content: string, author: Types.ObjectId): Promise<ITaskComment>;
-  convertToBug(reason: string): Promise<ITask>;
+  workflowState?: WorkflowState;
   approveForSprint(sprintId: Types.ObjectId): Promise<ITask>;
   toJSON(): {
     _id: Types.ObjectId;
@@ -53,13 +59,14 @@ export interface ITask extends Document {
     type: TaskType;
     status: TaskStatus;
     priority: TaskPriority;
+    sizing: TaskSizing;
     assignee?: Types.ObjectId;
     reporter: Types.ObjectId;
     project: Types.ObjectId;
     team: Types.ObjectId;
     dueDate?: string;
+    acceptanceCriteria?: string;
     tags: string[];
-    estimatedTime?: number;
     spentTime?: number;
     story?: Types.ObjectId;
     attachments?: string[];
@@ -138,8 +145,13 @@ const taskSchema = new Schema<ITask>(
     },
     status: {
       type: String,
-      enum: ["backlog", "todo", "in-progress", "review", "done", "qa", "approved"],
-      default: "backlog",
+      enum: ["planning", "backlog", "todo", "doing", "qa", "done"],
+      default: "planning",
+    },
+    workflowState: {
+      type: String,
+      enum: ["pending-approval", "approved"],
+      default: null,
     },
     priority: {
       type: String,
@@ -170,18 +182,25 @@ const taskSchema = new Schema<ITask>(
       type: Date,
       default: null,
     },
-    tags: {
-      type: [String],
-      default: [],
-    },
-    estimatedTime: {
-      type: Number,
-      min: [0, "Estimated time cannot be negative"],
+    acceptanceCriteria: {
+      type: String,
+      trim: true,
+      maxlength: [5000, "Acceptance criteria cannot exceed 5000 characters"],
       default: null,
+    },
+    sizing: {
+      type: String,
+      enum: ["xs", "sm", "md", "lg", "xl"],
+      default: "sm",
     },
     spentTime: {
       type: Number,
       min: [0, "Spent time cannot be negative"],
+      default: null,
+    },
+    sprintId: {
+      type: Schema.Types.ObjectId,
+      ref: "Sprint",
       default: null,
     },
     story: {
@@ -264,7 +283,7 @@ taskSchema.methods.addComment = async function (
  */
 taskSchema.methods.convertToBug = async function (reason: string): Promise<ITask> {
   this.type = "bug";
-  this.status = "backlog";
+  this.status = "todo";
   this.comments = this.comments ?? [];
   this.comments.push({
     id: new Types.ObjectId().toString(),
@@ -281,7 +300,7 @@ taskSchema.methods.convertToBug = async function (reason: string): Promise<ITask
  */
 taskSchema.methods.approveForSprint = async function (sprintId: Types.ObjectId): Promise<ITask> {
   this.sprintId = sprintId;
-  this.status = "approved";
+  this.workflowState = "approved";
   await this.save();
   return this as ITask;
 };
