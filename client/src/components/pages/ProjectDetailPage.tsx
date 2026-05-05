@@ -131,11 +131,39 @@ export default function ProjectDetailPage() {
       {/* Placeholder sections */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
         <div className="lg:col-span-2 space-y-6">
-          {/* Epics section (placeholder) */}
+          {/* Epics section */}
           <div className="glass-card p-6">
-            <h2 className="text-lg font-semibold text-white/90 mb-4">Epics</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white/90">Epics</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-blue-400 hover:text-blue-300"
+                onClick={() => navigate(`/projects/${id}/epics`)}
+              >
+                View All
+              </Button>
+            </div>
             <p className="text-sm text-white/40 text-center py-8">
               Epics will be displayed here. Start by creating an epic for this project.
+            </p>
+          </div>
+
+          {/* Documents section */}
+          <div className="glass-card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white/90">Documents</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-blue-400 hover:text-blue-300"
+                onClick={() => navigate(`/projects/${id}/documents`)}
+              >
+                View All
+              </Button>
+            </div>
+            <p className="text-sm text-white/40 text-center py-8">
+              Documents will be displayed here. Start by creating a document for this project.
             </p>
           </div>
 

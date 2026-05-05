@@ -35,6 +35,11 @@ const AdminDepartmentsPage = lazy(
 const AdminTeamsPage = lazy(
   () => import("@/components/pages/AdminTeamsPage"),
 );
+const EmployeeFiscalPage = lazy(() => import("@/components/pages/EmployeeFiscalPage"));
+
+const EpicsPage = lazy(() => import("@/components/pages/EpicsPage"));
+const StoriesPage = lazy(() => import("@/components/pages/StoriesPage"));
+const ProjectDocumentPage = lazy(() => import("@/components/pages/ProjectDocumentPage"));
 
 // ── Router ────────────────────────────────────────────────────────────────────
 export const router = createBrowserRouter([
@@ -56,6 +61,9 @@ export const router = createBrowserRouter([
       { path: "/dashboard", element: <DashboardPage /> },
       { path: "/projects", element: <ProjectsPage /> },
       { path: "/projects/:id", element: <ProjectDetailPage /> },
+      { path: "/projects/:id/epics", element: <EpicsPage /> },
+      { path: "/projects/:id/epics/:epicId/stories", element: <StoriesPage /> },
+      { path: "/projects/:id/documents", element: <ProjectDocumentPage /> },
       { path: "/tasks", element: <TasksPage /> },
       { path: "/team", element: <TeamPage /> },
       { path: "/chat", element: <ChatPage /> },
@@ -64,6 +72,7 @@ export const router = createBrowserRouter([
       { path: "/backlog", element: <BacklogPage /> },
       { path: "/vacations", element: <VacationsPage /> },
       { path: "/info", element: <InfoPortalPage /> },
+      { path: "/fiscal", element: <EmployeeFiscalPage /> },
     ],
   },
 

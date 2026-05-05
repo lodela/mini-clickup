@@ -2,6 +2,12 @@
  * Application-wide TypeScript types and interfaces
  */
 
+export type UserRole =
+  | 'GOD_USER'
+  | 'TENANT_ADMIN'
+  | 'DEPT_LEAD'
+  | 'TEAM_MEMBER';
+
 /**
  * User Interface
  */
@@ -9,7 +15,7 @@ export interface User {
   _id: string;
   email: string;
   name: string;
-  role: 'user' | 'admin';
+  role: UserRole;
   avatar?: string;
   teams?: string[];
   isActive: boolean;
@@ -70,7 +76,7 @@ export interface Project {
 /**
  * Task Status
  */
-export type TaskStatus = 'backlog' | 'todo' | 'in-progress' | 'review' | 'done' | 'qa' | 'approved';
+export type TaskStatus = 'planning' | 'backlog' | 'todo' | 'doing' | 'qa' | 'done';
 
 /**
  * Task Type (Tarea/Bug)
@@ -245,6 +251,30 @@ export interface PaginatedResponse<T> {
 }
 
 /**
+ * Project Document
+ */
+export interface ProjectDocument {
+  _id: string;
+  title: string;
+  content: string;
+  project: string;
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProjectDocumentDTO {
+  title: string;
+  content: string;
+  project: string;
+}
+
+export interface UpdateProjectDocumentDTO {
+  title?: string;
+  content?: string;
+}
+
+/**
  * API Error Response
  */
 export interface ApiErrorResponse {
@@ -258,19 +288,109 @@ export interface ApiErrorResponse {
 /**
  * Team DTOs for API operations
  */
-export interface CreateTeamDTO {
-  name: string;
-  description?: string;
-  avatar?: string;
-}
-
-export interface UpdateTeamDTO {
-  name?: string;
-  description?: string;
-  avatar?: string;
-}
-
 export interface AddMemberDTO {
   email: string;
   role: 'admin' | 'member' | 'guest';
+}
+
+/**
+ * Epic Status
+ */
+export type EpicStatus = 'open' | 'in-progress' | 'completed' | 'cancelled';
+
+/**
+ * Epic Priority
+ */
+export type EpicPriority = 'low' | 'medium' | 'high' | 'urgent';
+
+/**
+ * Epic Interface
+ */
+export interface Epic {
+  _id: string;
+  epicNumber: string;
+  name: string;
+  description?: string;
+  project: string | Project;
+  status: EpicStatus;
+  priority: EpicPriority;
+  owner: string | User;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Story Status
+ */
+export type StoryStatus = 'planning' | 'backlog' | 'todo' | 'doing' | 'qa' | 'done';
+
+/**
+ * Story Priority
+ */
+export type StoryPriority = 'low' | 'medium' | 'high' | 'urgent';
+
+/**
+ * Story Sizing (T-shirt)
+ */
+export type StorySizing = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+/**
+ * Story Interface
+ */
+export interface Story {
+  _id: string;
+  storyNumber: string;
+  title: string;
+  description?: string;
+  epic: string | Epic;
+  project: string | Project;
+  assignee?: string | User;
+  status: StoryStatus;
+  priority: StoryPriority;
+  sizing: StorySizing;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Epic DTOs
+ */
+export interface CreateEpicDTO {
+  name: string;
+  description?: string;
+  project: string;
+  status?: EpicStatus;
+  priority?: EpicPriority;
+}
+
+export interface UpdateEpicDTO {
+  name?: string;
+  description?: string;
+  status?: EpicStatus;
+  priority?: EpicPriority;
+}
+
+/**
+ * Story DTOs
+ */
+export interface CreateStoryDTO {
+  title: string;
+  description?: string;
+  epic: string;
+  project: string;
+  assignee?: string;
+  status?: StoryStatus;
+  priority?: StoryPriority;
+  sizing?: StorySizing;
+}
+
+export interface UpdateStoryDTO {
+  title?: string;
+  description?: string;
+  epic?: string;
+  assignee?: string;
+  status?: StoryStatus;
+  priority?: StoryPriority;
+  sizing?: StorySizing;
 }

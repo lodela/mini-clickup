@@ -35,6 +35,7 @@ import companyRoutes from './routes/companies.js';
 import epicRoutes from './routes/epics.js';
 import storyRoutes from './routes/stories.js';
 import catalogRoutes from './routes/catalogs.js';
+import projectDocumentRoutes from './routes/projectDocuments.js';
 
 // Import middleware
 import { notFound, errorHandler } from './middleware/errorHandler.js';
@@ -118,6 +119,7 @@ app.use('/api/companies', companyRoutes);
 app.use('/api/epics', epicRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/catalogs', catalogRoutes);
+app.use('/api/project-documents', projectDocumentRoutes);
 
 // ============================================================================
 // Error Handling
