@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import path from 'path';
 
 // Import models (ensure they are registered with Mongoose)
 import './models/User.js';
@@ -120,6 +121,22 @@ app.use('/api/epics', epicRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/catalogs', catalogRoutes);
 app.use('/api/project-documents', projectDocumentRoutes);
+
+// ============================================================================
+// Static Files (Production)
+// ============================================================================
+if (NODE_ENV === 'production') {
+  const clientDistPath = path.resolve(__dirname, '../../client/dist');
+  app.use(express.static(clientDistPath));
+
+  // SPA catch-all — serve index.html for non-API routes so React Router works
+  app.get('*', (req: Request, res: Response, next: NextFunction) => {
+    if (req.originalUrl.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
 
 // ============================================================================
 // Error Handling
