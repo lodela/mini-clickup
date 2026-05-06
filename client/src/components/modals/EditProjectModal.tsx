@@ -41,7 +41,7 @@ import { PROJECT_COLORS, DEFAULT_PROJECT_COLOR } from "@/utils/colors";
 import { FolderKanban, CalendarIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/components/ui/utils";
-import type { Project, Team } from "@/types";
+import type { Project, ProjectStatus, Team } from "@/types";
 import { useAppCatalog } from '@/contexts/AppCatalogContext';
 
 const formSchema= z.object({
@@ -126,7 +126,7 @@ export default function EditProjectModal({
         name: values.name,
         description: values.description || "",
         team: values.team,
-        status: values.status,
+        status: values.status as ProjectStatus,
         color: values.color,
         startDate: values.startDate?.toISOString(),
         endDate: values.endDate?.toISOString(),

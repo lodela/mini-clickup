@@ -76,7 +76,7 @@ export interface Project {
 /**
  * Task Status
  */
-export type TaskStatus = 'planning' | 'backlog' | 'todo' | 'doing' | 'qa' | 'done';
+export type TaskStatus = 'planning' | 'backlog' | 'todo' | 'doing' | 'in-progress' | 'qa' | 'review' | 'done' | 'approved';
 
 /**
  * Task Type (Tarea/Bug)

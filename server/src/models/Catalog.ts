@@ -98,9 +98,9 @@ catalogSchema.index({ type: 1, key: 1 }, { unique: true });
  * Static: Get all catalogs grouped by type
  */
 catalogSchema.statics.getAllGrouped = async function (): Promise<CatalogsByType> {
-  const catalogs = await this.find({ isActive: true })
+  const catalogs = (await this.find({ isActive: true })
     .sort({ type: 1, order: 1 })
-    .lean();
+    .lean()) as ICatalog[];
 
   const grouped = catalogs.reduce<CatalogsByType>(
     (acc, cat) => {

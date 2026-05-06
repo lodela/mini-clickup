@@ -1,4 +1,4 @@
-import Catalog, { CatalogsByType } from "@/models/Catalog.js";
+import Catalog, { CatalogsByType } from "../models/Catalog.js";
 
 /**
  * CatalogService

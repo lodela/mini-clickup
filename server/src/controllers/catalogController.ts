@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { catalogService } from "@/services/catalogService.js";
+import { catalogService } from "../services/catalogService.js";
 
 /**
  * CatalogController
