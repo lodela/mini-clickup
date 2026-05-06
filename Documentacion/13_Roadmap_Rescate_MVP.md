@@ -1,9 +1,9 @@
 # Mini ClickUp — Roadmap de Rescate y Desarrollo MVP
 
-**Versión:** 2.0.0-rescue  
-**Fecha:** 2026-04-16  
+**Versión:** 3.0.0-rescue+agile  
+**Fecha:** 2026-05-06  
 **Propietario:** Norberto Lodela  
-**Estado:** 🔴 RESCATE ACTIVO → Construcción MVP  
+**Estado:** 🟡 FASE 0-2 COMPLETADA → Construyendo FASE 3-7
 
 ---
 
@@ -12,6 +12,7 @@
 Mini ClickUp es una aplicación de gestión de proyectos inspirada en ClickUp, construida con MERN Stack + Socket.IO. El proyecto fue iniciado y dejado en estado roto por agentes anteriores. Este documento define el plan de rescate y desarrollo ordenado hacia un MVP funcional y verificable.
 
 **Pila tecnológica confirmada:**
+
 - Frontend: React 19 + Vite + TypeScript + Tailwind CSS
 - Backend: Node.js + Express + TypeScript
 - Base de datos: MongoDB 8.2 (Windows service, local)
@@ -21,57 +22,60 @@ Mini ClickUp es una aplicación de gestión de proyectos inspirada en ClickUp, c
 
 ---
 
-## 🗺️ Mapa de Pantallas (desde Figma + Codebase)
+## 🗺️ Mapa de Pantallas (desde Figma + Codebase — Auditado 2026-05-06)
 
 ```
 RUTAS PÚBLICAS (GuestLayout)
-├── /login              ✅ 100% — LoginPage.tsx
-├── /register           ✅ 100% — RegisterPage.tsx
-├── /forgot-password    ✅ UI, ❌ email flow — ForgotPasswordPage.tsx
-└── /reset-password     ✅ UI, ❌ token flow — ResetPasswordPage.tsx
+├── /login              ✅ 100% — LoginPage.tsx (glassmorphism, i18n, OTP)
+├── /register           ✅ 100% — RegisterPage.tsx (glassmorphism, validación)
+├── /forgot-password    ✅ 100% — ForgotPasswordPage.tsx (anti-enumeración)
+└── /reset-password     ✅ 100% — ResetPasswordPage.tsx (token flow)
 
 RUTAS PROTEGIDAS (ProtectedLayout)
-├── /dashboard          ⚠️  70% — DashboardPage.tsx + dashboard/app/
-├── /projects           ⚠️  50% — ProjectsPage.tsx (mock data)
-├── /tasks              ⚠️  40% — TasksPage.tsx (mock data)
-├── /team               ⚠️  90% — TeamPage.tsx (bug: delete 500)
-├── /backlog            ❌   0% — BacklogPage.tsx (stub)
-├── /chat               ❌  15% — ChatPage.tsx (stub)
-├── /calendar           ❌  20% — CalendarPage.tsx (stub)
-├── /settings           ❌  20% — SettingsPage.tsx (stub)
-└── [employees]         ❌  20% — pages/employees/index.tsx (sin ruta)
-    [info-portal]       ❌   0% — pages/info/portal.tsx (sin ruta)
-    [vacations]         ❌   0% — pages/vacations/index.tsx (sin ruta)
-    [messenger]         ❌  15% — pages/messenger/index.tsx (sin ruta)
-```
+├── /dashboard          ⚠️  70% — DashboardPage.tsx (datos mock hardcoded)
+├── /projects           ⚠️  80% — ProjectsPage.tsx (API real, glassmorphism)
+│   └── /projects/:id   ⚠️  50% — ProjectDetailPage (epics OK, tareas placeholder)
+│       ├── /epics      ✅ 100% — EpicsPage.tsx (CRUD completo)
+│       └── /epics/:id/stories ✅ 100% — StoriesPage.tsx (CRUD + reorder)
+├── /tasks              ⚠️  70% — TasksPage.tsx (@dnd-kit Kanban, mock parcial)
+├── /backlog            ⚠️  10% — BacklogPage.tsx (stub estático)
+├── /team               ⚠️  90% — TeamPage.tsx (CRUD + invite, bug: delete 500)
+├── /chat               ⚠️  15% — ChatPage.tsx (stub "Coming Soon")
+├── /calendar           ⚠️  20% — CalendarPage.tsx (stub)
+├── /settings           ⚠️  30% — SettingsPage.tsx (perfil parcial)
+├── /vacations          ⚠️  15% — VacationsPage.tsx (stub)
+├── /info-portal        ⚠️  10% — InfoPortalPage.tsx (stub)
 
-**Sidebar Figma confirmado:**
-```
-[Logo] [P]
-├── Dashboard
-├── Projects
-├── Calendar
-├── Vacations
-├── Employees
-├── Messenger
-└── Info Portal
-[Support widget]
-[Logout]
+RUTAS ADMIN (AdminLayout → AdminProvider)
+├── /admin/companies    ✅ 100% — AdminCompaniesPage (CRUD + fuzzy + branding)
+├── /admin/departments  ✅ 100% — AdminDepartmentsPage (CRUD completo)
+└── /admin/teams        ✅ 100% — AdminTeamsPage (CRUD completo)
+
+PANTALLAS FALTANTES (no implementadas aún)
+├── /sprints            ❌   0% — SprintBoardPage (no existe)
+├── /sprints/planning   ❌   0% — SprintPlanningPage (no existe)
+├── /projects/:id/table ❌   0% — ListViewPage (no existe)
+├── /projects/:id/gantt ❌   0% — GanttViewPage (no existe)
+├── /notifications      ❌   0% — NotificationsPage (no existe)
+└── /time-tracking      ❌   0% — TimeTrackingPage (no existe)
 ```
 
 ---
 
-## 🚨 Bugs Críticos Confirmados (Fase 0 Obligatoria)
+## 🚨 Bugs Críticos Confirmados (Auditado 2026-05-06)
 
-| ID | Bug | Evidencia | Prioridad |
-|----|-----|-----------|-----------|
-| BUG-001 | `DELETE /api/teams/:id` → 500 Internal Server Error | Screenshot dev tools | P0 |
-| BUG-002 | `authenticate` sin `()` en routes/projects.ts, tasks.ts, sprint.ts | Código fuente | P0 |
-| BUG-003 | Build falla (errores TypeScript + imports rotos) | `npm run build` → error | P0 |
-| BUG-004 | Tests de teams: 12/33 fallan | `npm run test` | P0 |
-| BUG-005 | Duplicado de árbol dashboard (`pages/dashboard/app/`) vs `DashboardPage.tsx` | Estructura | P1 |
-| BUG-006 | `axios` usado en hooks viejos en lugar de `services/api.ts` | useTasks, useProjects | P1 |
-| BUG-007 | Socket.IO naming mixto: kebab-case vs colon-notation | SocketContext | P1 |
+| ID      | Bug                                     | Archivo                                     | Prioridad | Estado                      |
+| ------- | --------------------------------------- | ------------------------------------------- | --------- | --------------------------- |
+| BUG-001 | `DELETE /api/teams/:id` → 500           | teamController/teamService                  | P0        | ⏳ Pendiente                |
+| BUG-002 | `authenticate` sin `()` en catalogs.ts  | `server/src/routes/catalogs.ts:12`          | P0        | ⏳ Pendiente                |
+| BUG-003 | Build TypeScript falla                  | Proyecto                                    | P0        | ⏳ Parcial (commit 4f2bc1d) |
+| BUG-004 | Tests de teams: 12/33 fallan            | `server/tests/team.test.ts`                 | P0        | ⏳ Pendiente                |
+| BUG-005 | Duplicado de árbol dashboard            | `pages/dashboard/app/`                      | P1        | ⏳ Pendiente                |
+| BUG-006 | `axios` en hooks viejos                 | useTasks, useProjects, useTeams             | P1        | ⚠️ Parcial                  |
+| BUG-007 | Socket.IO naming mixto                  | SocketContext kebab vs colon                | P1        | ⏳ Pendiente                |
+| BUG-008 | Sprint model SIN project/team/companyId | `server/src/models/Sprint.ts`               | P1        | ⏳ Pendiente                |
+| BUG-009 | Socket no conectado a REST controllers  | `server/src/controllers/*.ts`               | P1        | ⏳ Pendiente                |
+| BUG-010 | Hooks sin service layer                 | useTasks, useProjects, useTeams, useSprints | P2        | ⏳ Pendiente                |
 
 ---
 
@@ -85,12 +89,12 @@ RUTAS PROTEGIDAS (ProtectedLayout)
 
 #### Epics de Rescate
 
-| Epic | Descripción | Issues | Estimación |
-|------|-------------|--------|------------|
-| E-RESCUE-01 | Fix bugs P0 en backend (routes, team delete) | 3 tasks | CH |
-| E-RESCUE-02 | Estabilizar build TypeScript | 2 tasks | MD |
-| E-RESCUE-03 | Unificar cliente API (eliminar axios de hooks) | 1 task | CH |
-| E-RESCUE-04 | Reconciliar árbol de dashboard duplicado | 1 task | MD |
+| Epic        | Descripción                                    | Issues  | Estimación |
+| ----------- | ---------------------------------------------- | ------- | ---------- |
+| E-RESCUE-01 | Fix bugs P0 en backend (routes, team delete)   | 3 tasks | CH         |
+| E-RESCUE-02 | Estabilizar build TypeScript                   | 2 tasks | MD         |
+| E-RESCUE-03 | Unificar cliente API (eliminar axios de hooks) | 1 task  | CH         |
+| E-RESCUE-04 | Reconciliar árbol de dashboard duplicado       | 1 task  | MD         |
 
 ---
 
@@ -102,13 +106,13 @@ RUTAS PROTEGIDAS (ProtectedLayout)
 
 #### Epics
 
-| Epic | Descripción | Estimación |
-|------|-------------|------------|
-| E-PROJ-01 | Projects API — CRUD completo (controller, service, routes) | L |
-| E-PROJ-02 | Projects Frontend — conectar a API real | MD |
-| E-TASK-01 | Tasks API — CRUD completo (controller, service, routes) | L |
-| E-TASK-02 | Tasks Frontend — conectar a API real | MD |
-| E-DASH-01 | Dashboard — conectar a APIs reales | MD |
+| Epic      | Descripción                                                | Estimación |
+| --------- | ---------------------------------------------------------- | ---------- |
+| E-PROJ-01 | Projects API — CRUD completo (controller, service, routes) | L          |
+| E-PROJ-02 | Projects Frontend — conectar a API real                    | MD         |
+| E-TASK-01 | Tasks API — CRUD completo (controller, service, routes)    | L          |
+| E-TASK-02 | Tasks Frontend — conectar a API real                       | MD         |
+| E-DASH-01 | Dashboard — conectar a APIs reales                         | MD         |
 
 ---
 
@@ -120,13 +124,13 @@ RUTAS PROTEGIDAS (ProtectedLayout)
 
 #### Epics
 
-| Epic | Descripción | Estimación |
-|------|-------------|------------|
-| E-DASH-02 | Dashboard — Workload, Nearest Events, Activity Stream | L |
-| E-TASK-03 | Kanban Board — drag-and-drop (@dnd-kit) | XL |
-| E-TASK-04 | Task Detail Modal — completo | MD |
-| E-TEAMS-01 | Teams 100% — avatar upload, ownership transfer | MD |
-| E-UI-01 | Atomic Components — Badge, Avatar, Checkbox, Radio | MD |
+| Epic       | Descripción                                           | Estimación |
+| ---------- | ----------------------------------------------------- | ---------- |
+| E-DASH-02  | Dashboard — Workload, Nearest Events, Activity Stream | L          |
+| E-TASK-03  | Kanban Board — drag-and-drop (@dnd-kit)               | XL         |
+| E-TASK-04  | Task Detail Modal — completo                          | MD         |
+| E-TEAMS-01 | Teams 100% — avatar upload, ownership transfer        | MD         |
+| E-UI-01    | Atomic Components — Badge, Avatar, Checkbox, Radio    | MD         |
 
 ---
 
@@ -138,13 +142,13 @@ RUTAS PROTEGIDAS (ProtectedLayout)
 
 #### Epics
 
-| Epic | Descripción | Estimación |
-|------|-------------|------------|
-| E-FLOW-01 | Task Workflow — estados, transiciones, validaciones | MD |
-| E-FLOW-02 | QA Auto-transition (Done → QA automático) | MD |
-| E-FLOW-03 | Bug Entity — creación desde rechazo QA | MD |
-| E-NOTIF-01 | Notification System — Socket.IO + badge | L |
-| E-BACK-01 | Backlog — sprint planning básico | MD |
+| Epic       | Descripción                                         | Estimación |
+| ---------- | --------------------------------------------------- | ---------- |
+| E-FLOW-01  | Task Workflow — estados, transiciones, validaciones | MD         |
+| E-FLOW-02  | QA Auto-transition (Done → QA automático)           | MD         |
+| E-FLOW-03  | Bug Entity — creación desde rechazo QA              | MD         |
+| E-NOTIF-01 | Notification System — Socket.IO + badge             | L          |
+| E-BACK-01  | Backlog — sprint planning básico                    | MD         |
 
 ---
 
@@ -156,14 +160,14 @@ RUTAS PROTEGIDAS (ProtectedLayout)
 
 #### Epics
 
-| Epic | Descripción | Estimación |
-|------|-------------|------------|
-| E-CHAT-01 | Chat/Messenger — Socket.IO chat completo | XL |
-| E-CAL-01 | Calendar — vista mensual/semanal | L |
-| E-VAC-01 | Vacations — solicitud y aprobación | L |
-| E-EMP-01 | Employees — directorio y perfiles | MD |
-| E-INFO-01 | Info Portal — contenido base | CH |
-| E-SET-01 | Settings — perfil, notificaciones, tema | MD |
+| Epic      | Descripción                              | Estimación |
+| --------- | ---------------------------------------- | ---------- |
+| E-CHAT-01 | Chat/Messenger — Socket.IO chat completo | XL         |
+| E-CAL-01  | Calendar — vista mensual/semanal         | L          |
+| E-VAC-01  | Vacations — solicitud y aprobación       | L          |
+| E-EMP-01  | Employees — directorio y perfiles        | MD         |
+| E-INFO-01 | Info Portal — contenido base             | CH         |
+| E-SET-01  | Settings — perfil, notificaciones, tema  | MD         |
 
 ---
 
@@ -175,47 +179,100 @@ RUTAS PROTEGIDAS (ProtectedLayout)
 
 #### Epics
 
-| Epic | Descripción | Estimación |
-|------|-------------|------------|
-| E-PERF-01 | Performance audit + optimizaciones | MD |
-| E-A11Y-01 | Accessibility WCAG AA básico | CH |
-| E-DOCS-01 | OpenAPI spec + flowcharts | MD |
-| E-TEST-01 | Tests unitarios coverage >80% paths críticos | L |
+| Epic      | Descripción                                  | Estimación |
+| --------- | -------------------------------------------- | ---------- |
+| E-PERF-01 | Performance audit + optimizaciones           | MD         |
+| E-A11Y-01 | Accessibility WCAG AA básico                 | CH         |
+| E-DOCS-01 | OpenAPI spec + flowcharts                    | MD         |
+| E-TEST-01 | Tests unitarios coverage >80% paths críticos | L          |
+
+---
+
+### FASE 6: MOTOR AGILE — "Sprints y Kanban real" 🟠
+
+**Objetivo:** Ciclo ágil completo: Sprint Board, Planning, Burndown, Velocity, Backlog priorizado.  
+**Milestone GitHub:** `Phase 6 — Agile Engine`  
+**Condición de salida:** Un sprint completo se puede crear, planificar, ejecutar y cerrar con datos reales.
+
+#### Epics
+
+| Epic       | Descripción                                                                                                                        | Estimación |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| E-AGILE-01 | Sprint Board — Vista dedicada de sprint activo con columnas (Todo, In Progress, Review, Done), drag-and-drop, filtros por assignee | XL         |
+| E-AGILE-02 | Burndown + Velocity Charts — Gráficos de burndown por sprint, velocity chart跨 sprints, chart.js o recharts                        | L          |
+| E-AGILE-03 | Sprint Lifecycle — Endpoints: POST /sprints/:id/start, PATCH /sprints/:id/complete, report de sprint completado                    | MD         |
+| E-AGILE-04 | Backlog Prioritization — BacklogPage funcional con drag-reorder, asignación a sprint, estimación por story points                  | L          |
+| E-FIX-008  | Fix Sprint model — Agregar project, team, companyId al schema Sprint                                                               | CH         |
+| E-FIX-010  | Service Layer — Crear taskService.ts, projectService.ts, teamService.ts, sprintService.ts, migrar hooks                            | MD         |
+
+---
+
+### FASE 7: PARIDAD CLICKUP — "Mini pero poderoso" 🟣
+
+**Objetivo:** Aproximarse a ClickUp en features esenciales: vistas múltiples, subtasks, time tracking, notificaciones, automations.  
+**Milestone GitHub:** `Phase 7 — ClickUp Parity`  
+**Condición de salida:** Un usuario puede gestionar proyectos con vistas Board+List, crear subtasks, trackear tiempo, y recibir notificaciones.
+
+#### Epics
+
+| Epic       | Descripción                                                                                          | Estimación |
+| ---------- | ---------------------------------------------------------------------------------------------------- | ---------- |
+| E-VIEW-01  | List/Table View — Vista de tabla tipo spreadsheet para tareas, columnas configurables, sort + filter | XL         |
+| E-TASK-05  | Subtasks + Checklists — Modelo Subtask con checklist dentro de tarea, drag-reorder, progreso %       | L          |
+| E-TASK-06  | Dependencies — Task dependencies (blocks/blocked_by), visualización en board, validación de ciclos   | MD         |
+| E-TIME-01  | Time Tracking — Timer start/stop por tarea, timesheets, reporte de tiempo por usuario/proyecto       | L          |
+| E-NOTIF-02 | In-app Notification System — Badge count, notification center, Socket.IO real-time, mark as read     | MD         |
+| E-AUTO-01  | Automation Rules — If-Then rules básicas (status change → assign, due date → notify)                 | XL         |
+| E-TEMPL-01 | Project Templates — Plantillas reutilizables para crear proyectos con estructura predefinida         | MD         |
+| E-GANTT-01 | Gantt View — Timeline visual con dependencias, drag para adjustar fechas                             | XL         |
 
 ---
 
 ## 📊 Resumen de Esfuerzo
 
-| Fase | Epics | Estimación | Prioridad |
-|------|-------|------------|-----------|
-| **Phase 0: Rescue** | 4 | ~1 día | 🔴 Inmediata |
-| **Phase 1: API Foundation** | 5 | ~3 días | 🔴 Alta |
-| **Phase 2: Core Screens** | 5 | ~5 días | 🟡 Alta |
-| **Phase 3: Workflow** | 5 | ~4 días | 🟡 Media-Alta |
-| **Phase 4: Secondary** | 6 | ~6 días | 🟢 Media |
-| **Phase 5: Polish** | 4 | ~2 días | 🔵 Baja |
-| **TOTAL** | **29** | **~21 días** | — |
+| Fase                        | Epics  | Estimación   | Prioridad     | Estado         |
+| --------------------------- | ------ | ------------ | ------------- | -------------- |
+| **Phase 0: Rescue**         | 4      | ~1 día       | 🔴 Inmediata  | ✅ Completada  |
+| **Phase 1: API Foundation** | 5      | ~3 días      | 🔴 Alta       | ✅ Completada  |
+| **Phase 2: Core Screens**   | 5      | ~5 días      | 🟡 Alta       | ✅ Completada  |
+| **Phase 3: Workflow**       | 5      | ~4 días      | 🟡 Media-Alta | 🟡 En progreso |
+| **Phase 4: Secondary**      | 6      | ~6 días      | 🟢 Media      | ⏳ Pendiente   |
+| **Phase 5: Polish**         | 4      | ~2 días      | 🔵 Baja       | ⏳ Pendiente   |
+| **Phase 6: Agile Engine**   | 6      | ~8 días      | 🟠 Alta       | ⏳ Pendiente   |
+| **Phase 7: ClickUp Parity** | 8      | ~14 días     | 🟣 Media      | ⏳ Pendiente   |
+| **TOTAL**                   | **43** | **~43 días** | —             | —              |
 
 ---
 
 ## 🔗 Dependencias Críticas
 
 ```
-Phase 0 (Rescue)
-    └─► Phase 1 (API Foundation)
-            ├─► Phase 2 (Core Screens)
-            │       └─► Phase 3 (Workflow)
-            │               └─► Phase 4 (Secondary)
-            │                       └─► Phase 5 (Polish)
-            └─► [PARALELO] Phase 4 secondary screens no-dependientes
-                (Employees, Info Portal, Settings — sin dependencia de Tasks/Workflow)
+Phase 0 (Rescue) ✅
+    └─► Phase 1 (API Foundation) ✅
+            └─► Phase 2 (Core Screens) ✅
+                    ├─► Phase 3 (Workflow) 🟡 EN PROGRESO
+                    │       └─► Phase 4 (Secondary) ⏳
+                    │               └─► Phase 5 (Polish) ⏳
+                    │                       └─► Phase 6 (Agile Engine) ⏳
+                    │                               └─► Phase 7 (ClickUp Parity) ⏳
+                    └─► [PARALELO] Phase 4 secondary screens no-dependientes
+                        (Employees, Info Portal, Settings — sin dependencia de Tasks/Workflow)
 ```
+
+**Nuevas dependencias FASE 6 → 7:**
+
+- E-AGILE-01 (Sprint Board) depende de E-AGILE-04 (Backlog priorizado)
+- E-AGILE-03 (Sprint Lifecycle) depende de E-FIX-008 (Sprint model fix)
+- E-VIEW-01 (List/Table View) requiere E-TASK-01 (Tasks API) ✅ ya completado
+- E-TIME-01 (Time Tracking) depende de E-AGILE-03 (Sprint Lifecycle)
+- E-AUTO-01 (Automation) depende de E-NOTIF-02 (Notificaciones)
 
 ---
 
 ## ✅ Definition of Done (DoD) Global
 
 Para que cualquier story se considere Done:
+
 1. Código implementado y funcionando
 2. TypeScript sin errores (`npm run typecheck`)
 3. ESLint + Prettier pass (`npm run lint`)
@@ -228,25 +285,20 @@ Para que cualquier story se considere Done:
 
 ## 🔧 Herramientas Disponibles para el Desarrollo
 
-| Herramienta | Estado | Uso |
-|-------------|--------|-----|
-| Figma MCP (`IOYnTnClPHrmSnWFlKh96O`) | ⚠️ Auth issue | Diseño de referencia |
-| GitHub Issues API | ✅ Disponible | Tracking de tasks |
-| MongoDB 8.2 local | ✅ Running | DB de desarrollo |
-| Socket.IO | ✅ Configurado | Realtime |
-| @dnd-kit | ✅ Instalado (sin uso) | Kanban drag-and-drop |
-| @tanstack/react-query | ✅ Instalado (sin uso) | Cache y fetching |
-| zustand | ✅ Instalado (sin uso) | State management |
-
-### Sugerencias de herramientas adicionales
-
-| Herramienta | Propósito | Acción |
-|-------------|-----------|--------|
-| Figma MCP token refresh | Acceso completo al diseño | Verificar `FIGMA_API_TOKEN` |
-| GitHub Projects GraphQL API | Kanban board en GitHub | Agregar al MCP config |
-| `mongosh` v2.8.2 | Ya instalado ✅ | Disponible |
+| Herramienta                          | Estado                 | Uso                                                                            |
+| ------------------------------------ | ---------------------- | ------------------------------------------------------------------------------ |
+| Figma MCP (`IOYnTnClPHrmSnWFlKh96O`) | ⚠️ Auth issue          | Diseño de referencia                                                           |
+| GitHub Issues API                    | ✅ Disponible          | Tracking de tasks                                                              |
+| MongoDB 8.2 local                    | ✅ Running             | DB de desarrollo                                                               |
+| Socket.IO                            | ✅ Configurado         | Realtime                                                                       |
+| @dnd-kit                             | ✅ Instalado y en uso  | Kanban + Stories drag-and-drop                                                 |
+| @tanstack/react-query                | ✅ Instalado (sin uso) | Cache y fetching                                                               |
+| zustand                              | ✅ Instalado (sin uso) | State management                                                               |
+| recharts                             | ❌ No instalado        | Gráficos Burndown/Velocity                                                     |
+| chart.js                             | ❌ No instalado        | Alternativa para gráficos                                                      |
+| TipTap                               | ✅ Instalado           | WYSIWYG en ProjectDocument                                                     |
+| Glassmorphism CSS                    | ✅ Completo            | .glass, .glass-card, .glass-input, .glass-button, .glass-modal, .glass-sidebar |
 
 ---
 
-_Documento generado: 2026-04-16 | Autor: GitHub Copilot + Norberto Lodela_
-_Referencia: estado-actual.md + Figma screenshot análisis + codebase audit_
+_Documento actualizado: 2026-05-06 | Audit: Copilot Agent | Basado en exploración completa del codebase + análisis de paridad ClickUp_
