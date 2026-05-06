@@ -1,9 +1,11 @@
 import { io, Socket } from 'socket.io-client';
 
 /**
- * Socket.IO server URL from environment
+ * Socket.IO server URL from environment.
+ * Empty string = same-origin (used for IIS reverse-proxy deployments).
  */
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const rawUrl = import.meta.env.VITE_SOCKET_URL;
+const SOCKET_URL = rawUrl === '' || rawUrl === undefined ? undefined : rawUrl;
 
 /**
  * Socket.IO event types
